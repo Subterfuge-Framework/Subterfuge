@@ -1,0 +1,13 @@
+<div id = "WPADHijacking">
+     <fieldset class = "reset" style = "float:left; height: auto;"><legend>&nbsp;Vector Settings&nbsp;</legend>
+             <div id = "setctrlbox">
+                <table>
+                <tr>
+                <td>Active:</td>
+                <td><input type = "checkbox" name = "WPADActive" id = "WPADActive" {% for vector in vectors %}{% if vector.name == "WPAD Hijacking" %}{% if vector.active|length > 2 %} checked = "checked" {% endif %}{% endif %}{% endfor %}/></td>
+                </tr>
+                </table>
+                <a href = "javascript: setVector()" name = "update"><div id = "redbutton">Apply</div></a>
+             </div>
+     </fieldset>
+</div>

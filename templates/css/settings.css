@@ -1,0 +1,8 @@
+#settingsnav
+    {
+        background:url('/static/images/panelsmall.png') repeat-x;
+        background-color: #d6e0e1;
+        height: 20px;
+        width: auto;
+        border-radius: 15px;
+    }

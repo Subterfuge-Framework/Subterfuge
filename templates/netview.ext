@@ -1,0 +1,263 @@
+{% extends "basic.tm" %}
+
+{% load modextras %}
+
+{% block content %}
+
+<style>
+ .modpageicon
+ {      
+      float: left;
+      height: 150px;
+      width: 150px;
+ }
+ #modpageicons
+ {      
+      float: left;
+      height: 150px;
+      width: 150px;
+ }
+ .modmainsettings
+ {
+     float: left;
+     border: 2px black solid;
+     padding: 15px 10px;
+     margin: auto;
+     height: 150px;
+     width: 80%;
+ }
+ .modbuilder
+ {
+     float: left;
+     border: 2px black solid;
+     padding: 15px 10px;
+     margin-top: 10px;
+     margin: auto;
+     height: 345px;
+     width: 96%;
+ }
+ #modframe
+ {
+     float: left;
+     width: auto;
+     width: 100%;
+     margin: 10px;
+ }
+ 
+ 
+#netctrl
+{
+  background-color: #ECEAf1;
+  float: left;
+  padding: 5px;
+  margin: 5px 15px 10px 5px;
+  width: 175px;
+  min-height: 473px;
+  border: solid black 1px;
+  -khtml-border-radius: 4px 4px 4px 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 5px 5px 5px 5px;
+  -khtml-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -ms-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -o-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  box-shadow: rgba(5, 5, 5, 5) 0 1px 2px;
+}
+#netclient
+{
+  background:url('/static/images/panel.jpg');
+  background-size: 100%;
+  float: left;
+  margin: 5px 15px 10px 15px;
+  width: 325px;
+  height: 150px;
+  border: solid black 1px;
+  -khtml-border-radius: 4px 4px 4px 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 5px 5px 5px 5px;
+  -khtml-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -ms-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -o-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  box-shadow: rgba(5, 5, 5, 5) 0 1px 2px;
+}  
+#netos
+{
+  float: left;
+  margin-right: 5px;
+  margin-bottom: -15px;
+}
+#netoptions
+{
+  float: left;
+}  
+#nettitle
+{
+  float: left;
+  margin-right: 5px;
+  margin-top: -5px;
+  margin-bottom: 15px;
+}           
+#cont
+{
+   float: left;
+   min-width: 680px;
+   max-width: 680px;
+   margin: 5px 15px 10px 15px;
+}   
+#expand
+{
+  background:url('/static/images/panel.jpg');
+  background-size: 100%;
+  width: 100%;
+  height: 315px;
+  border: solid black 1px;
+  -khtml-border-radius: 4px 4px 4px 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 5px 5px 5px 5px;
+  -khtml-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -ms-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -o-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  box-shadow: rgba(5, 5, 5, 5) 0 1px 2px;
+} 
+#expandbox
+{
+  float: left;
+  width: 640px;;
+  padding: 10px;
+  margin: 10px;
+  border: solid black 1px;
+  -khtml-border-radius: 4px 4px 4px 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 5px 5px 5px 5px;
+  -khtml-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -ms-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -o-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
+  box-shadow: rgba(5, 5, 5, 5) 0 1px 2px;
+}
+
+#netviewcont
+{
+    background:url('/static/images/panel.jpg') repeat-x;
+    background-color: #d6e0e1;
+    width: auto;
+    min-height: 660px;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+</style>
+
+<div id="dialog" class="window">
+    <font color = "white">Initiating: </font><img src = "/static/images/loader.gif">
+</div>
+<div id="mask"></div>
+
+
+<div id = "netviewcont">
+<div id = "nettitle">
+Enabled Modules: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</div>
+
+{% if modules %}
+   {% for module in modules %}
+<div id = "nettitle"><img height="35" width="35" src="/static/images/plugins/{{ module.name }}.png">&nbsp;&nbsp;</div>
+<div id = "nettitle">
+         {% if module.active == "yes" %}
+            <img width = "25" src = "/static/images/netview/green.png"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+         {% else %}
+            <img width = "25" src = "/static/images/netview/red.png"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+         {% endif %}
+   {% endfor %}
+{% endif %}
+
+
+<div id="modframe">
+   <div id = "netctrl">
+           <!-- HTTP Code Injection Control Panel -->
+       <div id = "injectionctrl">
+          <form id = "injectionform" name = "httpinjectionform" method = "post" action = "/config/httpinjection/">
+          Running:
+          <input type = "hidden" id = "status" name = "status" value = "no">
+          <input type = "checkbox" id = "status" name = "status" value = "yes" {% if config.27|length > 500 %} checked = "checked" {% endif %}/><br>
+          Vector:
+          <select id = "vector" name = "vector">
+             <option value = "browser_autopwn">browser_autopwn</option>
+          </select>
+          Payload:
+          <select id = "payload" name = "payload">
+             <option value = "frameinjection">IFrame Injection</option>
+             <option value = "redir">Window Redirection</option>
+             <option value = "popup">Popup Window</option>
+          </select>
+          <div id = "injectiontarget">
+          </div>
+          <input type = "hidden" id = "custominject" name = "custominject" value = "">
+          <a href = "javascript: httpcodeinjection()" name = "apply"><div id = "redbutton" style = "margin-top: 320px; color: white;">Apply</div></a>
+          </form>
+          </table>
+       </div>
+   </div>
+ 
+ 
+  <script type="text/javascript">
+   $("#injectionctrl").hide();
+   
+   //Current HostCount
+    
+       //Count number of hosts
+    var hostcount = 0;
+    {% if client %}
+       {% for host in client %}
+         hostcount++;
+       {% endfor %}
+   {% endif %}
+   
+    function setbasehostcount(){
+       document.getElementById('currenthostcount').innerHTML = hostcount;
+    }
+        
+       //Set/Hide BaseHostcount
+    $(document).ready(function() {  
+       $("#currenthostcount").hide();
+       setbasehostcount();
+    });  
+    
+  </script>
+  
+  <div id="currenthostcount">
+   0
+  </div>
+  <div id = "hostcheck">
+
+  </div>
+ 
+   <div id="netviewmaincont">
+   
+   </div>
+ </div>
+   {% if client %}
+    {% for host in client %}
+      <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    {% endfor %}
+   {% endif %}
+</div>
+{% endblock %}

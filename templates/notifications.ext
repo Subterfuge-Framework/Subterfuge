@@ -1,0 +1,15 @@
+{% extends "basic.tm" %}
+
+{% block content %}
+
+    <div id="dialog" class="window">
+        <font color = "white">Initiating: </font><img src = "/static/images/loader.gif">
+    </div>
+    <div id="mask"></div>
+        
+<div id = "notifications">
+
+</div>
+
+
+{% endblock %}

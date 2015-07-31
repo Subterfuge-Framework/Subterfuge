@@ -1,0 +1,410 @@
+{% extends "basic.tm" %}
+
+{% block content %}
+    <!--
+    <div id="configbg">
+<img src="/static/images/configbg.png" alt="background image" id="bg" />
+    </bg>
+    -->
+    
+
+    
+<div class="domtab">
+        <div id="dialog" class="window">
+            <font color = "white"></font><img style = "padding: 10px" src = "/static/images/loader.gif">
+        </div>
+    <ul class="domtabs">
+      <li><a href="#MITM">&nbsp;&nbsp;&nbsp;Settings</a></li>
+      <li><a href="#Vectors">MITM Vectors</a></li>
+      <li><a href="#Config">Configuration</a></li>
+      <li><a href="#Advanced">Advanced</a></li>
+    </ul>
+    
+  <div id = "intab">
+    <fieldset class = "menu">
+    <legend><h2><a name="MITM" id="MITM">Subterfuge Configuration Menu:</a></h2></legend>
+        <br>
+        <fieldset class = "reset" style = "float:left"><legend>&nbsp;Reset&nbsp;</legend>
+            <div id = "resetbox">
+                Clear captured credentials from the database:    <a href = "#" name = "reset"><div id = "redbutton">Purge Data</div></a>
+ 					<a href = "javascript: exportcreds()" name = "update" style = "float: left"><div id = "redbutton">Export Data</div></a>
+            </div>
+
+        </fieldset>
+
+        <fieldset class = "reset" style = "float:left"><legend>&nbsp;Update&nbsp;</legend>
+            <div id = "setctrlbox">
+                Check for updates to Subterfuge:<a href = "javascript: update()" name = "update"><div id = "redbutton">Update</div></a>
+            </div>
+        </fieldset>
+        
+		  
+
+		  
+        <form name = "mitmform" method = "post" action = "/config/settings/">
+          
+	<br><br><br><br>
+        <fieldset class = "generalsettings">
+    
+        <legend>&nbsp;General Settings&nbsp;</legend>
+        
+        <table>
+        <tr>
+        <td>Interface:</td>
+        <td><select name = "iface" id = "iface" class = "iface">
+	{% for settings in setup %}
+        <option value = "{{ settings.iface }}">{{ settings.iface }}</option>
+	{% endfor %}
+        <option value = "-----">-----</option>
+        {% if iface %}
+        		{% for inet in iface %}
+        <option value = "{{ inet }}">{{ inet }}</option>
+        		{% endfor %}
+		  {% endif %}
+        </select></td>
+        </tr>
+        <tr>
+        <td class = "autogate">Gateway:</td>
+        <td class = "autogate"><select name = "agw" id = "agw" class = "iface">
+	{% for settings in setup %}
+        <option value = "{{ settings.gateway }}">{{ settings.gateway }}</option>
+	{% endfor %}
+        <option value = "-----">-----</option>
+        {% if gateway %}
+        		{% for iface in gateway %}
+        <option value = "{{ iface }}">{{ iface }}</option>
+        		{% endfor %}
+		  {% endif %}
+        </select>
+        <a href = "#" name = "manualgate"><div id = "gatebutton" style = "margin-top: 10px; margin-bottom: 10px;">Manual Gateway</div></a></td>
+        </tr>
+        <tr>
+        <td class = "manualgate">Gateway:</td>
+        <td class = "manualgate"><input type = "text" name = "mgw" id = "mgw" /></td>
+        </tr>
+        <tr>
+        <td class = "proxymode">Proxy Mode:</td>
+        <td class = "proxymode"><select name = "proxymode" id = "proxymode">
+           <option value = "sslstrip">SSLStrip</option>s
+           <option value = "mitmproxy">MITMProxy</option>
+        </select></td>
+        </tr>
+        <tr>
+        <td>AutoConfigure:</td>
+        <td><input type = "checkbox" name = "auto" id = "auto" {% for settings in setup %}{% if settings.autoconf|length > 2 %} checked = "checked" {% endif %}{% endfor %}/></td>
+        </tr>
+        <tr>
+        <td style="display: none;">ARP Single Clients:</td>
+        <td style="display: none;">><input type = "text" name = "single" id = "single" value = "" /></td>
+        </tr>
+        </table>
+<a href = "javascript: setmitm()" name = "apply"><div id = "redbutton" style = "margin-top: 30px;">Apply</div></a>
+        </fieldset>   
+    
+    </fieldset>
+    <script type = "text/javascript">
+    function setmitm()
+    {
+      initiating();
+      if (document.getElementById('mgw').value == "")
+      {
+         $.post("/config/settings/", {
+               iface:	document.getElementById('iface').value,
+               agw:	   document.getElementById('agw').value,
+               auto:	   document.getElementById('auto').checked,
+               single:	document.getElementById('single').value
+         });
+      }
+      else
+      {
+	      $.post("/config/settings/", {
+	            iface:	document.getElementById('iface').value,
+	            mgw:	   document.getElementById('mgw').value,		
+	            auto:	   document.getElementById('auto').checked,
+	            single:	document.getElementById('single').value
+	      });
+      }
+
+    }
+    function update()
+    {
+      initiating();
+	   $.post("/config/update/", {
+	         update:	     "yes"
+	   });
+    }
+    function exportcreds()
+    {
+      initiating();
+      alert("Credentials exported to: /usr/share/subterfuge/credentials.txt");
+	   $.post("/config/exportcreds/", {
+	         update:	     "yes"
+	   });
+    }
+    </script>
+    </form>
+  </div>
+  
+  
+
+  <div id = "intab">
+    <fieldset class = "menu">
+    <legend><h2><a name="Vectors" id="Vectors">MITM Vectors</a></h2></legend>
+        <br>
+		
+        <table>
+        <tr>
+        <td>Vector:</td>
+        <td><select name = "vector" id = "vector" class = "vector" onchange = "vector(this.value)">
+        {% for vector in vectors %}
+        <option value = "{{ vector.name }}">{{ vector.name }}</option>
+        {% endfor %}
+        </select></td>
+        </tr>
+	</table>
+		  <!--        VECTOR SETTINGS        -->
+        {% include "settings/vectors/arpcachepoisoning.set" %}
+        {% include "settings/vectors/wirelessapgenerator.set" %}
+        {% include "settings/vectors/wpadhijack.set" %}
+        {% include "settings/vectors/roguedhcp.set" %}
+		  <!--        END_VECTOR SETTINGS     -->
+	
+	<script type="text/javascript">
+		hidevectors();
+		
+		function hidevectors() {
+			$('#ARPCachePoisoning').hide();
+			$('#WirelessAPGenerator').hide();
+			$('#WPADHijacking').hide();
+		   $('#RogueDHCP').hide();
+		}
+		
+		$('#ARPCachePoisoning').show();
+		
+		function vector(name) {
+			hidevectors();
+			name = name.split(" ").join("");
+			$('#' + name).show();
+		}
+		
+		function setVector() {
+		  initiating();
+					 //Get Vector
+		  method = document.getElementById('vector').value
+		  
+		  if (method == "ARP Cache Poisoning")
+        {
+           if (document.getElementById('arpsingle').checked == true)
+           {
+			     arptype = document.getElementById('arpsingle').value;
+           }
+           else
+           {
+			     arptype =	document.getElementById('arpall').value;
+           }
+
+			 $.post("/config/settings/", {
+				  vector		   :	document.getElementById('vector').value,
+				  active		   :	document.getElementById('ACPActive').checked,
+				  target		   :	document.getElementById('target').value,
+				  arpmethod	   :	arptype
+
+			 });
+		  }
+		  else if (method == "Wireless AP Generator") {
+					 $.post("/config/settings/", {
+						  vector		   :	document.getElementById('vector').value,
+						  active		   :	document.getElementById('APGenActive').checked,
+						  essid		   :	document.getElementById('essid').value,
+						  channel	   :	document.getElementById('channel').value,
+						  netnic		   :	document.getElementById('netnic').value,
+						  atknic		   :	document.getElementById('atknic').value
+					 });
+		  }
+		  else if (method == "WPAD Hijacking") {
+					 $.post("/config/settings/", {
+						  vector		   :	document.getElementById('vector').value,
+						  active		   :	document.getElementById('WPADActive').checked
+					 });
+		  }
+		  else if (method == "Rogue DHCP") {
+					 $.post("/config/settings/", {
+						  vector		   :	document.getElementById('vector').value,
+						  active		   :	document.getElementById('RogueDHCPActive').checked
+					 });
+		  }
+		}
+	</script>
+
+    </fieldset>
+  </div>
+  
+  
+  
+  <div id = "intab">
+	<fieldset class = "menu">
+	<legend><h2><a name="Config" id="Config">Subterfuge Configuration Menu:</a></h2></legend>
+        <br>
+	<form name = "configform" method = "post" action = "/config/settings/">
+        <fieldset class = "speedctrl"><legend>&nbsp;Refresh Rates&nbsp;</legend>
+          <div id = "speedbox">
+		      <table>
+		      <tr>
+		      <td>Page Reload Rate:</td>
+		      <td>
+               <script>
+                   $(function() {
+                       $("#range1").slider({
+                           range: "max",
+                           min: 1,
+                           max: 60,
+                           value: {% for settings in setup %}{{ settings.ploadrate }}{% endfor %},
+                           slide: function( event, ui ) {
+                               newValue = ui.value;
+                               document.getElementById("ploadrate").innerHTML=newValue
+                           }
+                       });
+                   });
+               </script>
+
+               <div id="range1"></div>
+               <span style="border: 0; color: #f6931f; font-weight: bold;" >
+               <span id = "ploadrate">{% for settings in setup %}{{ settings.ploadrate }}{% endfor %}</span> secs
+               </span>         
+            </td>
+		      </tr>
+		      <tr>
+		      <tr>
+		      <td>Injection Rate:</td>
+		      <td>
+		         <script>
+                   $(function() {
+                       $("#range2").slider({
+                           range: "max",
+                           min: 1,
+                           max: 30,
+                           value: {% for settings in setup %}{{ settings.injectrate }}{% endfor %},
+                           slide: function( event, ui ) {
+                               newValue = ui.value;
+                               document.getElementById("injectrate").innerHTML=newValue
+                           }
+                       });
+                   });
+               </script>
+
+               <div id="range2"></div>
+               <span style="border: 0; color: #f6931f; font-weight: bold;" >
+               <span id = "injectrate">{% for settings in setup %}{{ settings.injectrate }}{% endfor %}</span> secs
+               </span>
+               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		      </td>
+		      </tr>
+		      </table>
+		      <br>
+     </div>
+	</fieldset>
+   <fieldset class = "speedctrl"><legend>&nbsp;ARP Controls&nbsp;</legend>
+     <div id = "speedbox">
+		   <table>
+		   <tr>
+		   <td>Dynamic Retention:</td>
+		   <td><input type = "checkbox" id = "smartarp" {% for settings in setup %}{% if settings.smartarp|length > 2 %} checked = "checked" {% endif %}{% endfor %}/></td>
+		   </tr>
+		   <td>ARP Poison Speed:</td>
+		   <td>
+		      <script>
+                $(function() {
+                    $("#range3").slider({
+                        range: "max",
+                        min: 1,
+                        max: 30,
+                        value: {% for settings in setup %}{{ settings.arprate }}{% endfor %},
+                        slide: function( event, ui ) {
+                            newValue = ui.value;
+                            document.getElementById("arprate").innerHTML=newValue
+                        }
+                    });
+                });
+            </script>
+
+            <div id="range3"></div>
+            <span style="border: 0; color: #f6931f; font-weight: bold;" >
+            <span id ="arprate">{% for settings in setup %}{{ settings.arprate }}{% endfor %}</span> secs
+            </span>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		   </td>
+		   </tr>
+		   </table>
+		   <br>
+     </div>
+	</fieldset>
+	<a href = "javascript: setconfig()" name = "apply"><div id = "redbutton" style = "margin-top: 20px; float: left;">Apply</div></a>
+	</fieldset>
+	</form>
+	<script type="text/javascript">
+	function setconfig()
+	{
+	  initiating();
+	  $.post("/config/settings/", {
+	      ploadrate	   :	document.getElementById('ploadrate').innerHTML,
+	      injectrate   :	document.getElementById('injectrate').innerHTML,
+	      smartarp	   :	document.getElementById('smartarp').checked,
+	      arprate	   :	document.getElementById('arprate').innerHTML
+	});
+	}
+	function showValue(newValue, id)
+	{
+		newValue += " secs";
+		document.getElementById(id).innerHTML=newValue;
+	}
+	</script>
+    
+  </div>
+  
+  
+  <div id = "intab">
+    <fieldset class = "menu">
+    <legend><h2><a name="Advanced" id="Advanced">Advanced Options</a></h2></legend>
+        <br>
+
+
+		  <!--        ADVANCE SETTINGS      -->
+        {% include "settings/advanced/menu.set" %}
+
+		  <!--        END_ADVANCED SETTINGS   -->
+
+
+
+
+        <fieldset class = "reset" style = "float:left; height: auto; display: none;"><legend>&nbsp;Import an Nmap Scan&nbsp;</legend>
+            <div id = "setctrlbox">
+                <form enctype = "multipart/form-data" name = "scanform" method = "post" action = "/config/settings/" >
+                <table>
+                 <tr>
+                 <td>IP:</td>
+                 <td><input type = "text" name = "scantargetip" id = "scantargetip" value = "x.x.x.x" /></td>
+                 </tr>
+                 <tr>
+                 <td>File:</td>
+                 <td><input type = "file" name = "scanresults" id = "scanresults"></td>
+                 </tr>
+                <table>
+                
+                <a href = "javascript: importscan()" name = "importscan"><div id = "redbutton">Import</div></a>
+                </form>
+            </div>
+        </fieldset>
+    </fieldset>
+	   <script type="text/javascript">
+	   
+	      function importscan()
+	      {
+	            document.scanform.submit();
+	      }
+	   </script>
+  </div>
+</div>
+<div id = "invis">
+</div>
+
+{% endblock %}
