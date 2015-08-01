@@ -5,7 +5,7 @@
 major_release_version = 1
 minor_release_version = 0
 initial_revision_number = 0
-current_revision_number = 1
+current_revision_number = 2
 
 #Debian versioning
 
