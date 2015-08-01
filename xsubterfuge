@@ -1,0 +1,333 @@
+#!/usr/bin/python
+import os
+import sys
+import subprocess
+sys.path.append('/usr/share/subterfuge')
+from versioninfo import *
+from update import updatecheck
+from optparse import OptionParser, OptionGroup
+
+
+from django.conf import settings
+settings.configure(
+DATABASES = {
+    'default' : {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': "/usr/share/subterfuge/db",
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+    }
+}
+)
+
+from django.db import models
+from main.models import *
+from modules.models import *
+
+
+if not os.getuid() == 0:
+   sys.exit("\nSubterfuge must be run as root\n")
+
+	#Thanks to n37div3r5 for the fix to run Subterfuge on a different port
+def main():
+   print "\nSubterfuge courtesy of r00t0v3rr1d3 & 0sm0s1z"
+   usage  = """
+  subterfuge [OPTIONS]
+  Default usage will run on 127.0.0.1:80"""
+	#Calculate version info
+   release = int(current_revision_number) - int(initial_revision_number)
+   version = str(major_release_version) + "." + str(minor_release_version) + "." + str(release)
+
+   if len(sys.argv) == 1:
+      #updatecheck()
+      os.system("/usr/share/manage.py runserver --pythonpath=/usr/share/subterfuge 127.0.0.1:80")
+
+   OptionParser.format_epilog = lambda self, formatter: self.epilog
+   parser = OptionParser(usage=usage, version=version, epilog="""
+Examples (Standard):
+  subterfuge
+  subterfuge -s 192.168.1.10:80
+
+Examples (No GUI):
+  subterfuge -i eth0 -g 192.168.1.1 --arp --harvest
+""")
+
+   #Main Options
+   parser.add_option("-u", "--update", action="store_true", dest="update", help="update subterfuge")
+   parser.add_option("-s", metavar="IP:PORT", dest="altaddr", help="run subterfuge on an alternate IP:PORT")
+
+
+   #COMMAND LINE OPTIONS
+   group = OptionGroup(parser, """
+Command Line Options:
+  No GUI Mode: These options are for advanced Subterfuge users.
+
+  Settings Options""")
+   group.add_option("-a", action="store_true", dest="auto", help="Auto Configuration")
+   group.add_option("--creds", action="store_true", dest="creds", help="Display Captured Credentials")
+   group.add_option("-d", action="store_true", dest="display", help="Display Current Settings")
+   group.add_option("-g", action="store_true", dest="setgw", help="Set Gateway")
+   group.add_option("-i", action="store_true", dest="setiface", help="Set Interface")
+   group.add_option("--notes", action="store_true", dest="note", help="Display Notifications")
+   group.add_option("--purge", action="store_true", dest="purge", help="Purge Database")
+
+   parser.add_option_group(group)
+
+   #VECTOR OPTIONS
+   group = OptionGroup(parser, "Attack Methods")
+   group.add_option("-l", "--launch", action="store_true", dest="launch", help="Launch Attack")
+   group.add_option("--arp", action="store_true", dest="arp", help="ARP Cache Poisoning")
+   group.add_option("--ap-gen", action="store_true", dest="apgen", help="Wireless AP Generation")
+   group.add_option("--wpad", action="store_true", dest="wpad", help="Wireless Proxy Auto Detection")
+   group.add_option("--rogue-dhcp", action="store_true", dest="roguedhcp", help="Rogue DHCP")
+
+   parser.add_option_group(group)
+
+   #ARP Poison OPTIONS
+   group = OptionGroup(parser, "ARP Cache Poison Options")
+   group.add_option("-r", metavar="rate", dest="rate", help="ARP Cache Poison Speed")
+   group.add_option("--dynarp", action="store_true", dest="dynarp", help="Dynamic ARP Retention")
+   group.add_option("-t", "--target", action="store_true", dest="target", help="Specify Single Target")
+
+   parser.add_option_group(group)
+
+   #MODULE OPTIONS
+   group = OptionGroup(parser, "Module Options")
+   group.add_option("--harvest", action="store_true", dest="harvest", help="Credential Harvester")
+   group.add_option("--hijack", action="store_true", dest="hijack", help="Session Hijacking")
+   group.add_option("--httpinjection", action="store_true", dest="httpinjection", help="HTTP Code Injection")
+
+   parser.add_option_group(group)
+
+
+
+   (options, args) = parser.parse_args()
+
+
+   #if options.test:
+      #updatecheck()
+    #  os.system("/usr/share/manage.py runserver --pythonpath=/usr/share/subterfuge " + options.test)
+
+
+   if options.altaddr:
+      #updatecheck()
+      os.system("/usr/share/manage.py runserver --pythonpath=/usr/share/subterfuge " + options.altaddr)
+
+   if options.update:
+      os.system("apt-get install subterfuge")
+
+   #SETTINGS OPTIONS
+   if options.auto:
+      for settings in setup.objects.all():
+         autoconf = settings.autoconf
+
+      if autoconf == "yes" or autoconf == "true":
+         setup.objects.update(autoconf = "no")
+      else:
+         setup.objects.update(autoconf = "yes")
+
+   if options.display:
+      for settings in setup.objects.all():
+         ip            = settings.ip
+         autoconf      = settings.autoconf 
+         injectrate    = settings.injectrate
+         arprate       = settings.arprate 
+         interface     = settings.iface
+         gateway       = settings.gateway
+         routermac     = settings.routermac
+         smartarp      = settings.smartarp
+
+      print "\n#########################################"
+      print "##       Subterfuge Configuration      ##"
+      print "#########################################"
+      print "Auto Configuration:    " + autoconf          
+      print "Local IP Address:      " + ip      
+      print "Network Gateway:       " + gateway
+      print "Interface:             " + interface
+      print "Router MAC Address     " + routermac
+      print "Dynamic ARP Retention: " + smartarp
+
+      print "#########################################"
+      print "Active Modules:    "
+
+      for module in installed.objects.all():
+         name           = module.name
+         active         = module.active
+         print name + ": " + active
+
+      print "#########################################"
+      print "Active Vectors:    "
+
+      for vector in vectors.objects.all():
+         name           = vector.name
+         active         = vector.active
+         print name + ": " + active
+
+      print "#########################################"
+      print "ARP Cache Poison Settings:    "
+
+      for wet in arppoison.objects.all():
+         target           = wet.target
+         method           = wet.method
+         print "Target: " + target
+         print "Method: " + method
+
+      print "#########################################"
+
+   if options.creds:
+      print "\n[output syntax] Source,Username,Password"
+      for cred in credentials.objects.all():
+         source        = cred.source
+         username      = cred.username
+         password      = cred.password
+         print source + "," + username + "," + password
+
+
+   if options.setgw:
+      setup.objects.update(gateway = options.setgw)
+   if options.setiface:
+      setup.objects.update(iface = options.setiface)
+   if options.note:
+      print "\n[output syntax] Status, Title"
+      i = 1
+      for note in notification.objects.all():
+         message        = note.message
+         title         = note.title
+         print str(i) + ": " + title + "," + message
+         i = i + 1
+   if options.purge:
+      response = raw_input("\nThis operation will purge the Subterfuge database. All attack data will be lost. Are you sure? [y/n] ")
+      if response == "y" or response == "yes":
+         print "\nPurging Subterfuge Database Standby..."
+         os.system("cp /usr/share/subterfuge/base_db /usr/share/subterfuge/db")
+         print "Done!"
+
+
+   #VECTOR OPTIONS
+   if options.arp:
+      active = ""
+      for status in vectors.objects.all():
+         name        = status.name
+         if name == "ARP Cache Poisoning":
+            active = status.active
+            aname  = status.name
+
+      if active == "no":
+         clear_vectors()
+         vectors.objects.filter(name = "ARP Cache Poisoning").update(active = "yes")
+         print "Enabling Vector: " + aname + "\n"
+      else:
+         clear_vectors()
+         print "Disabling Vector: " + aname + "\n"
+
+   if options.apgen:
+      active = ""
+      for status in vectors.objects.all():
+         name        = status.name
+         if name == "Wireless AP Generator":
+            active = status.active
+            aname   = status.name
+
+      if active == "no":
+         clear_vectors()
+         vectors.objects.filter(name = "Wireless AP Generator").update(active = "yes")
+         print "Enabling Vector: " + aname + "\n"
+      else:
+         clear_vectors()
+         print "Disabling Vector: " + aname + "\n"
+
+   if options.wpad:
+      active = ""
+      for status in vectors.objects.all():
+         name        = status.name
+         if name == "WPAD Hijacking":
+            active = status.active
+            aname  = status.name
+
+      if active == "no":
+         clear_vectors()
+         vectors.objects.filter(name = "WPAD Hijacking").update(active = "yes")
+         print "Enabling Vector: " + aname + "\n"
+      else:
+         clear_vectors()
+         print "Disabling Vector: " + aname + "\n"
+
+   if options.roguedhcp:
+      active = ""
+      for status in vectors.objects.all():
+         name        = status.name
+         if name == "Rogue DHCP":
+            active = status.active
+            aname  = status.name
+
+      if active == "no":
+         clear_vectors()
+         vectors.objects.filter(name = "Rogue DHCP").update(active = "yes")
+         print "Enabling Vector:" + aname + "\n"
+      else:
+         clear_vectors()
+         print "Disabling Vector: " + aname + "\n"
+
+   #ARP Cache Poison Options
+   if options.rate:
+      setup.objects.update(arprate = options.rate)
+
+   if options.target:
+      for settings in setup.objects.all():
+         autoconf = settings.autoconf
+
+      if autoconf == "yes" or autoconf == "true":
+         setup.objects.update(autoconf = "no")
+      else:
+         setup.objects.update(autoconf = "yes")
+
+   #MODULE OPTIONS
+   if options.harvest:
+      for mod in installed.objects.all():
+         if mod.name == "harvester":
+            active = status.active
+
+      if active == "no":
+         installed.objects.filter(name = "harvester").update(active = "yes")
+      else:
+         installed.objects.filter(name = "harvester").update(active = "no")
+   
+   if  options.hijack:
+      pass
+
+   if  options.httpinjection:
+      for mod in installed.objects.all():
+         if mod.name == "httpcodeinjection":
+            active = status.active
+
+      if active == "no":
+         installed.objects.filter(name = "httpcodeinjection").update(active = "yes")
+      else:
+         installed.objects.filter(name = "httpcodeinjection").update(active = "no")
+      print "HTTP Code Injection Enabled. \nEdit: /usr/share/subterfuge/modules/httpcodeinjection/inject.x"
+
+
+   #LAUNCH ATTACK
+   if options.launch:
+      print "Launching Subterfuge Methods from CLI!"
+      for settings in setup.objects.all():
+         autoconf = settings.autoconf
+
+      if autoconf == "yes" or autoconf == "true":
+         method = "auto"
+      else:
+         method = "standard"
+      os.system("python /usr/share/subterfuge/attackctrl.py " + method + " &")
+
+#Disable all MITM Attack Vectors
+def clear_vectors():
+   vectors.objects.filter(name = "ARP Cache Poisoning").update(active = "no")
+   vectors.objects.filter(name = "Wireless AP Generator").update(active = "no")
+   vectors.objects.filter(name = "WPAD Hijacking").update(active = "no")
+   vectors.objects.filter(name = "Rogue DHCP").update(active = "no")
+
+
+
+if __name__ == '__main__':
+    main()
