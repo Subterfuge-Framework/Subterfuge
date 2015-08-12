@@ -45,3 +45,8 @@ except:
 #Install Subterfuge
 try:
    os.system("cp -R ../subterfuge /usr/share/subterfuge")
+   os.system("cp xsubterfuge /bin/subterfuge")
+   os.system("chmod +x /bin/subterfuge")
+   os.system("cp manage.py /usr/share/")
+except:
+   print "[!] Critical Error! Subterfuge configuration failed"
