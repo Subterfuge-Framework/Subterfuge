@@ -14,6 +14,31 @@ try:
 except:
    print "[!] Critical package failed to install: python-scapy"
 
+#Python-Twisted
+try:
+   os.system("apt-get install python-twisted")
+except:
+   print "[!] Important package failed to install: python-twisted"
+   print "[-] python-twisted is required to perform SSL Stripping attacks"
+
+#Python-Django
+try:
+   os.system("apt-get install python-django")
+except:
+   print "[!] Critical package failed to install: python-django"
+
+#Arptables
+try:
+   os.system("apt-get install arptables")
+except:
+   print "[!] Critical package failed to install: arptables"
+
+#DHCPD
+try:
+   os.system("apt-get install dhcpd")
+except:
+   print "[!] Package failed to install: dhcpd"
+
 
 
 
