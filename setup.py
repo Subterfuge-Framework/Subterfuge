@@ -48,13 +48,19 @@ try:
    os.system("rm -rf /usr/share/subterfuge/")
    os.system("rm /usr/share/manage.py")
    
-   mv = subprocess.call(["cp", "-R", "../subterfuge/", "/usr/share/subterfuge/"])
+   mv = subprocess.call(["cp", "-R", "../Subterfuge/", "/usr/share/subterfuge/"])
 
    if mv == 1:
       print "[!] Critical Error! Subterfuge install error could not stat primary path. Trying secondary"
       print "..."
-      subprocess.call(["cp", "-R",  "../Subterfuge/", "/usr/share/subterfuge/"])
+      mv2 = subprocess.call(["cp", "-R",  "../subterfuge/", "/usr/share/subterfuge/"])
       print "[+] Good! Secondary install mechanism succeeded. Installation continuing..."
+
+   if mv2 == 1:
+      print "[!] Critical Error! Subterfuge install error could not stat secondary path. Trying tertiary"
+      print "..."
+      subprocess.call(["cp", "-R",  "../Subterfuge-master/", "/usr/share/subterfuge/"])
+      print "[+] Good! Tertiary install mechanism succeeded. Installation continuing..."
 
    elif mv != 0 and mv != 1:
      print "[!!] Fatal installation error. Install aborted: Could not stat path: /usr/share/subterfuge"
