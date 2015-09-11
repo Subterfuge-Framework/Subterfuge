@@ -4,6 +4,8 @@
 #Final steps configure Subterfuge to run on the local system
 #Setup script is configured to run on Kali Linux (tested on version 2.0) but should work on all debian-based systems
 
+#Fixed zip pulldown error -> 16 Sept
+
 import os
 import subprocess
 
