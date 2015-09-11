@@ -528,6 +528,8 @@ def startpwn(request, method):
       os.system("python " + str(os.path.dirname(__file__)).rstrip("abcdefghijklmnnnopqrstruvwxyz") + "attackctrl.py " + method +" &")
     else:            
       print "Nope... Chuck Testa!"
+
+    return HttpResponse('')
         
 def stoppwn(request):
     if request.is_ajax():
@@ -535,6 +537,8 @@ def stoppwn(request):
         cease()
     else:
         print "Nope... Chuck Testa!"
+
+    return HttpResponse('')
         
 def resetpwn(request):
     if request.is_ajax():
@@ -545,6 +549,8 @@ def resetpwn(request):
         os.system(cmd)
     else:            
         print "Nope... Chuck Testa!"
+
+    return HttpResponse('')
         
 def gate(request):
    if request.is_ajax():

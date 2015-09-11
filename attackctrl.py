@@ -2,11 +2,16 @@ import os
 import re
 import sys
 sys.path.append('/usr/share/subterfuge')
+sys.path.append('/usr/share')
 import time
   #Ignore Deprication Warnings
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
+
+import django
+django.setup()
     
+'''
 from django.conf import settings
 settings.configure(
 DATABASES = {
@@ -19,10 +24,12 @@ DATABASES = {
     }
 }
 )
+'''
+
 
 from django.db import models
-from main.models import *
-from modules.models import *
+from subterfuge.main.models import *
+from subterfuge.modules.models import *
 
 #Subterfuge Imports
 sys.path.append('/usr/share/subterfuge/utilities')
