@@ -1,3 +1,5 @@
+#September 16 update fixes issues #2 and #4 due to Django Upgrade issues. CAO Django version 1.7.7
+
 import os
 import re
 import sys
