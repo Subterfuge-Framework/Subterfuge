@@ -7,11 +7,16 @@ import os
 import re
 import sys
 sys.path.append('/usr/share/subterfuge')
+sys.path.append('/usr/share')
 
 #Ignore Deprication Warnings
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
+import django
+django.setup()
+
+'''
 from django.conf import settings
 settings.configure(
 DATABASES = {
@@ -24,6 +29,8 @@ DATABASES = {
     }
 }
 )
+'''
+
 
 from django.db import models
 from main.models import *
