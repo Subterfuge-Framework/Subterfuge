@@ -47,10 +47,15 @@ except:
 
 #Install Subterfuge
 try:
-   os.system("rm -rf /usr/share/subterfuge/")
-   os.system("rm /usr/share/manage.py")
-   
+   try:
+      os.system("rm -rf /usr/share/subterfuge/")
+      os.system("rm /usr/share/manage.py")
+   except:
+      pass
+  
+
    mv = subprocess.call(["cp", "-R", "../Subterfuge/", "/usr/share/subterfuge/"])
+   mv2 = ""
 
    if mv == 1:
       print "[!] Critical Error! Subterfuge install error could not stat primary path. Trying secondary"

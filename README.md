@@ -2,6 +2,19 @@
 
 Branch development of a Subterfuge more GIT resident is ongoing for the latest details see: http://kinozoa.com/blog/development/
 
+##Installation
+
+Follow the steps below to download and install the latest version of Subterfuge:
+```
+git clone https://github.com/Subterfuge-Framework/Subterfuge.git
+cd Subterfuge
+python setup.py
+```
+
+Execute Subterfuge by running the following command:
+```
+subterfuge
+```
 
 ##Subterfuge – 2015
 
