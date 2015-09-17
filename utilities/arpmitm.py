@@ -33,7 +33,7 @@ DATABASES = {
 
 
 from django.db import models
-from main.models import *
+from subterfuge.main.models import *
 
 #Get Globals from Database
 for settings in setup.objects.all():
