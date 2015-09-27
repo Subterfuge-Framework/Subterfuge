@@ -5,6 +5,9 @@ import sys
 import time
 
 #Subterfuge Database Models
+import django
+django.setup()
+'''
 from django.conf import settings
 settings.configure(
 DATABASES = {
@@ -17,10 +20,12 @@ DATABASES = {
     }
 }
 )
+'''
 
 from django.db import models
 sys.path.append('/usr/share/subterfuge')
-from modules.models import *
+sys.path.append('/usr/share')
+from subterfuge.modules.models import *
 
 #Subterfuge Imports
 from errorhandler import notification_scan
