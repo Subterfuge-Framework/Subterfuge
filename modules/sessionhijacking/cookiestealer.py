@@ -12,8 +12,12 @@ from scapy.utils import *
 
 #Subterfuge Imports
 sys.path.append('/usr/share/subterfuge')
+sys.path.append('/usr/share')
 
 #Subterfuge Database Models
+import django
+django.setup()
+'''
 from django.conf import settings
 settings.configure(
 DATABASES = {
@@ -26,9 +30,10 @@ DATABASES = {
     }
 }
 )
+'''
 
 from django.db import models
-from modules.models import *
+from subterfuge.modules.models import *
 
 
 
