@@ -1,85 +1,46 @@
-###SUBTERFUGE Setup Script Current as of version 1.1
-#Purpose of this script is to install packages required by Subterfuge
-#Error messages pertain to packages that may have failed to install properly.
-#Final steps configure Subterfuge to run on the local system
+#The purpose of this script is to install the packages required by Subterfuge
 #Setup script is configured to run on Kali Linux (tested on version 2.0) but should work on all debian-based systems
 
-#Fixed zip pulldown error -> 16 Sept
+import sys, subprocess
 
-import os
-import subprocess
+print "[+] Beginning Subterfuge installation..."
 
-#Dependencies
-
-#Scapy
 try:
-   os.system("apt-get install python-scapy")
-except:
-   print "[!] Critical package failed to install: python-scapy"
+   #Install Dependencies: Scapy, Python-Twisted, Python-Django, Arptables, DHCPD
+   ecode = subprocess.call(["apt-get", "update"])
+   ecode2 = subprocess.call(["apt-get", "install", "python-scapy", "python-twisted", "python-django", "arptables", "dhcpd"])
+   if (ecode != 0 or ecode2 != 0):
+      print "[!] An error occurred while attempting to install the required dependencies using apt-get"
+      exit(1)
 
-#Python-Twisted
-try:
-   os.system("apt-get install python-twisted")
-except:
-   print "[!] Important package failed to install: python-twisted"
-   print "[-] python-twisted is required to perform SSL Stripping attacks"
+   #Remove previous installation of subterfuge
+   subprocess.call(["rm", "-rf", "/usr/share/subterfuge/"])
+   subprocess.call(["rm", "-f", "/usr/share/manage.py"])
+   subprocess.call(["rm", "-f", "/bin/subterfuge"])
 
-#Python-Django
-try:
-   os.system("apt-get install python-django")
-except:
-   print "[!] Critical package failed to install: python-django"
+   #Find Parent Directory
+   pathlogic = sys.argv[0]
+   parentdirectory = './'
+   if '/' in pathlogic:
+      parentdirectory = pathlogic.rsplit('/', 1)[0]
+      parentdirectory += '/'
 
-#Arptables
-try:
-   os.system("apt-get install arptables")
-except:
-   print "[!] Critical package failed to install: arptables"
+   #Install Subterfuge directory to proper location
+   ecode3 = subprocess.call(["cp", "-R", parentdirectory, "/usr/share/subterfuge/"])
 
-#DHCPD
-try:
-   os.system("apt-get install dhcpd")
-except:
-   print "[!] Package failed to install: dhcpd"
+   if (ecode3 != 0):
+      print "[!] An error occurred while attempting to copy the Subterfuge directory"
+      exit(1)
 
+   #Add Subterfuge startup script to path
+   subprocess.call(["mv", "/usr/share/subterfuge/xsubterfuge", "/bin/subterfuge"])
+   #Ensure Subterfuge startup script has execute permissions
+   subprocess.call(["chmod", "+x", "/bin/subterfuge"])
+   #Install Django control file to proper location. Controls the webserver.
+   subprocess.call(["mv", "/usr/share/subterfuge/manage.py", "/usr/share/"])
 
-
-
-#Install Subterfuge
-try:
-   try:
-      os.system("rm -rf /usr/share/subterfuge/")
-      os.system("rm /usr/share/manage.py")
-   except:
-      pass
-  
-
-   mv = subprocess.call(["cp", "-R", "../Subterfuge/", "/usr/share/subterfuge/"])
-   mv2 = ""
-
-   if mv == 1:
-      print "[!] Critical Error! Subterfuge install error could not stat primary path. Trying secondary"
-      print "..."
-      mv2 = subprocess.call(["cp", "-R",  "../subterfuge/", "/usr/share/subterfuge/"])
-      print "[+] Good! Secondary install mechanism succeeded. Installation continuing..."
-
-   if mv2 == 1:
-      print "[!] Critical Error! Subterfuge install error could not stat secondary path. Trying tertiary"
-      print "..."
-      subprocess.call(["cp", "-R",  "../Subterfuge-master/", "/usr/share/subterfuge/"])
-      print "[+] Good! Tertiary install mechanism succeeded. Installation continuing..."
-
-   elif mv != 0 and mv != 1:
-     print "[!!] Fatal installation error. Install aborted: Could not stat path: /usr/share/subterfuge"
-
-   os.system("cp xsubterfuge /bin/subterfuge")
-   os.system("chmod +x /bin/subterfuge")
-   os.system("cp manage.py /usr/share/")
-
-   print "[-] Cleaning up"
-
-   os.system("rm /usr/share/subterfuge/xsubterfuge")
-   os.system("rm /usr/share/subterfuge/manage.py")
+   print "[+] Subterfuge installation completed successfully!"
 
 except:
-   print "[!] Critical Error! Subterfuge configuration failed"
+   print "[!] An unknown error occurred while attempting to install Subterfuge"
+   exit(1)
