@@ -21,12 +21,16 @@ import logging, re, string, random, zlib, gzip, StringIO, os
 import sys
 import time
 sys.path.append('/usr/share/subterfuge')
+sys.path.append('/usr/share')
 import threading
   #Ignore Deprication Warnings
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 #Subterfuge Database Models
+import django
+django.setup()
+'''
 from django.conf import settings
 settings.configure(
 DATABASES = {
@@ -39,10 +43,11 @@ DATABASES = {
     }
 }
 )
+'''
 
 from django.db import models
-from modules.models import *
-from main.models import *
+from subterfuge.modules.models import *
+from subterfuge.main.models import *
 
 from twisted.web.http import HTTPClient
 from URLMonitor import URLMonitor
