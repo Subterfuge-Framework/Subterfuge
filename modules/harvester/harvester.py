@@ -112,9 +112,12 @@ def main():
 				for num in usrs:					
 					usrn = re.findall(r'=(.*?)&', num)
 					if (len(usrn)):
-						if (len(usrn[0]) > 2 and len(usrn[0]) < 32 and usrn[0] != 'adtoken'):
+						if (len(usrn[0]) > 2 and len(usrn[0]) < 32 and usrn[0] != 'adtoken' and usrn[0] != 'true'):
 							#print 'added ' + usrn[0]
 							newusrs.append(usrn[0])
+				
+				if ((source.find('yahoo') >= 0 ) and i != 'username'):
+					newusrs = []
 				
 				if (len(newusrs) > 0):
 					user = newusrs.pop((len(newusrs) -1))
