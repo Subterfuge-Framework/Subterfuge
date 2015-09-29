@@ -49,9 +49,9 @@
 	 #inject_menu
 	 {
 		  background: url('/static/images/menu.png');
-		  position: absolute;
-		  right: 30px;
-		  top: 20px;
+		  position: relative;
+		  right: -250px;
+		  top: -30px;
 		  width: 35px;
 		  height: 35px;
 	 }
@@ -173,10 +173,32 @@ function showCookieSwapper()
 		popup.style.display = 'none';
   }
 }
+function toggleCookies()
+{
+	if ($('#table2').is(':visible')) {
+		//Hide it
+		$('#table2').hide("slow");
+	}
+	if ($('#table2').is(':hidden')) {
+		//Show it
+		$('#table2').show("slow");
+	}	
+
+	var stat = document.getElementById('table2stat').innerHTML;
+
+	if (stat == '0'){
+		document.getElementById('table2stat').innerHTML = '1';
+	}
+	else if (stat == '1'){
+		document.getElementById('table2stat').innerHTML = '0';
+	}
+
+
+}
 
 </script>
 
-
+<div id = "table2stat">0</div>
 <div id="cookieswapperpopup" style="display: none;">
 	
 	<h4>CookieSwapper -- Paste this into your browser's JavaScript Console to steal victim sessions.</h4> <a href = "#" onclick = "showCookieSwapper()" style = "color:blue">close</a>

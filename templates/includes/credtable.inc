@@ -139,7 +139,9 @@ notificationcheck();
 <div id = "modulebox">
 	<div id = "moduleboxtext">
 	   <h3 style = "float:left;">Session Hijacking <a href = "http://www.kinozoa.com/blog/session-hijacking" target = "_blank">&nbsp;&nbsp;<img width = "15" src = "/static/images/help.png"></a></h3>
-	   <a style = "float:right;" href = "#" onclick = "showCookieSwapper()">CookieSwapper</a>
+	   <!--<a style = "float:right;" href = "#" onclick = "showCookieSwapper()">CookieSwapper</a>-->
+		<a href = "#" style = "float:right;" onclick = "toggleCookies()"><img width = "20" src = "/static/images/expand.png"></a>
+
       &nbsp;
 	</div>
 <div id="credbg">
@@ -168,10 +170,11 @@ function sessionhijack(session)
 	{% endfor%}
 }
 
-function toggleTables(table)
+function toggleTables(stat)
 {
 var placeholder = "stuff"
-	/*
+var table = "2"
+	
 	if (table == "1")
 	{
 		if ($('#table1').is(':visible')) {
@@ -185,19 +188,28 @@ var placeholder = "stuff"
 	}
 	else if (table == "2")
 	{
-		if ($('#table2').is(':visible')) {
-		//Hide it
-		$('#table2').hide("slow");
-	  }
-	  if ($('#table2').is(':hidden')) {
+	  if (stat == "0") {
 		//Show it
-		$('#table2').show("slow");
+		$('#table2').show();
+	  }
+	  else if (stat == "1") {
+		//Hide it
+		$('#table2').hide();
 	  }	
 	}
-	*/
+	
 }
 
+var stat = document.getElementById('table2stat').innerHTML;
+toggleTables(stat);
+
+
+
 </script>
+
+
+
+
 	 
 {% endif %}
 
