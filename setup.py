@@ -1,14 +1,14 @@
 #The purpose of this script is to install the packages required by Subterfuge
 #Setup script is configured to run on Kali Linux (tested on version 2.0) but should work on all debian-based systems
 
-import sys, subprocess
+import sys, subprocess, os
 
 print "[+] Beginning Subterfuge installation..."
 
 try:
    #Install Dependencies: Scapy, Python-Twisted, Python-Django, Arptables, DHCPD
    ecode = subprocess.call(["apt-get", "update"])
-   ecode2 = subprocess.call(["apt-get", "install", "python-scapy", "python-twisted", "python-django", "arptables", "dhcpd"])
+   ecode2 = subprocess.call(["apt-get", "install", "python-scapy", "python-twisted", "arptables", "dhcpd"])
    if (ecode != 0 or ecode2 != 0):
       print "[!] An error occurred while attempting to install the required dependencies using apt-get"
       exit(1)
@@ -18,6 +18,8 @@ try:
    subprocess.call(["rm", "-f", "/usr/share/manage.py"])
    subprocess.call(["rm", "-f", "/bin/subterfuge"])
 
+   os.system('pip install django=="1.7"')  
+ 
    #Find Parent Directory
    pathlogic = sys.argv[0]
    parentdirectory = './'

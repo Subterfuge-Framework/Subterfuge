@@ -308,7 +308,7 @@ def autoconfig():
     temp = ''
     gw.append(temp)
     for interface in result:
-       f = os.popen("ifconfig " + interface + " | grep \"inet addr\" | sed -e \'s/.*addr://;s/ .*//\'")
+       f = os.popen("ifconfig " + interface + " | awk '/inet /{print substr($2,0)}'")
        temp2 = ''
        temp3 = ''
        temp = f.readline().rstrip('\n')
@@ -328,7 +328,9 @@ def autoconfig():
     conf = f.readlines()
          
         #Get the Local IP Address
-    f = os.popen("ifconfig " + result[0] + " | grep \"inet addr\" | sed -e \'s/.*addr://;s/ .*//\'")
+    #f = os.popen("ifconfig " + result[0] + " | grep 'inet\ ' | sed -e \'s/.*inet//;s/ .*//\'")
+    #f = os.popen('ifconfig eth0 | grep "inet\ "')
+    f = os.popen("ifconfig " + result[0] + " | awk '/inet /{print substr($2,0)}'")
     temp2 = ''
     temp3 = ''
     temp = f.readline().rstrip('\n')
