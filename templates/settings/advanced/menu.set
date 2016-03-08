@@ -1,7 +1,0 @@
-<div id = "advancedmenu">
-                <table>
-                <tr>
-                <td><a href = "/notifications/" name = "update"><div id = "redbutton">Notifications</div></a></td>
-                </tr>
-                </table>  
-</div>
