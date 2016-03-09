@@ -46,6 +46,18 @@ class guiBuilder:
 
       #htable = guiObjects().hostTable(hosts)
       
+      #Get info from db
+      nloot = "5"
+      
+      
+      
+      page_variables = ""
+      
+      new_loot = '<div id = "new_loot">' + nloot + '</div>'
+      
+      
+      page_variables += new_loot
+      
       newlines = []
       #### Variable Parser
       for line in content:
@@ -53,7 +65,12 @@ class guiBuilder:
             r = re.compile('{{{(.*?)}}}')
             m = r.search(line)
             
-         newlines.append(line)
+            print "Inserting page vars"
+            
+            newlines.append(line.replace("{{{}}}", page_variables))
+            
+         else:
+            newlines.append(line)
             
          '''
          #if variable name is x
@@ -102,25 +119,38 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
          self.end_headers()
          self.wfile.write(guiBuilder().index()) #call sample function here
          return
+         
+      elif self.path=='/start':
+         print "Executing MITM Exploitation Server."
+         
       else:
          #print self.path
          SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
    def do_POST(self):
-      logging.warning("============= POST STARTED =============")
-      logging.warning(self.headers)
-      form = cgi.FieldStorage(
-         fp=self.rfile,
-         headers=self.headers,
-         environ={'REQUEST_METHOD':'POST',
-                  'CONTENT_TYPE': self.headers['Content-Type'],
-                 })
-      logging.warning("============= POST VALUES ==============")
-      for item in form.list:
-         logging.warning(item)
-      logging.warning("\n")
-      SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
-      C2Handler().formHandler(form.list)
+      #logging.warning("============= POST STARTED =============")
+      #logging.warning(self.headers)
+      
+      if self.path=='/start/':
+         print "Executing MITM Exploitation Server!"
+         
+      elif self.path=='/config/': 
+         print "Making attack configuration adjustments..."
+         
+      else:
+         print "PSOTS"
+         form = cgi.FieldStorage(
+            fp=self.rfile,
+            headers=self.headers,
+            environ={'REQUEST_METHOD':'POST',
+                     'CONTENT_TYPE': self.headers['Content-Type'],
+                    })
+         #logging.warning("============= POST VALUES ==============")
+         for item in form.list:
+            logging.warning(item)
+         logging.warning("\n")
+         SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+         C2Handler().formHandler(form.list)
 
 
 

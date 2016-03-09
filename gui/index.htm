@@ -6,6 +6,7 @@
    <meta name="Description" content="Subterfuge - MITM Framework">
    <link rel="sitemap" type="application/xml" title="Sitemap" href="">
    <script src="gui/js/jquery-1.7.1.min.js"></script>
+   <script src="gui/js/functions.js"></script>
    <link href="gui/css/style.css" rel="stylesheet">
    <link rel='stylesheet' href='gui/css/fonts.css' type='text/css'/>
     
@@ -46,10 +47,12 @@
    <div id = "nav_cont">
       <span class = "title">Subterfuge</span>
    </div>
+   <div id = "start" onclick="test(this.id)">
    <div id = "buttoncont">
       <div id = "buttonfill">
-         <a href = "#"><center style = "padding-top: 3px;"><span class = "buttontxt">Start</span></center></a>
+         <center style = "padding-top: 3px;"><span class = "buttontxt" >Start</span></center>
       </div>
+   </div>
    </div>
 </div>
 
@@ -61,7 +64,7 @@
    <div id = "viewbox">
       <div id = "feed_tbox"><span class = "feed_title"><b>Feeds ></b></span></div>
       <div id = "feed_tbox"><span class = "feed_title">Hosts</span></div>
-      <div id = "feed_tbox"><span class = "feed_title">Loot<div id = "notificationbox"><center><b>3</b></center></div></span></div>
+      <div id = "feed_tbox"><span class = "feed_title">Loot<div id = "notificationbox"><span id = "notificationbox_b"><center><b>3</b></center></span></div></span></div>
    </div>
 </div>
 
@@ -71,69 +74,87 @@
 
 
    <!-- Hosts Feed --> 
+   <div id = "hostsfeed">
    <div id = "hostrow">
       <div id = "hostfill">
          <div id = "hostdetails">
             <center><span class = "hostdetails"><b>192.168.1.35</b></span></center>
-            <span class = "hostdescription">IP Address</span>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IP Address</span>
          </div>
          <div id = "hostdetails">
             <center><span class = "hostdetails"><b>Windows</b></span></center>
-            <span class = "hostdescription">OS</span>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OS</span>
+         </div>
+         <div id = "hostdetails">
+            <span class = "hostdetails"><div id = "lootbox" class = "loot"><center><b>315</b></center></div></span>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loot</span>
          </div>
          <div id = "hostdetails">
             <center><span class = "hostdetails"><b>23s</b></span></center>
-            <span class = "hostdescription">Last Active</span>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Last Active</span>
          </div>
       </div>
    </div>
    <div id = "hostrow">
       <div id = "hostfill">
          <div id = "hostdetails">
-            <span class = "hostdetails"><b>192.168.1.35</b></span>
-            <span class = "hostdescription">IP Address</span>
+            <span class = "hostdetails"><b>192.168.1.1</b></span>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IP Address</span>
          </div>
          <div id = "hostdetails">
             <span class = "hostdetails"><b>Windows</b></span>
-            <span class = "hostdescription">OS</span>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OS</span>
          </div>
          <div id = "hostdetails">
-            <span class = "hostdetails"><b>52s</b></span>
-            <span class = "hostdescription">Last Active</span>
+            <span class = "hostdetails"><div id = "lootbox" class = "loot"><center><b>9</b></center></div></span>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loot</span>
+         </div>
+         <div id = "hostdetails">
+            <center><span class = "hostdetails"><b>52s</b></span></center>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Last Active</span>
          </div>
       </div>
    </div>
    <div id = "hostrow">
       <div id = "hostfill">
          <div id = "hostdetails">
-            <span class = "hostdetails"><b>192.168.1.35</b></span>
-            <span class = "hostdescription">IP Address</span>
+            <span class = "hostdetails"><b>192.168.1.22</b></span>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IP Address</span>
          </div>
          <div id = "hostdetails">
             <span class = "hostdetails"><b>Windows</b></span>
-            <span class = "hostdescription">OS</span>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OS</span>
          </div>
          <div id = "hostdetails">
-            <span class = "hostdetails"><b>2m 35s</b></span>
-            <span class = "hostdescription">Last Active</span>
+            <span class = "hostdetails"><div id = "lootbox" class = "loot"><center><b>6</b></center></div></span>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loot</span>
+         </div>
+         <div id = "hostdetails">
+            <center><span class = "hostdetails"><b>2m 35s</b></span></center>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Last Active</span>
          </div>
       </div>
    </div>
    <div id = "hostrow">
       <div id = "hostfill">
          <div id = "hostdetails">
-            <span class = "hostdetails"><b>192.168.1.35</b></span>
-            <span class = "hostdescription">IP Address</span>
+            <span class = "hostdetails"><b>192.168.1.115</b></span>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IP Address</span>
          </div>
          <div id = "hostdetails">
             <span class = "hostdetails"><b>Windows</b></span>
-            <span class = "hostdescription">OS</span>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OS</span> 
          </div>
          <div id = "hostdetails">
-            <span class = "hostdetails"><b>10m</b></span>
-            <span class = "hostdescription">Last Active</span>
+            <span class = "hostdetails"><div id = "lootbox" class = "noloot"><center><b>0</b></center></div></span>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loot</span>
+         </div>
+         <div id = "hostdetails">
+            <center><span class = "hostdetails"><b>10m</b></span></center>
+            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Last Active</span>
          </div>
       </div>
+   </div>
    </div>
    
    
@@ -141,8 +162,11 @@
    
    
    
-</div>
+</div> <!-- Host Container -->
+</div> <!-- Main Container -->
 
-</div>
+{{{}}}
+
+
 </body>
 </html>
