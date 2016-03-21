@@ -7,17 +7,32 @@ function test(ID)
    //alert(ID);
 }
 
+
+
 function notificationUpdate(ID)
 {
    var nloot = document.getElementById("new_loot").innerHTML;
    document.getElementById(ID).innerHTML = "<center><b>" + nloot + "</b></center>";
 }
 
+
+function dbQuery(qstring)
+{
+   //POST request to py to get db response
+   $('#CheckIn').load('/dbquery?qstring=testing');
+   
+   //var nloot = document.getElementById("new_loot").innerHTML;
+   //document.getElementById(ID).innerHTML = "<center><b>" + nloot + "</b></center>";
+}
+
+
 $(document).ready(function () {
    
    //Page Setup from variables
    //Get by name & iterate through IDs
    notificationUpdate("notificationbox_b");
+   
+   dbQuery("tbd");
    
    /*
   

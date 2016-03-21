@@ -104,6 +104,21 @@ class guiObjects:
          i = i + 1
 
       return table
+      
+      
+      
+#Class to dynamically generate and deliver the interface to a browser
+class dbHandler:
+   def __init__( self):
+      import sys
+      sys.path.append("../")
+
+   def dbquery(self, qstring):
+      response = qstring
+         
+      return response
+         
+         
 
 
 #Class to handle browser requests
@@ -112,7 +127,7 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       #logging.warning("============= GET STARTED ==============")
       #logging.warning(self.headers)
 
-      if self.path=='/':
+      if self.path.startswith('/'):
          #This URL will trigger our sample function and send what it returns back to the browser
          self.send_response(200)
          self.send_header('Content-type','text/html')
@@ -120,8 +135,19 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
          self.wfile.write(guiBuilder().index()) #call sample function here
          return
          
-      elif self.path=='/start':
+      elif self.path.startswith('/start'):
          print "Executing MITM Exploitation Server."
+         
+      elif self.path.startswith('/dbquery'):
+         print "Querying Database"
+         self.send_response(200)
+         self.send_header('Content-type','text/html')
+         self.end_headers()
+         print urlparse.parse_qs(os.environ['QUERY_STRING'])
+         qstring = "test"
+         self.wfile.write(dbHandler().dbquery(qstring) #call sample function here
+         return
+
          
       else:
          #print self.path
@@ -138,7 +164,7 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
          print "Making attack configuration adjustments..."
          
       else:
-         print "PSOTS"
+         print "POSTS"
          form = cgi.FieldStorage(
             fp=self.rfile,
             headers=self.headers,
