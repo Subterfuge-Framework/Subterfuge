@@ -9,6 +9,10 @@
    <script src="gui/js/functions.js"></script>
    <link href="gui/css/style.css" rel="stylesheet">
    <link rel='stylesheet' href='gui/css/fonts.css' type='text/css'/>
+   
+   <script src="gui/build/react.js"></script>
+   <script src="gui/build/react-dom.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
     
    <!--	Tab icon	-->
    <link rel="shortcut icon" href="gui/images/logo.png" />
@@ -64,7 +68,27 @@
    <div id = "viewbox">
       <div id = "feed_tbox"><span class = "feed_title"><b>Feeds ></b></span></div>
       <div id = "feed_tbox"><span class = "feed_title">Hosts</span></div>
-      <div id = "feed_tbox"><span class = "feed_title">Loot<div id = "notificationbox"><span id = "notificationbox_b"><center><b>3</b></center></span></div></span></div>
+      <div id = "feed_tbox"><span class = "feed_title">Loot<div id = "notificationbox"></div></span></div>
+      
+    <script type="text/babel">
+    
+    
+    var newloot = 0
+    
+      ReactDOM.render(
+        <span id = "notificationbox_b"><center><b>{newloot}</b></center></span>,
+        document.getElementById('notificationbox')
+      );
+      
+   //Track loot values
+   //result = dbQuery("select * from Hosts")
+   
+   //alert(result)
+      
+    </script>
+
+      
+      
    </div>
 </div>
 
@@ -74,95 +98,82 @@
 
 
    <!-- Hosts Feed --> 
-   <div id = "hostsfeed">
-   <div id = "hostrow">
-      <div id = "hostfill">
-         <div id = "hostdetails">
-            <center><span class = "hostdetails"><b>192.168.1.35</b></span></center>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IP Address</span>
-         </div>
-         <div id = "hostdetails">
-            <center><span class = "hostdetails"><b>Windows</b></span></center>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OS</span>
-         </div>
-         <div id = "hostdetails">
-            <span class = "hostdetails"><div id = "lootbox" class = "loot"><center><b>315</b></center></div></span>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loot</span>
-         </div>
-         <div id = "hostdetails">
-            <center><span class = "hostdetails"><b>23s</b></span></center>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Last Active</span>
-         </div>
+   <div id = "hostsfeed"></div> <!-- Host Container -->
+
+       
+         
+<script type="text/babel">
+
+
+   //Track loot values
+   var host_data = ''//dbQuery("select * from Hosts")
+   
+   alert(host_data)
+
+
+
+
+
+var HostList = React.createClass({
+  render: function() {
+    return (
+      <div id = "hostrow"><div id = "hostfill">
+      <Host data = {this.props.data} />
+      
+      </div></div>
+    );
+  }
+});
+
+
+
+var Host = React.createClass({
+  render: function() {
+    var hostNodes = this.props.data.map(function(host) {
+      return (
+          <p>
+          {host.Host}
+          </p>
+      );
+    });
+    return (
+      <div id = "hostdetails">
+        <center><span class = "hostdetails"><b>{hostNodes}</b></span></center>
       </div>
-   </div>
-   <div id = "hostrow">
-      <div id = "hostfill">
-         <div id = "hostdetails">
-            <span class = "hostdetails"><b>192.168.1.1</b></span>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IP Address</span>
-         </div>
-         <div id = "hostdetails">
-            <span class = "hostdetails"><b>Windows</b></span>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OS</span>
-         </div>
-         <div id = "hostdetails">
-            <span class = "hostdetails"><div id = "lootbox" class = "loot"><center><b>9</b></center></div></span>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loot</span>
-         </div>
-         <div id = "hostdetails">
-            <center><span class = "hostdetails"><b>52s</b></span></center>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Last Active</span>
-         </div>
-      </div>
-   </div>
-   <div id = "hostrow">
-      <div id = "hostfill">
-         <div id = "hostdetails">
-            <span class = "hostdetails"><b>192.168.1.22</b></span>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IP Address</span>
-         </div>
-         <div id = "hostdetails">
-            <span class = "hostdetails"><b>Windows</b></span>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OS</span>
-         </div>
-         <div id = "hostdetails">
-            <span class = "hostdetails"><div id = "lootbox" class = "loot"><center><b>6</b></center></div></span>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loot</span>
-         </div>
-         <div id = "hostdetails">
-            <center><span class = "hostdetails"><b>2m 35s</b></span></center>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Last Active</span>
-         </div>
-      </div>
-   </div>
-   <div id = "hostrow">
-      <div id = "hostfill">
-         <div id = "hostdetails">
-            <span class = "hostdetails"><b>192.168.1.115</b></span>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IP Address</span>
-         </div>
-         <div id = "hostdetails">
-            <span class = "hostdetails"><b>Windows</b></span>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OS</span> 
-         </div>
-         <div id = "hostdetails">
-            <span class = "hostdetails"><div id = "lootbox" class = "noloot"><center><b>0</b></center></div></span>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loot</span>
-         </div>
-         <div id = "hostdetails">
-            <center><span class = "hostdetails"><b>10m</b></span></center>
-            <span class = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Last Active</span>
-         </div>
-      </div>
-   </div>
-   </div>
+    );
+  }
+});
+
+
+
+ReactDOM.render(
+  <HostList data={host_data} />,
+  document.getElementById('hostsfeed')
+);
+
+
+
+
+/*
+var newloot = 0
+
+ReactDOM.render(
+ <span id = "notificationbox_b"><center><b>{newloot}</b></center></span>,
+ document.getElementById('notificationbox')
+);
+
+//Track loot values
+result = dbQuery("select * from Hosts")
+
+//alert(result)
+*/
+
+</script>
+         
+
    
    
-   
-   
-   
-   
-</div> <!-- Host Container -->
+
 </div> <!-- Main Container -->
 
 {{{}}}

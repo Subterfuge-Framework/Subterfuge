@@ -114,9 +114,26 @@ class dbHandler:
       sys.path.append("../")
 
    def dbquery(self, qstring):
-      response = qstring
+      import base64
+      import sqlite3
+      import json
+      
+      string = base64.b64decode(qstring.split('qstring=')[1])
+      
+      self.conn = sqlite3.connect('/home/rob/Desktop/projects/Subterfuge/attack.db', timeout=1) #You like the dick, you stupid variable python path piece of crap... !
+      self.conn.execute('pragma foreign_keys = on')
+      self.conn.commit()
+      self.cur = self.conn.cursor()
+      query = self.cur.execute(string)
+      
+      #Iterate through query results & append to list
+      r = [dict((query.description[i][0], value) for i, value in enumerate(row)) for row in query.fetchall()]
+      
+
+      print "Querying"
+      print json.dumps(r)
          
-      return response
+      return json.dumps(r)
          
          
 
@@ -127,7 +144,7 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       #logging.warning("============= GET STARTED ==============")
       #logging.warning(self.headers)
 
-      if self.path.startswith('/'):
+      if self.path == '/':
          #This URL will trigger our sample function and send what it returns back to the browser
          self.send_response(200)
          self.send_header('Content-type','text/html')
@@ -135,22 +152,18 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
          self.wfile.write(guiBuilder().index()) #call sample function here
          return
          
-      elif self.path.startswith('/start'):
-         print "Executing MITM Exploitation Server."
+      elif self.path == '/start':
+         print "Executing MITM Exploitation Server."  
          
-      elif self.path.startswith('/dbquery'):
-         print "Querying Database"
+      elif self.path.split('?')[0]=='/dbquery': 
          self.send_response(200)
          self.send_header('Content-type','text/html')
          self.end_headers()
-         print urlparse.parse_qs(os.environ['QUERY_STRING'])
-         qstring = "test"
-         self.wfile.write(dbHandler().dbquery(qstring) #call sample function here
+         self.wfile.write(dbHandler().dbquery(self.path.split('?')[1])) #call sample 
          return
-
          
       else:
-         #print self.path
+         print self.path.split('?')[0]
          SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
    def do_POST(self):
@@ -162,6 +175,7 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
          
       elif self.path=='/config/': 
          print "Making attack configuration adjustments..."
+
          
       else:
          print "POSTS"
