@@ -182,6 +182,7 @@ a
          margin-right: 15px;
          min-height: 15px;
          min-width: 40px;
+         cursor: pointer;
       }
       .feed_title
       {

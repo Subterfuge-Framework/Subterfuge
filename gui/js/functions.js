@@ -1,3 +1,9 @@
+function showFeed(feed)
+{
+   $(document.getElementsByName("feedcont")).hide()
+   $("#" + feed.className).show()
+}
+
 function test(ID)
 {
    $.post("/start/", {
@@ -47,6 +53,9 @@ function dbQuery(qstring)
 
 
 $(document).ready(function () {
+   
+   $(document.getElementsByName("feedcont")).hide()
+   $("#hostsfeed").show();
    
    //Page Setup from variables
    //Get by name & iterate through IDs

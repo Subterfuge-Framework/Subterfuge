@@ -67,12 +67,12 @@
 <div id = "viewctrl">
    <div id = "viewbox">
       <div id = "feed_tbox"><span class = "feed_title"><b>Feeds ></b></span></div>
-      <div id = "feed_tbox"><span class = "feed_title">Hosts</span></div>
-      <div id = "feed_tbox"><span class = "feed_title">Loot<div id = "notificationbox"></div></span></div>
+      <div id = "feed_tbox"><span class = "feed_title"><span name = "feed_title" class="hostsfeed" onclick="showFeed(this)" >Hosts</span></span></div>
+      <div id = "feed_tbox"><span class = "feed_title"><span name = "feed_title" class="lootfeed" onclick="showFeed(this)">Loot</span><div id = "notificationbox"></div></span></div>
       
     <script type="text/babel">
     
-    
+    /*
     var newloot = 0
     
       ReactDOM.render(
@@ -84,6 +84,7 @@
    //result = dbQuery("select * from Hosts")
    
    //alert(result)
+   */
       
     </script>
 
@@ -98,7 +99,7 @@
 
 
    <!-- Hosts Feed --> 
-   <div id = "hostsfeed"></div> <!-- Host Container -->
+   <div id = "hostsfeed" name = "feedcont"></div> <!-- Host Container -->
 
        
          
@@ -184,6 +185,73 @@ ReactDOM.render(
 
    
    
+   <!-- Loot Feed --> 
+   <div id = "lootfeed" name = "feedcont"></div> <!-- Loot Container -->
+   
+<script type="text/babel">
+//LootTable
+//Track & Update Loot
+var LootTable = React.createClass({
+  loadLootFromServer: function() {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    this.loadLootFromServer();
+    setInterval(this.loadLootFromServer, this.props.pollInterval);
+  },
+  
+
+  render: function() {
+    return (
+      <Loot data = {this.state.data} />
+    );
+  }
+});
+
+//Loot
+//Build Loot Table
+var Loot = React.createClass({
+  render: function() {
+    var lootNodes = this.props.data.map(function(loot) {
+      //Build Loot Table
+      //Do UNION join on HID to get host
+      return (
+         <span>
+         {loot.ID}
+         {loot.HID}
+         {loot.Details}
+         {loot.Datetime}
+         <br />
+         </span>
+      );
+    });
+    return (
+    <b>{lootNodes}</b>
+
+    );
+  }
+});
+
+var qstring = "SELECT * from Loot"
+
+ReactDOM.render(
+   <LootTable url={'/dbquery?qstring=' + btoa(qstring)} pollInterval={2000} />,
+   document.getElementById('lootfeed')
+);
+</script>   
 
 </div> <!-- Main Container -->
 
