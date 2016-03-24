@@ -56,7 +56,7 @@ class guiBuilder:
       new_loot = '<div id = "new_loot">' + nloot + '</div>'
       
       
-      page_variables += new_loot
+      #page_variables += new_loot
       
       newlines = []
       #### Variable Parser
@@ -118,9 +118,9 @@ class dbHandler:
       import sqlite3
       import json
       
-      string = base64.b64decode(qstring.split('qstring=')[1])
+      string = base64.b64decode(qstring.split('qstring=')[1].split('&')[0])
       
-      self.conn = sqlite3.connect('/home/rob/Desktop/projects/Subterfuge/attack.db', timeout=1) #You like the dick, you stupid variable python path piece of crap... !
+      self.conn = sqlite3.connect('/home/adhd/Desktop/projects/Subterfuge/attack.db', timeout=1) #You like the dick, you stupid variable python path piece of crap... !
       self.conn.execute('pragma foreign_keys = on')
       self.conn.commit()
       self.cur = self.conn.cursor()
@@ -131,6 +131,7 @@ class dbHandler:
       
 
       print "Querying"
+      print string
       print json.dumps(r)
          
       return json.dumps(r)

@@ -19,23 +19,22 @@ function notificationUpdate(ID)
 function dbQuery(qstring)
 {
    //POST request to py to get db response
-   var result = null;
-   var scriptUrl = '/dbquery?qstring=' + btoa(qstring);
-   $.ajax({
-     url: scriptUrl,
-     type: 'get',
-     dataType: 'html',
-     async: false,
-     success: function(data) {
-         result = data;
-     } 
-   });
-   return result;
+    $.ajax({
+      url: '/dbquery?qstring=' + btoa(qstring),
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
    
    
    
    
-   //alert(result)
+   //alert(result)    '/dbquery?qstring=' + btoa(qstring)
    
    //return result
    
