@@ -677,3 +677,12 @@ a
    .terminal a:hover {
       color: #EFEBEB;
    }
+
+#attack_loader
+{
+   position: relative;
+   float: right;
+   top: 27px;
+   right: 30px;
+   display: none;
+}

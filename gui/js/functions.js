@@ -4,13 +4,27 @@ function showFeed(feed)
    $("#" + feed.className).show()
 }
 
-function test(ID)
+function startpwn(ID)
 {
    $.post("/start/", {
       status:  "go"
    });   
    
-   //alert(ID);
+   $("#startpwn").hide();
+   $("#attack_loader").show("slow");
+   $("#stoppwn").show();
+}
+
+
+function stoppwn(ID)
+{
+   $.post("/stop/", {
+      status:  "no-go"
+   });   
+   
+   $("#stoppwn").hide();
+   $("#attack_loader").hide("slow");
+   $("#startpwn").show();
 }
 
 
@@ -54,7 +68,7 @@ function dbQuery(qstring)
 
 $(document).ready(function () {
    
-   $(document.getElementsByName("feedcont")).hide()
+   $(document.getElementsByName("feedcont")).hide();
    $("#hostsfeed").show();
    
    //Page Setup from variables

@@ -62,6 +62,7 @@ def cleanJobs():
    exit()
    
 #MITMServer should be spawned as a background process PID tracked in DB and killed on stop (Ctrl-Z)
+#Check if MITMServer already running (via jobs?)
 
 a = "0"
 

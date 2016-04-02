@@ -65,7 +65,7 @@ class guiBuilder:
             r = re.compile('{{{(.*?)}}}')
             m = r.search(line)
             
-            print "Inserting page vars"
+            #print "Inserting page vars"
             
             newlines.append(line.replace("{{{}}}", page_variables))
             
@@ -130,9 +130,9 @@ class dbHandler:
       r = [dict((query.description[i][0], value) for i, value in enumerate(row)) for row in query.fetchall()]
       
 
-      print "Querying"
-      print string
-      print json.dumps(r)
+      #print "Querying"
+      #print string
+      #print json.dumps(r)
          
       return json.dumps(r)
          
@@ -141,10 +141,16 @@ class dbHandler:
 
 #Class to handle browser requests
 class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
-   def do_GET(self):
-      #logging.warning("============= GET STARTED ==============")
-      #logging.warning(self.headers)
+   def log_message(self, format, *args):
+      pass
+   
+   def log_request(self, code='-', size='-'):
+       pass
 
+   def log_error(self, format, *args):
+       pass
+   
+   def do_GET(self):
       if self.path == '/':
          #This URL will trigger our sample function and send what it returns back to the browser
          self.send_response(200)
@@ -153,8 +159,6 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
          self.wfile.write(guiBuilder().index()) #call sample function here
          return
          
-      elif self.path == '/start':
-         print "Executing MITM Exploitation Server."  
          
       elif self.path.split('?')[0]=='/dbquery': 
          self.send_response(200)
@@ -168,10 +172,13 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
          SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
    def do_POST(self):
-      #logging.warning("============= POST STARTED =============")
-      #logging.warning(self.headers)
-      
       if self.path=='/start/':
+         import os
+         import subprocess
+
+         subterfuge_dir = os.path.dirname(os.path.dirname(__file__))
+         process = subprocess.Popen('python ' + subterfuge_dir + '/mitmserver.py &', shell=True)
+         
          print "Executing MITM Exploitation Server!"
          
       elif self.path=='/config/': 
