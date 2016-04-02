@@ -4,8 +4,13 @@ class rawPacket:
       import os
       os.system('sysctl -w net.ipv4.ip_forward=1')
 
-   def portProxy(self, FEED_PORT, PROXY_PORT):
+   def portProxy(self, args):
       import os
+      
+      FEED_PORT, PROXY_PORT = args.split(",")
+      
+      print "Creating Port Proxy for " + FEED_PORT, PROXY_PORT
+      
       os.system('iptables -t nat -A PREROUTING -p tcp --destination-port ' + str(FEED_PORT) + ' -j REDIRECT --to-port ' + str(PROXY_PORT))
          
    def iptablesconfig(self, proxymode):
