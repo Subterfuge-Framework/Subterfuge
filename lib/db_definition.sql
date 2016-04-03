@@ -23,7 +23,11 @@ CREATE TABLE Loot(
 CREATE TABLE Jobs(
    ID INTEGER PRIMARY KEY   AUTOINCREMENT,
    Name        VARCHAR(100)   NOT NULL,
-   Active      INTEGER
+   Active      INTEGER,
+   Enabled     INTEGER,
+   CmdString   VARCHAR(100),
+   Type        VARCHAR(100),
+   PID         INTEGER
 );
 
 CREATE TABLE Feeds(
@@ -49,7 +53,18 @@ insert into Hosts (host, os, lastactive)
 VALUES ("172.16.15.23", "Windows", "2m 15s");
 
 
+insert into Jobs (Name, Active, Enabled, CmdString, Type, PID)
+VALUES ("HTTP Proxy", "1", "0", "rawPacket().portProxy(a);80,10000", "", "");
+insert into Jobs (Name, Active, Enabled, CmdString, Type, PID)
+VALUES ("SSLStrip", "1", "0", "sslstrip().proxy(a);10000", "", "");
+insert into Jobs (Name, Active, Enabled, CmdString, Type, PID)
+VALUES ("HTTP Credential Harvester", "1", "0", "harvester().httpHarvester(a);packages/sslstrip.log", "", "");
+insert into Jobs (Name, Active, Enabled, CmdString, Type, PID)
+VALUES ("Network-wide ARP Cache Poison", "1", "0", "arpPoison().poisonAll(a);10.0.0.1,8", "", "");
+
 insert into Interactions (hostid, channelid, command, response, status)
 VALUES ("1", "1", "notepad", "", "0");
 insert into Interactions (hostid, channelid, command, response, status)
 VALUES ("1", "1", "ls", "", "0");
+
+

