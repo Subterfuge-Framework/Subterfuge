@@ -23,12 +23,13 @@ os.system('iptables -P OUTPUT ACCEPT')
 from lib.feeds import *
 from lib.metafeeds import *
 from lib.consumers import *
+from lib.vectors import *
 
 
 def getJobs(a):
    #Get jobs from DB
    if a == "0":
-      jobs = [["HTTP Proxy", "1", "0", "rawPacket().portProxy(a);80,10000"], ["sslstrip", "1", "0", "sslstrip().proxy(a);10000"], ["HTTP Credential Harvester", "1", "0", "harvester().httpHarvester(a);packages/sslstrip.log"], ["Test", "0", "1", "tmp"], ["Test2", "1", "1", "tmp2"]]
+      jobs = [["HTTP Proxy", "1", "0", "rawPacket().portProxy(a);80,10000"], ["sslstrip", "1", "0", "sslstrip().proxy(a);10000"], ["HTTP Credential Harvester", "1", "0", "harvester().httpHarvester(a);packages/sslstrip.log"], ["Network-wide ARP Cache Poison", "1", "0", "arpPoison().poisonAll(a);10.0.0.1,8"], ["Test2", "1", "1", "tmp2"]]
       
    else:
       jobs = []
