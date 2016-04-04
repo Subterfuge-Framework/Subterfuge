@@ -74,6 +74,87 @@ a
          text-decoration: None;
       }
 
+   #jobs
+   {
+      width: 500px;
+   }
+   .sidebar_menu
+   {
+      position: absolute;
+      background-color: #444748;
+      left: -400px;
+      z-index: 2011;
+      color: #fff;
+      min-height: 100%;
+      top: 0px;
+      right: 0px;
+      border-right: 2px solid #C2C8CC;
+   }
+   .sbar_title
+   {
+      position: relative;
+      float: left;
+      width: 32.9%;
+      border-left: 1px solid #60686D;
+      border-right: 1px solid #60686D;
+      border-bottom: 1px solid #60686D;
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 23px;
+      line-height: 20px;
+      font-weight: 100;
+      line-height: 2.1;
+      color: #999;
+   }
+   .sbar_title:hover
+   {
+      background-color: #D8CECE;
+      color: #444748;
+      text-decoration: None;
+      cursor: pointer;
+   }
+   .sbar_title_active
+   {
+      position: relative;
+      float: left;
+      width: 32.9%;
+      border-left: 1px solid #60686D;
+      border-right: 1px solid #60686D;
+      border-bottom: 1px solid #60686D;
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 23px;
+      line-height: 20px;
+      font-weight: 100;
+      line-height: 2.1;
+      background-color: #D8CECE;
+      color: #444748;
+      text-decoration: None;
+      cursor: pointer;
+   }
+   #sidebarcont
+   {
+      padding-top: 25px;
+      padding-left: 10px;
+      padding-right: 10px;
+      margin-top: 40px;
+   }
+   #job_cancel_icon
+   {
+      font-size: 24px;
+      line-height: 20px;
+      color: #999;
+      text-decoration: None;
+      cursor: pointer;
+   }
+   #job_cancel_icon:hover
+   {
+      font-size: 24px;
+      line-height: 20px;
+      color: #D8CECE;
+      text-decoration: None;
+   }
+
 #topnav
 {
    position: absolute;

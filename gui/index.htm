@@ -32,10 +32,10 @@
       <span  class = "sideicons"><a href = "#" class = "sideicons"><div id = "widget_icon"><span class='icon-cog'></span></div>
       <center>Settings</center></a></span>
    </div>
-   <div id = "sidebar_widget">
-      <span  class = "sideicons"><a href = "#" class = "sideicons"><div id = "widget_icon"><span class='icon-box-add'></span></div>
-      <center>Feeds</center></a></span>
-   </div>
+   <div id = "sidebar_widget"><div id = "job" onclick="toggleMenu(this.id)">
+      <span  class = "sideicons"><a href = "#" name = "Jobs" class = "sideicons"><div id = "widget_icon"><span class='icon-box-add'></span></div>
+      <center>Jobs</center></a></span>
+   </div></div>
    <div id = "sidebar_widget">
       <span  class = "sideicons"><a href = "#" class = "sideicons"><div id = "widget_icon"><span class='icon-bars'></span></div>
       <center>Notifications</center></a></span>
@@ -45,6 +45,116 @@
       <center>Help</center></a></span>
    </div>
 </div>
+   
+   
+<!-- Sidebar Menus -->
+<div id = "settings" style="display:none">
+   
+</div>
+<div id = "jobs" class = "sidebar_menu">
+   <div id = "activejobs" class = "sbar_title">
+      <span>Active</span>
+   </div>
+   <div id = "feedjobs" class = "sbar_title">
+      <span>Feeds</span>
+   </div>
+   <div id = "vectorjobs" class = "sbar_title">
+      <span>Vectors</span>
+   </div>
+   
+   <!-- Active Jobs -->
+   <div id = "sidebarcont">
+      <div id = "ajobs"></div>
+   </div>
+   
+<script type="text/babel">
+//Active Job Tracker
+var JobTable = React.createClass({
+  loadJobsFromServer: function() {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    this.loadJobsFromServer();
+    setInterval(this.loadJobsFromServer, this.props.pollInterval);
+  },
+  render: function() {
+    return (
+      <Job data = {this.state.data} />
+    );
+  }
+});
+
+//Build Job Table
+var Job = React.createClass({
+  render: function() {
+    var jobNodes = this.props.data.map(function(job) {
+    
+      if (job.Enabled == 1) { var runningJob = 'gui/images/loader.gif'; } else { var runningJob = ''; }
+        
+ 
+      if (job.Active = "1"){
+         //Build Job Table
+         return (
+            <span>
+            <div id = "job_cancel_icon" name = {job.ID}  style={{float:'left'}}><span className = "icon-cancel-circle"></span></div>
+            <img style={{float:'left'}} src = {runningJob} />
+            <span style={{float:'right'}}>{job.Name}</span>
+            <br /><br />
+            </span>
+         );
+      }
+
+    });
+    return (
+    <b>{jobNodes}</b>
+    );
+  }
+});
+
+
+
+var qstring = "SELECT * from Jobs"
+
+ReactDOM.render(
+   <JobTable url={'/dbquery?qstring=' + btoa(qstring)} pollInterval={10000} />,
+   document.getElementById('ajobs')
+);
+</script> 
+   
+   <!-- Feed Jobs -->
+   <div id = "sidebarcont">
+   
+   </div>
+   <!-- Vector Jobs -->
+   <div id = "sidebarcont">
+   
+   </div>
+      
+   
+</div>
+<script>
+
+
+   
+   
+   //$("#jobs").show();
+</script>
+<div id = "notifications" style="display:none"></div>
+<div id = "help" style="display:none"></div>
+   
 
 <!-- Title Pane -->
 <div id = "topnav">

@@ -15,7 +15,6 @@ function startpwn(ID)
    $("#stoppwn").show();
 }
 
-
 function stoppwn(ID)
 {
    $.post("/stop/", {
@@ -27,7 +26,37 @@ function stoppwn(ID)
    $("#startpwn").show();
 }
 
+function toggleMenu(iid){
+   $("#sidebar_border_fix").toggle();
+   
+   var ID = "#" + iid + "s";
+   //alert(ID);
+   
+   // create menu variables
+   var slideoutMenu = $(ID);
+   var slideoutMenuWidth = $(ID).width();
 
+   // toggle open class
+   slideoutMenu.toggleClass("open");
+
+   // slide menu
+   if (slideoutMenu.hasClass("open")) {
+      slideoutMenu.animate({
+          left: "100px"
+      });	
+   } else {
+      slideoutMenu.animate({
+          left: -slideoutMenuWidth
+      }, 250);	
+   }
+}
+
+
+function resetJobMenus(){
+   $("#activejobs").removeClass('sbar_title_active');
+   $("#feedjobs").removeClass('sbar_title_active');
+   $("#vectorjobs").removeClass('sbar_title_active');
+}
 
 function notificationUpdate(ID)
 {
@@ -65,8 +94,45 @@ function dbQuery(qstring)
    //document.getElementById(ID).innerHTML = "<center><b>" + nloot + "</b></center>";
 }
 
+function killJob(jid) {
+   $.post("/killjob/", {
+      jid:  jid
+   });  
+}
+
+//Get doc elements created by REACT JS after document.ready()
+function readyCheck() {
+   $('div[id=job_cancel_icon]').click(function(e) {
+      //Cancel the link behavior
+      e.preventDefault();
+      
+      var r = confirm("Are you sure you want to kill Job: " + $(this).attr('name'));
+      if (r == true) {
+         killJob($(this).attr('name'));
+      }
+   });
+}
+
+//Document Interval loader
+setInterval(function(){
+   readyCheck();
+}, 5000);
 
 $(document).ready(function () {
+   
+$("#activejobs").click(function() {
+   resetJobMenus()
+  $(this).addClass('sbar_title_active');
+});
+$( "#feedjobs" ).click(function() {
+   resetJobMenus()
+  $(this).addClass('sbar_title_active');
+});
+$( "#vectorjobs" ).click(function() {
+   resetJobMenus()
+  $(this).addClass('sbar_title_active');
+});
+   
    
    $(document.getElementsByName("feedcont")).hide();
    $("#hostsfeed").show();
