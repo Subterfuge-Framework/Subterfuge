@@ -56,6 +56,9 @@ function resetJobMenus(){
    $("#activejobs").removeClass('sbar_title_active');
    $("#feedjobs").removeClass('sbar_title_active');
    $("#vectorjobs").removeClass('sbar_title_active');
+   $("#ajobs").hide();
+   $("#fjobs").hide();
+   $("#vjobs").hide();
 }
 
 function notificationUpdate(ID)
@@ -79,19 +82,6 @@ function dbQuery(qstring)
         console.error(this.props.url, status, err.toString());
       }.bind(this)
     });
-   
-   
-   
-   
-   //alert(result)    '/dbquery?qstring=' + btoa(qstring)
-   
-   //return result
-   
-   
-   //$('#CheckIn').load('/dbquery?qstring=' + btoa(qstring));
-   
-   //var nloot = document.getElementById("new_loot").innerHTML;
-   //document.getElementById(ID).innerHTML = "<center><b>" + nloot + "</b></center>";
 }
 
 function killJob(jid) {
@@ -122,15 +112,18 @@ $(document).ready(function () {
    
 $("#activejobs").click(function() {
    resetJobMenus()
-  $(this).addClass('sbar_title_active');
+   $(this).addClass('sbar_title_active');
+   $("#ajobs").show();
 });
 $( "#feedjobs" ).click(function() {
    resetJobMenus()
-  $(this).addClass('sbar_title_active');
+   $(this).addClass('sbar_title_active');
+   $("#fjobs").show();
 });
 $( "#vectorjobs" ).click(function() {
    resetJobMenus()
-  $(this).addClass('sbar_title_active');
+   $(this).addClass('sbar_title_active');
+   $("#vjobs").show();
 });
    
    

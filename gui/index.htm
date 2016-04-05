@@ -52,7 +52,7 @@
    
 </div>
 <div id = "jobs" class = "sidebar_menu">
-   <div id = "activejobs" class = "sbar_title">
+   <div id = "activejobs" class = "sbar_title sbar_title_active">
       <span>Active</span>
    </div>
    <div id = "feedjobs" class = "sbar_title">
@@ -65,6 +65,8 @@
    <!-- Active Jobs -->
    <div id = "sidebarcont">
       <div id = "ajobs"></div>
+      <div id = "fjobs" style="display:none"></div>
+      <div id = "vjobs" style="display:none">Vectors</div>
    </div>
    
 <script type="text/babel">
@@ -102,7 +104,7 @@ var Job = React.createClass({
   render: function() {
     var jobNodes = this.props.data.map(function(job) {
     
-      if (job.Enabled == 1) { var runningJob = 'gui/images/loader.gif'; } else { var runningJob = ''; }
+      if (job.Enabled == 1) { var runningJob = 'gui/images/loader.gif'; } else { var runningJob = '';}
         
  
       if (job.Active = "1"){
@@ -131,6 +133,97 @@ var qstring = "SELECT * from Jobs"
 ReactDOM.render(
    <JobTable url={'/dbquery?qstring=' + btoa(qstring)} pollInterval={10000} />,
    document.getElementById('ajobs')
+);
+
+
+//Get Installed Feeds
+var FeedTable = React.createClass({
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  render: function() {
+    return (
+      <AvailableFeeds data = {this.state.data} />
+    );
+  }
+});
+var AvailableFeeds  = React.createClass({
+  render: function() {
+    var feedNodes = this.props.data.map(function(feed) {
+         return (
+            <span>
+            <div id = "job_cancel_icon" name = {feed.ID}  style={{float:'left'}}><span className = "icon-box-add"></span></div>
+            <span style={{float:'left'}}>{feed.Name}</span>
+            <br /><br />
+            </span>
+         );
+    });
+    return (
+    <b>{feedNodes}</b>
+    );
+  }
+});
+ReactDOM.render(
+   <FeedTable url={'/packages/feeds.json'} />,
+   document.getElementById('fjobs')
+);
+
+//Get Installed Vectors
+var VectorTable = React.createClass({
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  render: function() {
+    return (
+      <AvailableVectors data = {this.state.data} />
+    );
+  }
+});
+var AvailableVectors  = React.createClass({
+  render: function() {
+    var vectorNodes = this.props.data.map(function(vector) {
+         return (
+            <span>
+            <div id = "job_cancel_icon" name = {vector.ID}  style={{float:'left'}}><span className = "icon-plus"></span></div>
+            <span style={{float:'left'}}>{vector.Name}</span>
+            <br /><br />
+            </span>
+         );
+    });
+    return (
+    <b>{vectorNodes}</b>
+    );
+  }
+});
+ReactDOM.render(
+   <VectorTable url={'/packages/vectors.json'} />,
+   document.getElementById('vjobs')
 );
 </script> 
    
