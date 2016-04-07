@@ -2,9 +2,13 @@ import sys
 import os
 import sqlite3
 
-sys.path.append("../")
+#Setup system path
+import inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+subdir = packdir.split("lib")[0]
+sys.path.append(subdir)
 
-DATABASE = '/home/adhd/Desktop/projects/Subterfuge/attack.db'
+DATABASE = subdir + 'attack.db'
 
 class dbmgr:
    def __init__(self):
@@ -29,7 +33,6 @@ class dbmgr:
       #Set job status enabled
       HID = "0"
       new = "1"
-      print "INSERT INTO Loot(HID, Details, Datetime, New) values ('" + HID + "','" + details + "','" + datetime + "','" + new + "')"
       self.cur.execute("INSERT INTO Loot(HID, Details, Datetime, New) values ('" + HID + "','" + details + "','" + datetime + "','" + new + "')") 
       self.conn.commit()
       #self.conn.close()

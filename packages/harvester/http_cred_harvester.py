@@ -13,11 +13,7 @@ import inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 packdir = os.path.dirname(currentdir)
 subdir = packdir.split("packages")[0]
-print packdir, subdir
 sys.path.append(subdir)
-#print os.path.dirname(os.path.dirname(__file__))
-#packdir = os.path.dirname(os.path.dirname(__file__))
-#subdir = os.path.dirname(os.path.dirname(os.path.dirname(__file__))
 
 ### SUBTERFUGE IMPORTS ####
 #Import DB Libs
@@ -26,9 +22,6 @@ from lib.dbmgr import *
 
 def main():
    print "Harvesting Credentials..."
-   
-
-   
    post_feed = sys.argv[1]
 
    #Read in username fields from definitions file
@@ -55,8 +48,7 @@ def main():
    #Purge Logs
    os.system("echo > " + post_feed)
    #os.system("echo > /usr/share/subterfuge/mitmproxy.log")
-
-
+   
    log = open(post_feed)
 
    while 1:
@@ -156,20 +148,13 @@ def main():
                                  #to prevent duplicate entries being found
                                  line = ''
 
-
-
 #insert into database
 def reap(source, username, password):
    now = datetime.datetime.now()
    date = now.strftime("%d-%m-%Y %H:%M")
    
    details = source + "; username: " + username + "; password: " + password
-   
    dbmgr().logLoot(details, date)
-
-
-   #logcred = credentials(source = source, username = username, password = password, date = date)
-   #logcred.save()
 
 def usage(): 
    print "\nSubterfuge courtesy of r00t0v3rr1d3 & 0sm0s1z \n"
