@@ -17,7 +17,7 @@ CREATE TABLE Loot(
    HID         INTEGER   NOT NULL,
    Details     VARCHAR(100),
    Datetime    VARCHAR(100),
-   New         VARCHAR(100)
+   New         INTEGER
 );
 
 CREATE TABLE Jobs(

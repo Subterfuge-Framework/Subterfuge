@@ -23,6 +23,16 @@ class dbmgr:
       self.cur.execute("UPDATE Jobs SET Enabled = 1 WHERE ID = " + str(jid))
       self.conn.commit()
       #self.conn.close()
+      
+   #Add source field to Loot table???
+   def logLoot(self, details, datetime):
+      #Set job status enabled
+      HID = "0"
+      new = "1"
+      print "INSERT INTO Loot(HID, Details, Datetime, New) values ('" + HID + "','" + details + "','" + datetime + "','" + new + "')"
+      self.cur.execute("INSERT INTO Loot(HID, Details, Datetime, New) values ('" + HID + "','" + details + "','" + datetime + "','" + new + "')") 
+      self.conn.commit()
+      #self.conn.close()
 
    def newChannel(self, hostid, details, tags):
       self.cur.execute("insert into Channels (HostID, Details, Tags) values ('" + hostid + "','" + details + "','" + tags + "')")

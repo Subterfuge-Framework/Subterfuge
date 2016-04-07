@@ -7,12 +7,27 @@ import datetime
 import urllib
 
 
+
+#Setup system path
+import inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+packdir = os.path.dirname(currentdir)
+subdir = packdir.split("packages")[0]
+print packdir, subdir
+sys.path.append(subdir)
+#print os.path.dirname(os.path.dirname(__file__))
+#packdir = os.path.dirname(os.path.dirname(__file__))
+#subdir = os.path.dirname(os.path.dirname(os.path.dirname(__file__))
+
+### SUBTERFUGE IMPORTS ####
+#Import DB Libs
+from lib.dbmgr import *
+
+
 def main():
    print "Harvesting Credentials..."
    
-   print os.path.dirname(os.path.dirname(__file__))
-   
-   packdir = os.path.dirname(os.path.dirname(__file__))
+
    
    post_feed = sys.argv[1]
 
@@ -148,8 +163,9 @@ def reap(source, username, password):
    now = datetime.datetime.now()
    date = now.strftime("%d-%m-%Y %H:%M")
    
+   details = source + "; username: " + username + "; password: " + password
    
-   print "Got Creds yay!"
+   dbmgr().logLoot(details, date)
 
 
    #logcred = credentials(source = source, username = username, password = password, date = date)
