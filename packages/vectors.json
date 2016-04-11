@@ -1,3 +1,30 @@
 [
-  {"Name": "ARP Cache Poisoning", "text": "This is one comment"}
+   {
+      "ID": "1",
+      "Name": "ARP Cache Poisoning",
+      "Class": "arpPoison",
+      "Options": [
+         {
+            "type": "poisonAll",
+            "gateway": "tmp",
+            "arprate": "tmp"
+         },
+         {
+            "type": "poisonHost",
+            "gateway": "tmp",
+            "arprate": "tmp"
+         },
+         {
+            "type": "rearpNetwork",
+            "gateway": "tmp",
+            "arprate": "tmp"
+         }
+      ]
+   },
+   {
+      "ID": "2",
+      "Name": "WPAD Hijacking",
+      "Class": "wpadHijacking",
+      "Options": "None"
+   }
 ]
