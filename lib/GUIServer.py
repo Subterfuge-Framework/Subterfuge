@@ -1,15 +1,19 @@
 import BaseHTTPServer
+import cgi
+import configparser
+import logging
+import os
 import SimpleHTTPServer
 import SocketServer
-from subprocess import Popen, PIPE
-import logging
-import cgi
 import ssl
-import os
+import sqlite3
 import re
 
-import sqlite3
+from subprocess import Popen, PIPE
 
+CWD = os.getcwd()
+ATTACKDB = os.path.join(CWD,"attack.db")
+print ATTACKDB
 
 PORT = 8080
 print ""
@@ -21,15 +25,7 @@ class C2Handler:
    #   self.target = target
 
    def formHandler(self, form):
-      #if CMD
-      #try:
-         #print str(form).split(",")[0].split("'")[1]
-         #print str(form).split(",")[2].split("'")[1]
-         cmd = str(form).split(",")[3].split("'")[1]
-         channel = str(form).split(",")[1].split("'")[1]
-         #dbmgr().newInteraction("", channel, cmd, "", "0")
-      #except:
-         print form
+      cmd,channel = re.findall("'([^']+)'",str(form))
 
 	  
 #Class to dynamically generate and deliver the interface to a browser
@@ -120,7 +116,7 @@ class dbHandler:
       
       string = base64.b64decode(qstring.split('qstring=')[1].split('&')[0])
       
-      self.conn = sqlite3.connect('/home/adhd/Desktop/projects/Subterfuge/attack.db', timeout=1) #You like the dick, you stupid variable python path piece of crap... !
+      self.conn = sqlite3.connect(ATTACKDB, timeout=1) #You like the dick, you stupid variable python path piece of crap... !
       self.conn.execute('pragma foreign_keys = on')
       self.conn.commit()
       self.cur = self.conn.cursor()

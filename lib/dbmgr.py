@@ -5,11 +5,11 @@ import sqlite3
 #Setup system path
 import inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-subdir = packdir.split("lib")[0]
+subdir = os.path.split(currentdir)[0]
 sys.path.append(subdir)
 
-DATABASE = subdir + 'attack.db'
-
+DATABASE = os.path.join(subdir , 'attack.db')
+print DATABASE
 class dbmgr:
    def __init__(self):
       self.conn = sqlite3.connect(DATABASE, timeout=1)
