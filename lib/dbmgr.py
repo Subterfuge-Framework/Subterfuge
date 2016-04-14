@@ -28,6 +28,13 @@ class dbmgr:
       self.conn.commit()
       #self.conn.close()
       
+   def createJob(self, jobDict):
+      #Build new job
+      print jobDict
+      
+      self.cur.execute("INSERT INTO Jobs (Name, Active, Enabled, CmdString, Type, PID) values (" + str(jobDict['Name']) + ' ' + str(jobDict['Active']) + ' ' + str(jobDict['Enabled']) + ' ' + str(jobDict['CmdString']) + ' ' + str(jobDict['Type']) + ' ' + str(jobDict['PID']))
+      self.conn.commit()
+      
    #Add source field to Loot table???
    def logLoot(self, details, datetime):
       #Set job status enabled

@@ -12,7 +12,7 @@
    
    <script src="gui/build/react.js"></script>
    <script src="gui/build/react-dom.js"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+   <script src="gui/js/browser.min.js"></script>
     
    <!--	Tab icon	-->
    <link rel="shortcut icon" href="gui/images/logo.png" />
@@ -101,19 +101,32 @@ var JobTable = React.createClass({
 
 //Build Job Table
 var Job = React.createClass({
+/*
+  handleClick: function(event) {
+    console.log('testclick');
+    //this.setState({data: "badfa"});
+  },
+  */
   render: function() {
-    var jobNodes = this.props.data.map(function(job) {
+    //this.handleClick("asdf");
+    
+    var blah = "ASDFASD"
+  
+  
+    var jobNodes = this.props.data.map(function(job, blah) {
     
       if (job.Enabled == 1) { var runningJob = 'gui/images/loader.gif'; } else { var runningJob = '';}
+      
+      console.log(blah)
         
  
       if (job.Active = "1"){
          //Build Job Table
          return (
             <span>
-            <div id = "job_cancel_icon" name = {job.ID}  style={{float:'left'}}><span className = "icon-cancel-circle"></span></div>
-            <img style={{float:'left'}} src = {runningJob} />
-            <span style={{float:'right'}}>{job.Name}</span>
+            <div id = "job_cancel_icon" onClick={blah} name = {job.ID}  style={{float:'left'}}><span className = "icon-cancel-circle"></span></div>
+            <img style={{float:'right'}} src = {runningJob} />
+            <span style={{float:'left'}}>{job.Name}</span>
             <br /><br />
             </span>
          );
@@ -199,27 +212,33 @@ var VectorTable = React.createClass({
       }.bind(this)
     });
   },
+
   render: function() {
     return (
       <AvailableVectors data = {this.state.data} />
     );
   }
 });
+var handleClick = function(vector) {
+      console.log(vector);
+}
 var AvailableVectors  = React.createClass({
   render: function() {
-    var vectorNodes = this.props.data.map(function(vector) {
+   return (
+      <b>
+      {this.props.data.map(function(vector) {
          return (
             <span>
-            <div id = "job_cancel_icon" name = {vector.ID}  style={{float:'left'}}><span className = "icon-plus"></span></div>
+            <div id = "job_cancel_icon"  style={{float:'left'}} onClick={handleClick.bind(this, vector)} value = "tmp"><span className = "icon-plus"></span></div>
+
             <span style={{float:'left'}}>{vector.Name}</span>
             <br /><br />
             </span>
          );
-    });
-    return (
-    <b>{vectorNodes}</b>
+      })}
+      </b>
     );
-  }
+   }
 });
 ReactDOM.render(
    <VectorTable url={'/packages/vectors.json'} />,

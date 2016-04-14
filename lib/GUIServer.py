@@ -14,6 +14,7 @@ from subprocess import Popen, PIPE
 CWD = os.getcwd()
 ATTACKDB = os.path.join(CWD,"attack.db")
 print ATTACKDB
+from lib.dbmgr import *
 
 PORT = 8080
 print ""
@@ -104,6 +105,7 @@ class guiObjects:
       
       
 #Class to dynamically generate and deliver the interface to a browser
+#Convert to dbmgr
 class dbHandler:
    def __init__( self):
       import sys
@@ -124,12 +126,7 @@ class dbHandler:
       
       #Iterate through query results & append to list
       r = [dict((query.description[i][0], value) for i, value in enumerate(row)) for row in query.fetchall()]
-      
 
-      #print "Querying"
-      #print string
-      #print json.dumps(r)
-         
       return json.dumps(r)
          
          
@@ -179,6 +176,20 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
          
       elif self.path=='/config/': 
          print "Making attack configuration adjustments..."
+         
+      elif self.path=='/newjob/': 
+         print "Configuring new attack job..."
+         
+         jobDict = {
+            Name        :  "tmp",
+            Active      :  "1",
+            Enabled     :  "0",
+            CmdString   :  "tmp",
+            Type        :  "tmp",
+            PID         :  "1000"
+         }
+         
+         dbmgr().createJob(jobDict)
 
          
       else:

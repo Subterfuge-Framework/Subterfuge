@@ -51,7 +51,6 @@ function toggleMenu(iid){
    }
 }
 
-
 function resetJobMenus(){
    $("#activejobs").removeClass('sbar_title_active');
    $("#feedjobs").removeClass('sbar_title_active');
@@ -90,23 +89,47 @@ function killJob(jid) {
    });  
 }
 
+function newJob(stuff)
+{
+   
+   alert(stuff);
+   
+   /*
+   $.post("/stop/", {
+      status:  "no-go"
+   });   
+   
+   $("#stoppwn").hide();
+   $("#attack_loader").hide("slow");
+   $("#startpwn").show();
+   
+   */
+}
+
+
 //Get doc elements created by REACT JS after document.ready()
+/*
 function readyCheck() {
    $('div[id=job_cancel_icon]').click(function(e) {
       //Cancel the link behavior
       e.preventDefault();
       
-      var r = confirm("Are you sure you want to kill Job: " + $(this).attr('name'));
-      if (r == true) {
-         killJob($(this).attr('name'));
-      }
+      console.log('test')
+      
+      //var r = confirm("Are you sure you want to kill Job: " + $(this).attr('name'));
+      //if (r == true) {
+         //killJob($(this).attr('name'));
+      //   console.log('test')
+      //}
    });
-}
+}*/
 
 //Document Interval loader
+/*
 setInterval(function(){
    readyCheck();
 }, 5000);
+*/
 
 $(document).ready(function () {
    
