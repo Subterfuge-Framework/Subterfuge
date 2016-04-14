@@ -1,46 +1,49 @@
 class arpPoison:
-   def __init__(self):
-      import os
-      import sys
-      
-   def poisonAll(self, args):
-      import os
-      import sys
-      sys.path.append("../")
-      import subprocess
+    def __init__(self):
+        import os
+        import sys
 
-      GATEWAY, ARPRATE = args.split(",")
+    def poisonAll(self, args):
+        import os
+        import sys
+        sys.path.append("../")
+        import subprocess
 
-      package_dir = os.path.dirname(os.path.dirname(__file__)) + '/packages/'
+        GATEWAY, ARPRATE = args.split(",")
 
-      process = subprocess.Popen('python ' + package_dir + 'arpmitm/arpmitm.py ' + GATEWAY + ' ' + ARPRATE + ' &', shell=True)
-      
-      return process.pid
-   
-   def poisonHost(self, args):
-      import os
-      import sys
-      sys.path.append("../")
-      import subprocess
-      
-      GATEWAY, ARPRATE = args.split(",")
+        package_dir = os.path.dirname(os.path.dirname(__file__)) + '/packages/'
 
-      package_dir = os.path.dirname(os.path.dirname(__file__)) + '/packages/'
+        process = subprocess.Popen('python ' + package_dir + 'arpmitm/arpmitm.py ' + GATEWAY + ' ' + ARPRATE + ' &',
+                                   shell=True)
 
-      process = subprocess.Popen('python ' + package_dir + 'arpmitm/arpmitm.py -s ' + TARGETIP + ' ' + GATEWAY + ' ' + ARPRATE + ' &', shell=True)
-      
-      return process.pid
-   
-   def rearpNetwork(self, args):
-      import os
-      import sys
-      sys.path.append("../")
-      import subprocess
-      
-      GATEWAY = args
+        return process.pid
 
-      package_dir = os.path.dirname(os.path.dirname(__file__)) + '/packages/'
+    def poisonHost(self, args):
+        import os
+        import sys
+        sys.path.append("../")
+        import subprocess
 
-      process = subprocess.Popen('python ' + package_dir + 'arpmitm/arpmitm.py -r ' + GATEWAY + ' &', shell=True)
-      
-      return process.pid
+        GATEWAY, ARPRATE = args.split(",")
+
+        package_dir = os.path.dirname(os.path.dirname(__file__)) + '/packages/'
+
+        process = subprocess.Popen(
+            'python ' + package_dir + 'arpmitm/arpmitm.py -s ' + TARGETIP + ' ' + GATEWAY + ' ' + ARPRATE + ' &',
+            shell=True)
+
+        return process.pid
+
+    def rearpNetwork(self, args):
+        import os
+        import sys
+        sys.path.append("../")
+        import subprocess
+
+        GATEWAY = args
+
+        package_dir = os.path.dirname(os.path.dirname(__file__)) + '/packages/'
+
+        process = subprocess.Popen('python ' + package_dir + 'arpmitm/arpmitm.py -r ' + GATEWAY + ' &', shell=True)
+
+        return process.pid

