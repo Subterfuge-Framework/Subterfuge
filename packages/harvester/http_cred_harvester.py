@@ -153,7 +153,7 @@ def reap(source, username, password):
     now = datetime.datetime.now()
     date = now.strftime("%d-%m-%Y %H:%M")
 
-    details = source + "; username: " + username + "; password: " + password
+    details = "#" + source + "#http#credentials# username: " + username + "; password: " + password
     dbmgr().logLoot(details, date)
 
 
