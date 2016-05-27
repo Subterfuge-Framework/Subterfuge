@@ -16,6 +16,11 @@ Execute Subterfuge by running the following command:
 subterfuge
 ```
 
+###Dependencies
+
+python-configparser
+
+
 ##Subterfuge – 2016
 
 Where oh where did all of the progress go!?!? As the development team has gone off in many directions we’ve had to restructure our project goals and timeline. Subterfuge isn’t dead, but we certainly changed the way we do business. Here’s the short and sweet of it:

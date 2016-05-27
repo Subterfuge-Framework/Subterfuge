@@ -1,0 +1,32 @@
+/* Loot Table  */
+#lootfeed
+{
+   position: absolute;
+   width: 100%;
+   top: -20px;
+   right: 15px;
+   background-color: #fcfcfc;
+}
+
+.lootlist
+{
+    width: 100%;
+}
+.lootbar
+{
+    font-weight: bold;
+}
+.lootrowa
+{
+      background-image: -webkit-linear-gradient(top,rgb(255,255,255),rgb(248,248,248));
+      height: 30px;
+      width: 100%;
+      border-radius: 4px;
+}
+.lootrowb
+{
+      /*background-image: -webkit-linear-gradient(top,rgb(255,255,255),rgb(248,248,248));*/
+      height: 30px;
+      width: 100%;
+      border-radius: 4px;
+}
