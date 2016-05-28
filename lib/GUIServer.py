@@ -107,29 +107,51 @@ class guiObjects:
 # Class to dynamically generate and deliver the interface to a browser
 # Convert to dbmgr
 class dbHandler:
-    def __init__(self):
-        import sys
-        sys.path.append("../")
+   def __init__(self):
+      import sys
+      sys.path.append("../")
 
-    def dbquery(self, qstring):
-        import base64
-        import sqlite3
-        import json
+   def dbquery(self, qstring):
+      import base64
+      import sqlite3
+      import json
 
-        string = base64.b64decode(qstring.split('qstring=')[1].split('&')[0])
+      string = base64.b64decode(qstring.split('qstring=')[1].split('&')[0])
 
-        self.conn = sqlite3.connect(ATTACKDB,
+      try:
+         self.conn = sqlite3.connect(ATTACKDB,
                                     timeout=1)  # You like the dick, you stupid variable python path piece of crap... !
-        self.conn.execute('pragma foreign_keys = on')
-        self.conn.commit()
-        self.cur = self.conn.cursor()
-        query = self.cur.execute(string)
+         self.conn.execute('pragma foreign_keys = on')
+         self.conn.commit()
+         self.cur = self.conn.cursor()
+         query = self.cur.execute(string)
+         
+      except sqlite3.Error as e:
+         print "Error:", e.message
 
-        # Iterate through query results & append to list
-        r = [dict((query.description[i][0], value) for i, value in enumerate(row)) for row in query.fetchall()]
+      # Iterate through query results & append to list
+      r = [dict((query.description[i][0], value) for i, value in enumerate(row)) for row in query.fetchall()]
 
-        return json.dumps(r)
+      return json.dumps(r)
+   
+   def dbupdate(self, qstring):
+      import base64
+      import sqlite3
+      import json
+      
+      string = base64.b64decode(qstring.split('qstring=')[1].split('&')[0])
 
+      try:
+         self.conn = sqlite3.connect(ATTACKDB,
+                                    timeout=1)
+         self.conn.execute('pragma foreign_keys = on')
+         self.cur = self.conn.cursor()
+         self.cur.execute(string)
+         self.conn.commit()
+         
+      except sqlite3.Error as e:
+         print "Error:", e.message
+         
 
 # Class to handle browser requests
 class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
@@ -157,6 +179,13 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             self.wfile.write(dbHandler().dbquery(self.path.split('?')[1]))  # call sample
+            return
+         
+        elif self.path.split('?')[0] == '/dbupdate':
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write(dbHandler().dbupdate(self.path.split('?')[1]))  # call sample
             return
 
         else:

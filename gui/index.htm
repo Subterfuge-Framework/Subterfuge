@@ -100,32 +100,55 @@ var JobTable = React.createClass({
   }
 });
 
+var killJob = function(event) {
+   console.log(event);
+   //this.setState({data: "badfa"});
+   
+   var qstring = "UPDATE Jobs SET Active = 0 where ID = " + event.ID
+   
+   //DB UPDATE QUERY
+    $.ajax({
+      url: '/dbupdate?qstring=' + btoa(qstring),
+      dataType: 'json',
+      cache: false,
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }
+    });
+
+   var qstring = "UPDATE Jobs SET Enabled = 0 where ID = " + event.ID
+   
+   //DB UPDATE QUERY
+    $.ajax({
+      url: '/dbupdate?qstring=' + btoa(qstring),
+      dataType: 'json',
+      cache: false,
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }
+    });
+
+}
+
 //Build Job Table
 var Job = React.createClass({
-/*
-  handleClick: function(event) {
-    console.log('testclick');
-    //this.setState({data: "badfa"});
-  },
-  */
-  render: function() {
-    //this.handleClick("asdf");
-    
-    var blah = "ASDFASD"
-  
-  
-    var jobNodes = this.props.data.map(function(job, blah) {
-    
+
+   render: function() {
+      //this.handleClick("asdf");
+      //console.log(this.props.data)
+      var blah = "ASDFASD"
+
+      var jobNodes = this.props.data.map(function(job, blah) {
+
       if (job.Enabled == 1) { var runningJob = 'gui/images/loader.gif'; } else { var runningJob = '';}
-      
-      //console.log(blah)
-        
- 
+   
+            
+            
       if (job.Active = "1"){
          //Build Job Table
          return (
             <span>
-            <div id = "job_cancel_icon" onClick={blah} name = {job.ID}  style={{float:'left'}}><span className = "icon-cancel-circle"></span></div>
+            <div id = "job_cancel_icon" onClick={killJob.bind(this, job)} name = {job.ID}  style={{float:'left'}}><span className = "icon-cancel-circle"></span></div>
             <img style={{float:'right'}} src = {runningJob} />
             <span style={{float:'left'}}>{job.Name}</span>
             <br /><br />
@@ -133,11 +156,11 @@ var Job = React.createClass({
          );
       }
 
-    });
-    return (
-    <b>{jobNodes}</b>
-    );
-  }
+      });
+      return (
+      <b>{jobNodes}</b>
+      );
+   }
 });
 
 
@@ -145,7 +168,7 @@ var Job = React.createClass({
 var qstring = "SELECT * from Jobs"
 
 ReactDOM.render(
-   <JobTable url={'/dbquery?qstring=' + btoa(qstring)} pollInterval={10000} />,
+   <JobTable url={'/dbquery?qstring=' + btoa(qstring)} pollInterval={1000} />,
    document.getElementById('ajobs')
 );
 
