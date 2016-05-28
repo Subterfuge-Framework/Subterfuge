@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+ 
 //Get Installed Feeds
 var FeedTable = React.createClass({
   getInitialState: function() {
@@ -37,3 +40,7 @@ var AvailableFeeds  = React.createClass({
     );
   }
 });
+ReactDOM.render(
+   <FeedTable url={'/packages/feeds.json'} />,
+   document.getElementById('fjobs')
+);

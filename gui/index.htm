@@ -15,10 +15,7 @@
    <script src="gui/build/react.js"></script>
    <script src="gui/build/react-dom.js"></script>
    <script src="gui/js/browser.min.js"></script>
-   
-   <!--	Apps	-->
-   <script type="text/javascript" src="gui/bundle.js"></script>
-    
+
    <!--	Tab icon	-->
    <link rel="shortcut icon" href="gui/images/logo.png" />
 </head>
@@ -74,167 +71,6 @@
       <div id = "vjobs" style="display:none">Vectors</div>
    </div>
    
-<script type="text/babel">
-//Active Job Tracker
-var JobTable = React.createClass({
-  loadJobsFromServer: function() {
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
-  },
-  getInitialState: function() {
-    return {data: []};
-  },
-  componentDidMount: function() {
-    this.loadJobsFromServer();
-    setInterval(this.loadJobsFromServer, this.props.pollInterval);
-  },
-  render: function() {
-    return (
-      <Job data = {this.state.data} />
-    );
-  }
-});
-
-var killJob = function(event) {
-   console.log(event);
-   //this.setState({data: "badfa"});
-   
-   var qstring = "UPDATE Jobs SET Active = 0 where ID = " + event.ID
-   
-   //DB UPDATE QUERY
-    $.ajax({
-      url: '/dbupdate?qstring=' + btoa(qstring),
-      dataType: 'json',
-      cache: false,
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }
-    });
-
-   var qstring = "UPDATE Jobs SET Enabled = 0 where ID = " + event.ID
-   
-   //DB UPDATE QUERY
-    $.ajax({
-      url: '/dbupdate?qstring=' + btoa(qstring),
-      dataType: 'json',
-      cache: false,
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }
-    });
-
-}
-
-//Build Job Table
-var Job = React.createClass({
-
-   render: function() {
-      //this.handleClick("asdf");
-      //console.log(this.props.data)
-      var blah = "ASDFASD"
-
-      var jobNodes = this.props.data.map(function(job, blah) {
-
-      if (job.Enabled == 1) { var runningJob = 'gui/images/loader.gif'; } else { var runningJob = '';}
-   
-            
-            
-      if (job.Active == "1"){
-         //Build Job Table
-         return (
-            <span>
-            <img style={{float:'right'}} src = {runningJob} />
-            <span style={{float:'left'}}>{job.Name}</span>
-            <div id = "job_cancel_icon" onClick={killJob.bind(this, job)} name = {job.ID}  style={{float:'right'}}><span className = "icon-cancel-circle"></span></div>
-            <br /><br />
-            </span>
-         );
-      }
-
-      });
-      return (
-      <b>{jobNodes}</b>
-      );
-   }
-});
-
-
-
-var qstring = "SELECT * from Jobs"
-
-ReactDOM.render(
-   <JobTable url={'/dbquery?qstring=' + btoa(qstring)} pollInterval={1000} />,
-   document.getElementById('ajobs')
-);
-
-
-
-ReactDOM.render(
-   <FeedTable url={'/packages/feeds.json'} />,
-   document.getElementById('fjobs')
-);
-
-//Get Installed Vectors
-var VectorTable = React.createClass({
-  getInitialState: function() {
-    return {data: []};
-  },
-  componentDidMount: function() {
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
-  },
-
-  render: function() {
-    return (
-      <AvailableVectors data = {this.state.data} />
-    );
-  }
-});
-var handleClick = function(vector) {
-      console.log(vector);
-}
-var AvailableVectors  = React.createClass({
-  render: function() {
-   return (
-      <b>
-      {this.props.data.map(function(vector) {
-         return (
-            <span>
-            <div id = "job_cancel_icon"  style={{float:'left'}} onClick={handleClick.bind(this, vector)} value = "tmp"><span className = "icon-plus"></span></div>
-
-            <span style={{float:'left'}}>{vector.Name}</span>
-            <br /><br />
-            </span>
-         );
-      })}
-      </b>
-    );
-   }
-});
-ReactDOM.render(
-   <VectorTable url={'/packages/vectors.json'} />,
-   document.getElementById('vjobs')
-);
-</script> 
-   
    <!-- Feed Jobs -->
    <div id = "sidebarcont">
    
@@ -246,13 +82,7 @@ ReactDOM.render(
       
    
 </div>
-<script>
 
-
-   
-   
-   //$("#jobs").show();
-</script>
 <div id = "notifications" style="display:none"></div>
 <div id = "help" style="display:none"></div>
    
@@ -260,7 +90,7 @@ ReactDOM.render(
 <!-- Title Pane -->
 <div id = "topnav">
    <div id = "nav_cont">
-      <span class = "title">Subterfuge</span>
+      <span class = "title">Subterfuge</span><div id = "world"></div>
    </div>
 
    <div id = "startpwn" onclick="startpwn(this.id)">
@@ -304,262 +134,18 @@ ReactDOM.render(
       <div id = "feed_tbox"><span class = "feed_title"><b>Feeds ></b></span></div>
       <div id = "feed_tbox"><span class = "feed_title"><span name = "feed_title" class="hostsfeed" onclick="showFeed(this)" >Hosts</span></span></div>
       <div id = "feed_tbox"><span class = "feed_title"><span name = "feed_title" class="lootfeed" onclick="showFeed(this)">Loot</span><div id = "lootnotificationbox"></div></span></div>
-      
-   <script type="text/babel">
-      var LootNotification = React.createClass({
-        render: function() {
-          return (
-            <div id = "notificationbox">5</div>
-          );
-        }
-      });
-      ReactDOM.render(
-        <LootNotification />,
-        document.getElementById('lootnotificationbox')
-      );
-    
-    /*
-    var newloot = 0
-    
-      ReactDOM.render(
-        <span id = "notificationbox_b"><center><b>{newloot}</b></center></span>,
-        document.getElementById('notificationbox')
-      );
-      
-   //Track loot values
-   //result = dbQuery("select * from Hosts")
    
-   //alert(result)
-   */
-      
-    </script>
-
-      
-      
    </div>
 </div>
 
 <div id = "hostcont">
 
-
-
-
    <!-- Hosts Feed --> 
    <div id = "hostsfeed" name = "feedcont"></div> <!-- Host Container -->
 
-       
-         
-<script type="text/babel">
-//HostList
-//Track & Update Hosts
-var HostList = React.createClass({
-  loadHostsFromServer: function() {
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
-  },
-  getInitialState: function() {
-    return {data: []};
-  },
-  componentDidMount: function() {
-    this.loadHostsFromServer();
-    setInterval(this.loadHostsFromServer, this.props.pollInterval);
-  },
-  
-
-  render: function() {
-    return (
-      <Host data = {this.state.data} />
-    );
-  }
-});
-
-//Host
-//Build Host Columns
-var Host = React.createClass({
-  render: function() {
-    var hostNodes = this.props.data.map(function(host) {
-      //Build Host Rows
-      return (
-      <div id = "hostrow">
-         <div id = "hostfill">
-            <div id = "hostdetails">
-              <center><span className = "hostdetails">
-                {host.Host}
-              </span></center>
-              <span className="hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IP Address</span>
-            </div>
-            <div id = "hostdetails">
-               <center><span className = "hostdetails">{host.OS}</span></center>
-               <span className = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OS</span>
-            </div>
-            <div id = "hostdetails">
-               <span className = "hostdetails"><div id = "lootbox" className = "loot"><center>10</center></div></span>
-               <span className = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loot</span>
-            </div>
-            <div id = "hostdetails">
-               <center><span className = "hostdetails">{host.LastActive}</span></center>
-               <span className = "hostdescription">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Last Active</span>
-            </div>
-         </div>
-      </div>
-      );
-    });
-    return (
-    <b>{hostNodes}</b>
-
-    );
-  }
-});
-
-var qstring = "SELECT * from Hosts"
-
-ReactDOM.render(
-   <HostList url={'/dbquery?qstring=' + btoa(qstring)} pollInterval={2000} />,
-   document.getElementById('hostsfeed')
-);
-</script>
-         
-
-   
-   
    <!-- Loot Feed --> 
    <div id = "lootfeed" name = "feedcont"></div> <!-- Loot Container -->
-   
-<script type="text/babel">
-//LootTable
-//Track & Update Loot
-var LootTable = React.createClass({
-  loadLootFromServer: function() {
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
-    
-      /*console.log(this.state.data);
-      var json = this.state.data;
-      for(var i = 0; i < json.length; i++) {
-         var obj = json[i];
-         console.log(obj.id);
-      }*/
-  },
-  getInitialState: function() {
-    return {data: []};
-  },
-  componentDidMount: function() {
-    this.loadLootFromServer();
-    setInterval(this.loadLootFromServer, this.props.pollInterval);
-  },
-  
-  //var tmp = this.state.data;
-  
 
-  render: function() {
-    return (
-      <Loot data = {this.state.data} />
-      
-    );
-  }
-});
-
-
-      /*
-      if ({loot.New} == 1){
-         newLoot = newLoot + 1;
-         alert(newLoot);
-      }*/
-
-var newLoot = 0;
-
-//Loot
-//Build Loot Table
-var LootRow = React.createClass({
-   render: function() {
-
-      var details = this.props.loot.Details.split("#")
-      
-      var source = details[0]
-      var protocol = details[1]
-      var type = details[2]
-      var loot = details[3]
-      
-      return (
-         <tr className={"lootrow"+(this.props.loot.ID%2 ? "a":"b")}>>
-            <td>{source}</td>
-            <td>{protocol}</td>
-            <td>{type}</td>
-            <td>{loot}</td>
-            <td>{this.props.loot.Datetime}</td>
-         </tr>
-      );
-   }
-});
-
-
-var Loot = React.createClass({
-  render: function() {
-    var rows = [];
-    var lootNodes = this.props.data.forEach(function(loot) {
-      if (loot.ID == "1") {
-         newLoot = 0;
-      }
-      if (loot.New == "1") {
-         newLoot ++;
-         
-      }
-
-      rows.push(<LootRow loot={loot} key={loot.ID} />)
-      
-      });
-      
-      //Set Loot Indicator
-      if (newLoot != 0) {
-         $(document.getElementById("lootnotificationbox")).show();
-         document.getElementById("lootnotificationbox").innerHTML = '<div id = "notificationbox"><center><b>' + newLoot + '</b></center></div>';
-      }
-      else {
-         $(document.getElementById("lootnotificationbox")).hide();
-      } 
-    
-    
-      //Build Loot Table
-      //Do UNION join on HID to get host
-      return (
-         <table className="lootlist">
-            <thread>
-               <tr className="lootbar"><td>Source</td><td>Protocol</td><td>Type</td><td>Loot Details</td><td>Date</td></tr>
-            </thread>
-            <tbody>{rows}</tbody>
-         </table>
-      );
-    
-
-
-  }
-});
-
-var qstring = "SELECT * from Loot"
-
-ReactDOM.render(
-   <LootTable url={'/dbquery?qstring=' + btoa(qstring)} pollInterval={2000} />,
-   document.getElementById('lootfeed')
-);
-</script>   
 
 </div> <!-- Main Container -->
 
@@ -567,6 +153,6 @@ ReactDOM.render(
 
 
 <div id = "CheckIn"></div>
-
+<script type="text/javascript" src="gui/bundle.js"></script>
 </body>
 </html>
