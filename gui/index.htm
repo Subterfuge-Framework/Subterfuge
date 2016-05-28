@@ -9,11 +9,15 @@
    <script src="gui/js/functions.js"></script>
    <link href="gui/css/style.css" rel="stylesheet">
    <link href="gui/css/views.css" rel="stylesheet">
+   <link href="gui/css/sidebar.css" rel="stylesheet">
    <link rel='stylesheet' href='gui/css/fonts.css' type='text/css'/>
    
    <script src="gui/build/react.js"></script>
    <script src="gui/build/react-dom.js"></script>
    <script src="gui/js/browser.min.js"></script>
+   
+   <!--	Apps	-->
+   <script type="text/javascript" src="gui/bundle.js"></script>
     
    <!--	Tab icon	-->
    <link rel="shortcut icon" href="gui/images/logo.png" />
@@ -144,13 +148,13 @@ var Job = React.createClass({
    
             
             
-      if (job.Active = "1"){
+      if (job.Active == "1"){
          //Build Job Table
          return (
             <span>
-            <div id = "job_cancel_icon" onClick={killJob.bind(this, job)} name = {job.ID}  style={{float:'left'}}><span className = "icon-cancel-circle"></span></div>
             <img style={{float:'right'}} src = {runningJob} />
             <span style={{float:'left'}}>{job.Name}</span>
+            <div id = "job_cancel_icon" onClick={killJob.bind(this, job)} name = {job.ID}  style={{float:'right'}}><span className = "icon-cancel-circle"></span></div>
             <br /><br />
             </span>
          );
@@ -173,46 +177,7 @@ ReactDOM.render(
 );
 
 
-//Get Installed Feeds
-var FeedTable = React.createClass({
-  getInitialState: function() {
-    return {data: []};
-  },
-  componentDidMount: function() {
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
-  },
-  render: function() {
-    return (
-      <AvailableFeeds data = {this.state.data} />
-    );
-  }
-});
-var AvailableFeeds  = React.createClass({
-  render: function() {
-    var feedNodes = this.props.data.map(function(feed) {
-         return (
-            <span>
-            <div id = "job_cancel_icon" name = {feed.ID}  style={{float:'left'}}><span className = "icon-box-add"></span></div>
-            <span style={{float:'left'}}>{feed.Name}</span>
-            <br /><br />
-            </span>
-         );
-    });
-    return (
-    <b>{feedNodes}</b>
-    );
-  }
-});
+
 ReactDOM.render(
    <FeedTable url={'/packages/feeds.json'} />,
    document.getElementById('fjobs')
