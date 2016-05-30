@@ -154,6 +154,8 @@
 
 	function submitData(data) {
 	   $.post("/settings/", data);
+	   hideFeedForms();
+	   showFeeds();
 	}
 
 	var AvailableFeeds = _react2.default.createClass({

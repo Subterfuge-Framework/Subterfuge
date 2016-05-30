@@ -140,13 +140,12 @@ function hideFeedForms() {
 }
 
 function showFeeds() {
-   $(".feedformtitle").show();
+   $(".feedtitle").show();
 }
 
 function showFeedForm(id) {
    $("#" + id).show();
 }
-
 
 $(document).ready(function () {
    

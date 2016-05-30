@@ -61,7 +61,9 @@ var FeedForm  = React.createClass({
 });
 
 function submitData(data) {
-   $.post("/settings/", data);   
+   $.post("/settings/", data);
+   hideFeedForms();
+   showFeeds();
 }
       
 var AvailableFeeds  = React.createClass({
