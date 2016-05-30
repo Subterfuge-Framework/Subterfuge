@@ -50,23 +50,23 @@
 
 	var _feedtable2 = _interopRequireDefault(_feedtable);
 
-	var _loottable = __webpack_require__(160);
+	var _loottable = __webpack_require__(209);
 
 	var _loottable2 = _interopRequireDefault(_loottable);
 
-	var _vectortable = __webpack_require__(161);
+	var _vectortable = __webpack_require__(210);
 
 	var _vectortable2 = _interopRequireDefault(_vectortable);
 
-	var _jobtracker = __webpack_require__(162);
+	var _jobtracker = __webpack_require__(211);
 
 	var _jobtracker2 = _interopRequireDefault(_jobtracker);
 
-	var _lootnotification = __webpack_require__(163);
+	var _lootnotification = __webpack_require__(212);
 
 	var _lootnotification2 = _interopRequireDefault(_lootnotification);
 
-	var _hosttracker = __webpack_require__(164);
+	var _hosttracker = __webpack_require__(213);
 
 	var _hosttracker2 = _interopRequireDefault(_hosttracker);
 
@@ -86,55 +86,102 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
+	var _reactJsonschemaForm = __webpack_require__(160);
+
+	var _reactJsonschemaForm2 = _interopRequireDefault(_reactJsonschemaForm);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var classNames = __webpack_require__(208);
 
 	//Get Installed Feeds
 	var FeedTable = _react2.default.createClass({
-	  displayName: 'FeedTable',
+	   displayName: 'FeedTable',
 
-	  getInitialState: function getInitialState() {
-	    return { data: [] };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    $.ajax({
-	      url: this.props.url,
-	      dataType: 'json',
-	      cache: false,
-	      success: function (data) {
-	        this.setState({ data: data });
-	      }.bind(this),
-	      error: function (xhr, status, err) {
-	        console.error(this.props.url, status, err.toString());
-	      }.bind(this)
-	    });
-	  },
-	  render: function render() {
-	    return _react2.default.createElement(AvailableFeeds, { data: this.state.data });
-	  }
+	   getInitialState: function getInitialState() {
+	      return { data: [] };
+	   },
+	   componentDidMount: function componentDidMount() {
+	      $.ajax({
+	         url: this.props.url,
+	         dataType: 'json',
+	         cache: false,
+	         success: function (data) {
+	            this.setState({ data: data });
+	         }.bind(this),
+	         error: function (xhr, status, err) {
+	            console.error(this.props.url, status, err.toString());
+	         }.bind(this)
+	      });
+	   },
+	   render: function render() {
+	      return _react2.default.createElement(AvailableFeeds, { data: this.state.data });
+	   }
 	});
-	var AvailableFeeds = _react2.default.createClass({
-	  displayName: 'AvailableFeeds',
 
-	  render: function render() {
-	    var feedNodes = this.props.data.map(function (feed) {
+	var OpenFeed = function OpenFeed(event) {
+	   console.log(event);
+	   hideFeeds();
+	   showFeedForm(event.id);
+	};
+
+	var FeedForm = _react2.default.createClass({
+	   displayName: 'FeedForm',
+
+	   render: function render() {
+
+	      var formData = {};
+
+	      var log = function log(type) {
+	         return console.log.bind(console, type);
+	      };
+	      var onSubmit = function onSubmit(_ref) {
+	         var formData = _ref.formData;
+	         return submitData({ formData: formData });
+	      };
+
 	      return _react2.default.createElement(
-	        'div',
-	        { id: 'panelform' },
-	        _react2.default.createElement(
-	          'span',
-	          { style: { float: 'left' } },
-	          feed.Name
-	        ),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement('br', null)
+	         'div',
+	         { id: this.props.data.id, className: 'feedformbox' },
+	         _react2.default.createElement(_reactJsonschemaForm2.default, { schema: this.props.data,
+	            formData: formData,
+	            onChange: log("changed"),
+	            onSubmit: onSubmit,
+	            onError: log("errors") })
 	      );
-	    });
-	    return _react2.default.createElement(
-	      'b',
-	      null,
-	      feedNodes
-	    );
-	  }
+	   }
+	});
+
+	function submitData(data) {
+	   $.post("/settings/", data);
+	}
+
+	var AvailableFeeds = _react2.default.createClass({
+	   displayName: 'AvailableFeeds',
+
+	   render: function render() {
+	      var feedNodes = this.props.data.map(function (feed) {
+	         console.log(feed);
+	         return _react2.default.createElement(
+	            'div',
+	            { id: 'panelform', className: 'feedformtitle', key: feed.id },
+	            _react2.default.createElement(
+	               'span',
+	               { className: 'feedtitle', style: { float: 'left' }, onClick: OpenFeed.bind(this, feed) },
+	               feed.title
+	            ),
+	            _react2.default.createElement(FeedForm, { data: feed, key: feed.id }),
+	            _react2.default.createElement('br', null),
+	            _react2.default.createElement('br', null)
+	         );
+	      });
+
+	      return _react2.default.createElement(
+	         'b',
+	         null,
+	         feedNodes
+	      );
+	   }
 	});
 	_reactDom2.default.render(_react2.default.createElement(FeedTable, { url: '/packages/feeds.json' }), document.getElementById('fjobs'));
 
@@ -19746,6 +19793,8249 @@
 /* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _Form = __webpack_require__(161);
+
+	var _Form2 = _interopRequireDefault(_Form);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _Form2.default;
+
+/***/ },
+/* 161 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _SchemaField2 = __webpack_require__(162);
+
+	var _SchemaField3 = _interopRequireDefault(_SchemaField2);
+
+	var _TitleField2 = __webpack_require__(171);
+
+	var _TitleField3 = _interopRequireDefault(_TitleField2);
+
+	var _DescriptionField2 = __webpack_require__(172);
+
+	var _DescriptionField3 = _interopRequireDefault(_DescriptionField2);
+
+	var _ErrorList = __webpack_require__(196);
+
+	var _ErrorList2 = _interopRequireDefault(_ErrorList);
+
+	var _utils = __webpack_require__(163);
+
+	var _validate = __webpack_require__(197);
+
+	var _validate2 = _interopRequireDefault(_validate);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Form = function (_Component) {
+	  _inherits(Form, _Component);
+
+	  function Form(props) {
+	    _classCallCheck(this, Form);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Form).call(this, props));
+
+	    _this.onChange = function (formData) {
+	      var options = arguments.length <= 1 || arguments[1] === undefined ? { validate: false } : arguments[1];
+
+	      var mustValidate = _this.props.liveValidate || options.validate;
+	      var state = { status: "editing", formData: formData };
+	      if (mustValidate) {
+	        var _this$validate = _this.validate(formData);
+
+	        var errors = _this$validate.errors;
+	        var errorSchema = _this$validate.errorSchema;
+
+	        state = _extends({}, state, { errors: errors, errorSchema: errorSchema });
+	      }
+	      (0, _utils.setState)(_this, state, function () {
+	        if (_this.props.onChange) {
+	          _this.props.onChange(_this.state);
+	        }
+	      });
+	    };
+
+	    _this.onSubmit = function (event) {
+	      event.preventDefault();
+	      _this.setState({ status: "submitted" });
+
+	      var _this$validate2 = _this.validate(_this.state.formData);
+
+	      var errors = _this$validate2.errors;
+	      var errorSchema = _this$validate2.errorSchema;
+
+	      if (Object.keys(errors).length > 0) {
+	        (0, _utils.setState)(_this, { errors: errors, errorSchema: errorSchema }, function () {
+	          if (_this.props.onError) {
+	            _this.props.onError(errors);
+	          } else {
+	            console.error("Form validation failed", errors);
+	          }
+	        });
+	        return;
+	      } else if (_this.props.onSubmit) {
+	        _this.props.onSubmit(_this.state);
+	      }
+	      _this.setState({ status: "initial", errors: [], errorSchema: {} });
+	    };
+
+	    _this.state = _this.getStateFromProps(props);
+	    return _this;
+	  }
+
+	  _createClass(Form, [{
+	    key: "componentWillReceiveProps",
+	    value: function componentWillReceiveProps(nextProps) {
+	      this.setState(this.getStateFromProps(nextProps));
+	    }
+	  }, {
+	    key: "getStateFromProps",
+	    value: function getStateFromProps(props) {
+	      var state = this.state || {};
+	      var schema = "schema" in props ? props.schema : this.props.schema;
+	      var uiSchema = "uiSchema" in props ? props.uiSchema : this.props.uiSchema;
+	      var edit = typeof props.formData !== "undefined";
+	      var liveValidate = props.liveValidate || this.props.liveValidate;
+	      var mustValidate = edit && liveValidate;
+	      var definitions = schema.definitions;
+
+	      var formData = (0, _utils.getDefaultFormState)(schema, props.formData, definitions);
+
+	      var _ref = mustValidate ? this.validate(formData, schema) : {
+	        errors: state.errors || [],
+	        errorSchema: state.errorSchema || {}
+	      };
+
+	      var errors = _ref.errors;
+	      var errorSchema = _ref.errorSchema;
+
+	      var idSchema = (0, _utils.toIdSchema)(schema, uiSchema["ui:rootFieldId"], definitions);
+	      return { status: "initial", formData: formData, edit: edit, errors: errors, errorSchema: errorSchema, idSchema: idSchema };
+	    }
+	  }, {
+	    key: "shouldComponentUpdate",
+	    value: function shouldComponentUpdate(nextProps, nextState) {
+	      return (0, _utils.shouldRender)(this, nextProps, nextState);
+	    }
+	  }, {
+	    key: "validate",
+	    value: function validate(formData, schema) {
+	      var validate = this.props.validate;
+
+	      return (0, _validate2.default)(formData, schema || this.props.schema, validate);
+	    }
+	  }, {
+	    key: "renderErrors",
+	    value: function renderErrors() {
+	      var _state = this.state;
+	      var status = _state.status;
+	      var errors = _state.errors;
+
+	      if (status !== "editing" && errors.length) {
+	        return _react2.default.createElement(_ErrorList2.default, { errors: errors });
+	      }
+	      return null;
+	    }
+	  }, {
+	    key: "getRegistry",
+	    value: function getRegistry() {
+	      // For BC, accept passed SchemaField and TitleField props and pass them to
+	      // the "fields" registry one.
+	      var _SchemaField = this.props.SchemaField || _SchemaField3.default;
+	      var _TitleField = this.props.TitleField || _TitleField3.default;
+	      var _DescriptionField = this.props.DescriptionField || _DescriptionField3.default;
+
+	      var fields = Object.assign({
+	        SchemaField: _SchemaField,
+	        TitleField: _TitleField,
+	        DescriptionField: _DescriptionField
+	      }, this.props.fields);
+	      return {
+	        fields: fields,
+	        widgets: this.props.widgets || {},
+	        definitions: this.props.schema.definitions || {}
+	      };
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      var _props = this.props;
+	      var children = _props.children;
+	      var schema = _props.schema;
+	      var uiSchema = _props.uiSchema;
+	      var safeRenderCompletion = _props.safeRenderCompletion;
+	      var _state2 = this.state;
+	      var formData = _state2.formData;
+	      var errorSchema = _state2.errorSchema;
+	      var idSchema = _state2.idSchema;
+
+	      var registry = this.getRegistry();
+	      var _SchemaField = registry.fields.SchemaField;
+	      return _react2.default.createElement(
+	        "form",
+	        { className: "rjsf", onSubmit: this.onSubmit },
+	        this.renderErrors(),
+	        _react2.default.createElement(_SchemaField, {
+	          schema: schema,
+	          uiSchema: uiSchema,
+	          errorSchema: errorSchema,
+	          idSchema: idSchema,
+	          formData: formData,
+	          onChange: this.onChange,
+	          registry: registry,
+	          safeRenderCompletion: safeRenderCompletion }),
+	        children ? children : _react2.default.createElement(
+	          "p",
+	          null,
+	          _react2.default.createElement(
+	            "button",
+	            { type: "submit", className: "btn btn-info" },
+	            "Submit"
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return Form;
+	}(_react.Component);
+
+	Form.defaultProps = {
+	  uiSchema: {},
+	  liveValidate: false,
+	  safeRenderCompletion: false
+	};
+	exports.default = Form;
+
+
+	if (process.env.NODE_ENV !== "production") {
+	  Form.propTypes = {
+	    schema: _react.PropTypes.object.isRequired,
+	    uiSchema: _react.PropTypes.object,
+	    formData: _react.PropTypes.any,
+	    widgets: _react.PropTypes.objectOf(_react.PropTypes.func),
+	    fields: _react.PropTypes.objectOf(_react.PropTypes.func),
+	    onChange: _react.PropTypes.func,
+	    onError: _react.PropTypes.func,
+	    onSubmit: _react.PropTypes.func,
+	    liveValidate: _react.PropTypes.bool,
+	    safeRenderCompletion: _react.PropTypes.bool
+	  };
+	}
+
+	exports.default = Form;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 162 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _utils = __webpack_require__(163);
+
+	var _ArrayField = __webpack_require__(189);
+
+	var _ArrayField2 = _interopRequireDefault(_ArrayField);
+
+	var _BooleanField = __webpack_require__(190);
+
+	var _BooleanField2 = _interopRequireDefault(_BooleanField);
+
+	var _NumberField = __webpack_require__(192);
+
+	var _NumberField2 = _interopRequireDefault(_NumberField);
+
+	var _ObjectField = __webpack_require__(194);
+
+	var _ObjectField2 = _interopRequireDefault(_ObjectField);
+
+	var _StringField = __webpack_require__(193);
+
+	var _StringField2 = _interopRequireDefault(_StringField);
+
+	var _UnsupportedField = __webpack_require__(195);
+
+	var _UnsupportedField2 = _interopRequireDefault(_UnsupportedField);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var REQUIRED_FIELD_SYMBOL = "*";
+	var COMPONENT_TYPES = {
+	  "array": _ArrayField2.default,
+	  "boolean": _BooleanField2.default,
+	  "integer": _NumberField2.default,
+	  "number": _NumberField2.default,
+	  "object": _ObjectField2.default,
+	  "string": _StringField2.default
+	};
+
+	function getFieldComponent(schema, uiSchema, fields) {
+	  var field = uiSchema["ui:field"];
+	  if (typeof field === "function") {
+	    return field;
+	  }
+	  if (typeof field === "string" && field in fields) {
+	    return fields[field];
+	  }
+	  return COMPONENT_TYPES[schema.type] || _UnsupportedField2.default;
+	}
+
+	function getLabel(label, required, id) {
+	  if (!label) {
+	    return null;
+	  }
+	  return _react2.default.createElement(
+	    "label",
+	    { className: "control-label", htmlFor: id },
+	    required ? label + REQUIRED_FIELD_SYMBOL : label
+	  );
+	}
+
+	function ErrorList(_ref) {
+	  var errors = _ref.errors;
+
+	  return _react2.default.createElement(
+	    "div",
+	    null,
+	    _react2.default.createElement("p", null),
+	    _react2.default.createElement(
+	      "ul",
+	      { className: "error-detail bs-callout bs-callout-info" },
+	      (errors || []).map(function (error, index) {
+	        return _react2.default.createElement(
+	          "li",
+	          { className: "text-danger", key: index },
+	          error
+	        );
+	      })
+	    )
+	  );
+	}
+
+	function Wrapper(_ref2) {
+	  var type = _ref2.type;
+	  var classNames = _ref2.classNames;
+	  var errorSchema = _ref2.errorSchema;
+	  var label = _ref2.label;
+	  var hidden = _ref2.hidden;
+	  var help = _ref2.help;
+	  var required = _ref2.required;
+	  var displayLabel = _ref2.displayLabel;
+	  var id = _ref2.id;
+	  var children = _ref2.children;
+
+	  if (hidden) {
+	    return children;
+	  }
+	  var errors = errorSchema.__errors;
+	  var isError = errors && errors.length > 0;
+	  var classList = ["form-group", "field", "field-" + type, isError ? "field-error has-error" : "", classNames].join(" ").trim();
+	  return _react2.default.createElement(
+	    "div",
+	    { className: classList },
+	    displayLabel && label ? getLabel(label, required, id) : null,
+	    children,
+	    isError ? _react2.default.createElement(ErrorList, { errors: errors }) : _react2.default.createElement("div", null),
+	    help ? _react2.default.createElement(
+	      "p",
+	      { className: "help-block" },
+	      help
+	    ) : null
+	  );
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  Wrapper.propTypes = {
+	    type: _react.PropTypes.string.isRequired,
+	    id: _react.PropTypes.string,
+	    classNames: _react2.default.PropTypes.string,
+	    label: _react.PropTypes.string,
+	    hidden: _react.PropTypes.bool,
+	    help: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.element]),
+	    required: _react.PropTypes.bool,
+	    displayLabel: _react.PropTypes.bool,
+	    children: _react2.default.PropTypes.node.isRequired
+	  };
+	}
+
+	Wrapper.defaultProps = {
+	  classNames: "",
+	  errorSchema: { errors: [] },
+	  hidden: false,
+	  required: false,
+	  displayLabel: true
+	};
+
+	function SchemaField(props) {
+	  var uiSchema = props.uiSchema;
+	  var errorSchema = props.errorSchema;
+	  var idSchema = props.idSchema;
+	  var name = props.name;
+	  var required = props.required;
+	  var registry = props.registry;
+	  var definitions = registry.definitions;
+	  var fields = registry.fields;
+
+	  var schema = (0, _utils.retrieveSchema)(props.schema, definitions);
+	  var FieldComponent = getFieldComponent(schema, uiSchema, fields);
+	  var disabled = Boolean(props.disabled || uiSchema["ui:disabled"]);
+	  var readonly = Boolean(props.readonly || uiSchema["ui:readonly"]);
+
+	  if (Object.keys(schema).length === 0) {
+	    return _react2.default.createElement("div", null);
+	  }
+
+	  var displayLabel = true;
+	  if (schema.type === "array") {
+	    displayLabel = (0, _utils.isMultiSelect)(schema);
+	  }
+	  if (schema.type === "object") {
+	    displayLabel = false;
+	  }
+	  if (schema.type === "boolean" && !uiSchema["ui:widget"]) {
+	    displayLabel = false;
+	  }
+
+	  return _react2.default.createElement(
+	    Wrapper,
+	    {
+	      label: props.schema.title || schema.title || name,
+	      errorSchema: errorSchema,
+	      hidden: uiSchema["ui:widget"] === "hidden",
+	      help: uiSchema["ui:help"],
+	      required: required,
+	      type: schema.type,
+	      displayLabel: displayLabel,
+	      id: idSchema.id,
+	      classNames: uiSchema.classNames },
+	    _react2.default.createElement(FieldComponent, _extends({}, props, {
+	      schema: schema,
+	      disabled: disabled,
+	      readonly: readonly }))
+	  );
+	}
+
+	SchemaField.defaultProps = {
+	  uiSchema: {},
+	  errorSchema: {},
+	  idSchema: {},
+	  registry: (0, _utils.getDefaultRegistry)(),
+	  disabled: false,
+	  readonly: false
+	};
+
+	if (process.env.NODE_ENV !== "production") {
+	  SchemaField.propTypes = {
+	    schema: _react.PropTypes.object.isRequired,
+	    uiSchema: _react.PropTypes.object,
+	    idSchema: _react.PropTypes.object,
+	    formData: _react.PropTypes.any,
+	    errorSchema: _react.PropTypes.object,
+	    registry: _react.PropTypes.shape({
+	      widgets: _react.PropTypes.objectOf(_react.PropTypes.func).isRequired,
+	      fields: _react.PropTypes.objectOf(_react.PropTypes.func).isRequired,
+	      definitions: _react.PropTypes.object.isRequired
+	    })
+	  };
+	}
+
+	exports.default = SchemaField;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 163 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(setImmediate) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+	exports.getDefaultRegistry = getDefaultRegistry;
+	exports.defaultFieldValue = defaultFieldValue;
+	exports.getAlternativeWidget = getAlternativeWidget;
+	exports.getDefaultFormState = getDefaultFormState;
+	exports.isObject = isObject;
+	exports.mergeObjects = mergeObjects;
+	exports.asNumber = asNumber;
+	exports.orderProperties = orderProperties;
+	exports.isMultiSelect = isMultiSelect;
+	exports.isFixedItems = isFixedItems;
+	exports.allowAdditionalItems = allowAdditionalItems;
+	exports.optionsList = optionsList;
+	exports.retrieveSchema = retrieveSchema;
+	exports.shouldRender = shouldRender;
+	exports.toIdSchema = toIdSchema;
+	exports.parseDateString = parseDateString;
+	exports.toDateString = toDateString;
+	exports.pad = pad;
+	exports.setState = setState;
+
+	__webpack_require__(165);
+
+	var _deeper = __webpack_require__(166);
+
+	var _deeper2 = _interopRequireDefault(_deeper);
+
+	var _TitleField = __webpack_require__(171);
+
+	var _TitleField2 = _interopRequireDefault(_TitleField);
+
+	var _DescriptionField = __webpack_require__(172);
+
+	var _DescriptionField2 = _interopRequireDefault(_DescriptionField);
+
+	var _PasswordWidget = __webpack_require__(173);
+
+	var _PasswordWidget2 = _interopRequireDefault(_PasswordWidget);
+
+	var _RadioWidget = __webpack_require__(175);
+
+	var _RadioWidget2 = _interopRequireDefault(_RadioWidget);
+
+	var _UpDownWidget = __webpack_require__(176);
+
+	var _UpDownWidget2 = _interopRequireDefault(_UpDownWidget);
+
+	var _RangeWidget = __webpack_require__(177);
+
+	var _RangeWidget2 = _interopRequireDefault(_RangeWidget);
+
+	var _SelectWidget = __webpack_require__(178);
+
+	var _SelectWidget2 = _interopRequireDefault(_SelectWidget);
+
+	var _TextWidget = __webpack_require__(179);
+
+	var _TextWidget2 = _interopRequireDefault(_TextWidget);
+
+	var _DateWidget = __webpack_require__(180);
+
+	var _DateWidget2 = _interopRequireDefault(_DateWidget);
+
+	var _DateTimeWidget = __webpack_require__(181);
+
+	var _DateTimeWidget2 = _interopRequireDefault(_DateTimeWidget);
+
+	var _AltDateWidget = __webpack_require__(182);
+
+	var _AltDateWidget2 = _interopRequireDefault(_AltDateWidget);
+
+	var _AltDateTimeWidget = __webpack_require__(183);
+
+	var _AltDateTimeWidget2 = _interopRequireDefault(_AltDateTimeWidget);
+
+	var _EmailWidget = __webpack_require__(184);
+
+	var _EmailWidget2 = _interopRequireDefault(_EmailWidget);
+
+	var _URLWidget = __webpack_require__(185);
+
+	var _URLWidget2 = _interopRequireDefault(_URLWidget);
+
+	var _TextareaWidget = __webpack_require__(186);
+
+	var _TextareaWidget2 = _interopRequireDefault(_TextareaWidget);
+
+	var _HiddenWidget = __webpack_require__(187);
+
+	var _HiddenWidget2 = _interopRequireDefault(_HiddenWidget);
+
+	var _ColorWidget = __webpack_require__(188);
+
+	var _ColorWidget2 = _interopRequireDefault(_ColorWidget);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+	var altWidgetMap = {
+	  boolean: {
+	    radio: _RadioWidget2.default,
+	    select: _SelectWidget2.default,
+	    hidden: _HiddenWidget2.default
+	  },
+	  string: {
+	    password: _PasswordWidget2.default,
+	    radio: _RadioWidget2.default,
+	    select: _SelectWidget2.default,
+	    textarea: _TextareaWidget2.default,
+	    hidden: _HiddenWidget2.default,
+	    date: _DateWidget2.default,
+	    datetime: _DateTimeWidget2.default,
+	    "alt-date": _AltDateWidget2.default,
+	    "alt-datetime": _AltDateTimeWidget2.default,
+	    color: _ColorWidget2.default
+	  },
+	  number: {
+	    updown: _UpDownWidget2.default,
+	    range: _RangeWidget2.default,
+	    hidden: _HiddenWidget2.default
+	  },
+	  integer: {
+	    updown: _UpDownWidget2.default,
+	    range: _RangeWidget2.default,
+	    hidden: _HiddenWidget2.default
+	  }
+	};
+
+	var stringFormatWidgets = {
+	  "date-time": _DateTimeWidget2.default,
+	  "date": _DateWidget2.default,
+	  "email": _EmailWidget2.default,
+	  "hostname": _TextWidget2.default,
+	  "ipv4": _TextWidget2.default,
+	  "ipv6": _TextWidget2.default,
+	  "uri": _URLWidget2.default
+	};
+
+	function getDefaultRegistry() {
+	  return {
+	    fields: {
+	      // Prevent a bug where SchemaField is undefined when imported via Babel.
+	      // This seems to have been introduced when upgrading React from 0.14 to to
+	      // 15.0, which now seems to prevent cyclic references of exported
+	      // components.
+	      // Investigation hint: getDefaultRegistry is called from within
+	      // SchemaField itself.
+	      SchemaField: __webpack_require__(162).default,
+	      TitleField: _TitleField2.default,
+	      DescriptionField: _DescriptionField2.default
+	    },
+	    widgets: {},
+	    definitions: {}
+	  };
+	}
+
+	function defaultFieldValue(formData, schema) {
+	  return typeof formData === "undefined" ? schema.default : formData;
+	}
+
+	function getAlternativeWidget(schema, widget) {
+	  var registeredWidgets = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+	  var type = schema.type;
+	  var format = schema.format;
+
+	  if (typeof widget === "function") {
+	    return widget;
+	  }
+	  if (typeof widget !== "string") {
+	    throw new Error("Unsupported widget definition: " + (typeof widget === "undefined" ? "undefined" : _typeof(widget)));
+	  }
+	  if (widget in registeredWidgets) {
+	    return registeredWidgets[widget];
+	  }
+	  if (!altWidgetMap.hasOwnProperty(type)) {
+	    throw new Error("No alternative widget for type " + type);
+	  }
+	  if (altWidgetMap[type].hasOwnProperty(widget)) {
+	    return altWidgetMap[type][widget];
+	  }
+	  if (type === "string" && stringFormatWidgets.hasOwnProperty(format)) {
+	    return stringFormatWidgets[format];
+	  }
+	  var info = type === "string" && format ? "/" + format : "";
+	  throw new Error("No alternative widget \"" + widget + "\" for type " + type + info);
+	}
+
+	function computeDefaults(schema, parentDefaults) {
+	  var definitions = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+	  // Compute the defaults recursively: give highest priority to deepest nodes.
+	  var defaults = parentDefaults;
+	  if (isObject(defaults) && isObject(schema.default)) {
+	    // For object defaults, only override parent defaults that are defined in
+	    // schema.default.
+	    defaults = mergeObjects(defaults, schema.default);
+	  } else if ("default" in schema) {
+	    // Use schema defaults for this node.
+	    defaults = schema.default;
+	  } else if ("enum" in schema && Array.isArray(schema.enum)) {
+	    // For enum with no defined default, select the first entry.
+	    defaults = schema.enum[0];
+	  } else if ("$ref" in schema) {
+	    // Use referenced schema defaults for this node.
+	    var refSchema = findSchemaDefinition(schema.$ref, definitions);
+	    return computeDefaults(refSchema, defaults, definitions);
+	  } else if (isFixedItems(schema)) {
+	    defaults = schema.items.map(function (itemSchema) {
+	      return computeDefaults(itemSchema, undefined, definitions);
+	    });
+	  }
+	  // Not defaults defined for this node, fallback to generic typed ones.
+	  if (typeof defaults === "undefined") {
+	    defaults = schema.default;
+	  }
+	  // We need to recur for object schema inner default values.
+	  if (schema.type === "object") {
+	    return Object.keys(schema.properties).reduce(function (acc, key) {
+	      // Compute the defaults for this node, with the parent defaults we might
+	      // have from a previous run: defaults[key].
+	      acc[key] = computeDefaults(schema.properties[key], (defaults || {})[key], definitions);
+	      return acc;
+	    }, {});
+	  }
+	  return defaults;
+	}
+
+	function getDefaultFormState(_schema, formData) {
+	  var definitions = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+	  if (!isObject(_schema)) {
+	    throw new Error("Invalid schema: " + _schema);
+	  }
+	  var schema = retrieveSchema(_schema, definitions);
+	  var defaults = computeDefaults(schema, _schema.default, definitions);
+	  if (typeof formData === "undefined") {
+	    // No form data? Use schema defaults.
+	    return defaults;
+	  }
+	  if (isObject(formData)) {
+	    // Override schema defaults with form data.
+	    return mergeObjects(defaults, formData);
+	  }
+	  return formData || defaults;
+	}
+
+	function isObject(thing) {
+	  return (typeof thing === "undefined" ? "undefined" : _typeof(thing)) === "object" && thing !== null && !Array.isArray(thing);
+	}
+
+	function mergeObjects(obj1, obj2) {
+	  var concatArrays = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+
+	  // Recursively merge deeply nested objects.
+	  var acc = Object.assign({}, obj1); // Prevent mutation of source object.
+	  return Object.keys(obj2).reduce(function (acc, key) {
+	    var left = obj1[key],
+	        right = obj2[key];
+	    if (obj1.hasOwnProperty(key) && isObject(right)) {
+	      acc[key] = mergeObjects(left, right, concatArrays);
+	    } else if (concatArrays && Array.isArray(left) && Array.isArray(right)) {
+	      acc[key] = left.concat(right);
+	    } else {
+	      acc[key] = right;
+	    }
+	    return acc;
+	  }, acc);
+	}
+
+	function asNumber(value) {
+	  if (/\.$/.test(value)) {
+	    // "3." can't really be considered a number even if it parses in js. The
+	    // user is most likely entering a float.
+	    return value;
+	  }
+	  var n = Number(value);
+	  var valid = typeof n === "number" && !Number.isNaN(n);
+	  return valid ? n : value;
+	}
+
+	function orderProperties(properties, order) {
+	  if (!Array.isArray(order)) {
+	    return properties;
+	  }
+	  if (order.length !== properties.length) {
+	    throw new Error("uiSchema order list length should match object properties length");
+	  }
+	  var fingerprint = function fingerprint(arr) {
+	    return [].slice.call(arr).sort().toString();
+	  };
+	  if (fingerprint(order) !== fingerprint(properties)) {
+	    throw new Error("uiSchema order list does not match object properties list");
+	  }
+	  return order;
+	}
+
+	function isMultiSelect(schema) {
+	  return Array.isArray(schema.items.enum) && schema.uniqueItems;
+	}
+
+	function isFixedItems(schema) {
+	  return Array.isArray(schema.items) && schema.items.length > 0 && schema.items.every(function (item) {
+	    return isObject(item);
+	  });
+	}
+
+	function allowAdditionalItems(schema) {
+	  if (schema.additionalItems === true) {
+	    console.warn("additionalItems=true is currently not supported");
+	  }
+	  return isObject(schema.additionalItems);
+	}
+
+	function optionsList(schema) {
+	  return schema.enum.map(function (value, i) {
+	    var label = schema.enumNames && schema.enumNames[i] || String(value);
+	    return { label: label, value: value };
+	  });
+	}
+
+	function findSchemaDefinition($ref) {
+	  var definitions = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+	  // Extract and use the referenced definition if we have it.
+	  var match = /#\/definitions\/(.*)$/.exec($ref);
+	  if (match && match[1] && definitions.hasOwnProperty(match[1])) {
+	    return definitions[match[1]];
+	  }
+	  // No matching definition found, that's an error (bogus schema?)
+	  throw new Error("Could not find a definition for " + $ref + ".");
+	}
+
+	function retrieveSchema(schema) {
+	  var definitions = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+	  // No $ref attribute found, returning the original schema.
+	  if (!schema.hasOwnProperty("$ref")) {
+	    return schema;
+	  }
+	  // Retrieve the referenced schema definition.
+	  var $refSchema = findSchemaDefinition(schema.$ref, definitions);
+	  // Drop the $ref property of the source schema.
+	  var $ref = schema.$ref;
+
+	  var localSchema = _objectWithoutProperties(schema, ["$ref"]); // eslint-disable-line no-unused-vars
+	  // Update referenced schema definition with local schema properties.
+
+
+	  return _extends({}, $refSchema, localSchema);
+	}
+
+	function shouldRender(comp, nextProps, nextState) {
+	  return !(0, _deeper2.default)(comp.props, nextProps) || !(0, _deeper2.default)(comp.state, nextState);
+	}
+
+	function toIdSchema(schema, id, definitions) {
+	  var idSchema = { id: id || "root" };
+	  if ("$ref" in schema) {
+	    var _schema = retrieveSchema(schema, definitions);
+	    return toIdSchema(_schema, id, definitions);
+	  }
+	  if ("items" in schema) {
+	    return toIdSchema(schema.items, id, definitions);
+	  }
+	  if (schema.type !== "object") {
+	    return idSchema;
+	  }
+	  for (var name in schema.properties || {}) {
+	    var field = schema.properties[name];
+	    var fieldId = idSchema.id + "_" + name;
+	    idSchema[name] = toIdSchema(field, fieldId, definitions);
+	  }
+	  return idSchema;
+	}
+
+	function parseDateString(dateString) {
+	  var includeTime = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
+
+	  if (!dateString) {
+	    return {
+	      year: -1,
+	      month: -1,
+	      day: -1,
+	      hour: includeTime ? -1 : 0,
+	      minute: includeTime ? -1 : 0,
+	      second: includeTime ? -1 : 0
+	    };
+	  }
+	  var date = new Date(dateString);
+	  if (Number.isNaN(date.getTime())) {
+	    throw new Error("Unable to parse date " + dateString);
+	  }
+	  return {
+	    year: date.getUTCFullYear(),
+	    month: date.getUTCMonth() + 1, // oh you, javascript.
+	    day: date.getUTCDate(),
+	    hour: includeTime ? date.getUTCHours() : 0,
+	    minute: includeTime ? date.getUTCMinutes() : 0,
+	    second: includeTime ? date.getUTCSeconds() : 0
+	  };
+	}
+
+	function toDateString(_ref) {
+	  var year = _ref.year;
+	  var month = _ref.month;
+	  var day = _ref.day;
+	  var _ref$hour = _ref.hour;
+	  var hour = _ref$hour === undefined ? 0 : _ref$hour;
+	  var _ref$minute = _ref.minute;
+	  var minute = _ref$minute === undefined ? 0 : _ref$minute;
+	  var _ref$second = _ref.second;
+	  var second = _ref$second === undefined ? 0 : _ref$second;
+	  var time = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
+
+	  var utcTime = Date.UTC(year, month - 1, day, hour, minute, second);
+	  var datetime = new Date(utcTime).toJSON();
+	  return time ? datetime : datetime.slice(0, 10);
+	}
+
+	function pad(num, size) {
+	  var s = String(num);
+	  while (s.length < size) {
+	    s = "0" + s;
+	  }
+	  return s;
+	}
+
+	function setState(instance, state, callback) {
+	  var safeRenderCompletion = instance.props.safeRenderCompletion;
+
+	  if (safeRenderCompletion) {
+	    instance.setState(state, callback);
+	  } else {
+	    instance.setState(state);
+	    setImmediate(callback);
+	  }
+	}
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(164).setImmediate))
+
+/***/ },
+/* 164 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(5).nextTick;
+	var apply = Function.prototype.apply;
+	var slice = Array.prototype.slice;
+	var immediateIds = {};
+	var nextImmediateId = 0;
+
+	// DOM APIs, for completeness
+
+	exports.setTimeout = function() {
+	  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
+	};
+	exports.setInterval = function() {
+	  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
+	};
+	exports.clearTimeout =
+	exports.clearInterval = function(timeout) { timeout.close(); };
+
+	function Timeout(id, clearFn) {
+	  this._id = id;
+	  this._clearFn = clearFn;
+	}
+	Timeout.prototype.unref = Timeout.prototype.ref = function() {};
+	Timeout.prototype.close = function() {
+	  this._clearFn.call(window, this._id);
+	};
+
+	// Does not start the time, just sets up the members needed.
+	exports.enroll = function(item, msecs) {
+	  clearTimeout(item._idleTimeoutId);
+	  item._idleTimeout = msecs;
+	};
+
+	exports.unenroll = function(item) {
+	  clearTimeout(item._idleTimeoutId);
+	  item._idleTimeout = -1;
+	};
+
+	exports._unrefActive = exports.active = function(item) {
+	  clearTimeout(item._idleTimeoutId);
+
+	  var msecs = item._idleTimeout;
+	  if (msecs >= 0) {
+	    item._idleTimeoutId = setTimeout(function onTimeout() {
+	      if (item._onTimeout)
+	        item._onTimeout();
+	    }, msecs);
+	  }
+	};
+
+	// That's not how node.js implements it but the exposed api is the same.
+	exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
+	  var id = nextImmediateId++;
+	  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
+
+	  immediateIds[id] = true;
+
+	  nextTick(function onNextTick() {
+	    if (immediateIds[id]) {
+	      // fn.call() is faster so we optimize for the common use-case
+	      // @see http://jsperf.com/call-apply-segu
+	      if (args) {
+	        fn.apply(null, args);
+	      } else {
+	        fn.call(null);
+	      }
+	      // Prevent ids from leaking
+	      exports.clearImmediate(id);
+	    }
+	  });
+
+	  return id;
+	};
+
+	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
+	  delete immediateIds[id];
+	};
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(164).setImmediate, __webpack_require__(164).clearImmediate))
+
+/***/ },
+/* 165 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global, clearImmediate, process) {(function (global, undefined) {
+	    "use strict";
+
+	    if (global.setImmediate) {
+	        return;
+	    }
+
+	    var nextHandle = 1; // Spec says greater than zero
+	    var tasksByHandle = {};
+	    var currentlyRunningATask = false;
+	    var doc = global.document;
+	    var setImmediate;
+
+	    function addFromSetImmediateArguments(args) {
+	        tasksByHandle[nextHandle] = partiallyApplied.apply(undefined, args);
+	        return nextHandle++;
+	    }
+
+	    // This function accepts the same arguments as setImmediate, but
+	    // returns a function that requires no arguments.
+	    function partiallyApplied(handler) {
+	        var args = [].slice.call(arguments, 1);
+	        return function() {
+	            if (typeof handler === "function") {
+	                handler.apply(undefined, args);
+	            } else {
+	                (new Function("" + handler))();
+	            }
+	        };
+	    }
+
+	    function runIfPresent(handle) {
+	        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
+	        // So if we're currently running a task, we'll need to delay this invocation.
+	        if (currentlyRunningATask) {
+	            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
+	            // "too much recursion" error.
+	            setTimeout(partiallyApplied(runIfPresent, handle), 0);
+	        } else {
+	            var task = tasksByHandle[handle];
+	            if (task) {
+	                currentlyRunningATask = true;
+	                try {
+	                    task();
+	                } finally {
+	                    clearImmediate(handle);
+	                    currentlyRunningATask = false;
+	                }
+	            }
+	        }
+	    }
+
+	    function clearImmediate(handle) {
+	        delete tasksByHandle[handle];
+	    }
+
+	    function installNextTickImplementation() {
+	        setImmediate = function() {
+	            var handle = addFromSetImmediateArguments(arguments);
+	            process.nextTick(partiallyApplied(runIfPresent, handle));
+	            return handle;
+	        };
+	    }
+
+	    function canUsePostMessage() {
+	        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
+	        // where `global.postMessage` means something completely different and can't be used for this purpose.
+	        if (global.postMessage && !global.importScripts) {
+	            var postMessageIsAsynchronous = true;
+	            var oldOnMessage = global.onmessage;
+	            global.onmessage = function() {
+	                postMessageIsAsynchronous = false;
+	            };
+	            global.postMessage("", "*");
+	            global.onmessage = oldOnMessage;
+	            return postMessageIsAsynchronous;
+	        }
+	    }
+
+	    function installPostMessageImplementation() {
+	        // Installs an event handler on `global` for the `message` event: see
+	        // * https://developer.mozilla.org/en/DOM/window.postMessage
+	        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+
+	        var messagePrefix = "setImmediate$" + Math.random() + "$";
+	        var onGlobalMessage = function(event) {
+	            if (event.source === global &&
+	                typeof event.data === "string" &&
+	                event.data.indexOf(messagePrefix) === 0) {
+	                runIfPresent(+event.data.slice(messagePrefix.length));
+	            }
+	        };
+
+	        if (global.addEventListener) {
+	            global.addEventListener("message", onGlobalMessage, false);
+	        } else {
+	            global.attachEvent("onmessage", onGlobalMessage);
+	        }
+
+	        setImmediate = function() {
+	            var handle = addFromSetImmediateArguments(arguments);
+	            global.postMessage(messagePrefix + handle, "*");
+	            return handle;
+	        };
+	    }
+
+	    function installMessageChannelImplementation() {
+	        var channel = new MessageChannel();
+	        channel.port1.onmessage = function(event) {
+	            var handle = event.data;
+	            runIfPresent(handle);
+	        };
+
+	        setImmediate = function() {
+	            var handle = addFromSetImmediateArguments(arguments);
+	            channel.port2.postMessage(handle);
+	            return handle;
+	        };
+	    }
+
+	    function installReadyStateChangeImplementation() {
+	        var html = doc.documentElement;
+	        setImmediate = function() {
+	            var handle = addFromSetImmediateArguments(arguments);
+	            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+	            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+	            var script = doc.createElement("script");
+	            script.onreadystatechange = function () {
+	                runIfPresent(handle);
+	                script.onreadystatechange = null;
+	                html.removeChild(script);
+	                script = null;
+	            };
+	            html.appendChild(script);
+	            return handle;
+	        };
+	    }
+
+	    function installSetTimeoutImplementation() {
+	        setImmediate = function() {
+	            var handle = addFromSetImmediateArguments(arguments);
+	            setTimeout(partiallyApplied(runIfPresent, handle), 0);
+	            return handle;
+	        };
+	    }
+
+	    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
+	    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
+	    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
+
+	    // Don't get fooled by e.g. browserify environments.
+	    if ({}.toString.call(global.process) === "[object process]") {
+	        // For Node.js before 0.9
+	        installNextTickImplementation();
+
+	    } else if (canUsePostMessage()) {
+	        // For non-IE10 modern browsers
+	        installPostMessageImplementation();
+
+	    } else if (global.MessageChannel) {
+	        // For web workers, where supported
+	        installMessageChannelImplementation();
+
+	    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
+	        // For IE 6–8
+	        installReadyStateChangeImplementation();
+
+	    } else {
+	        // For older browsers
+	        installSetTimeoutImplementation();
+	    }
+
+	    attachTo.setImmediate = setImmediate;
+	    attachTo.clearImmediate = clearImmediate;
+	}(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(164).clearImmediate, __webpack_require__(5)))
+
+/***/ },
+/* 166 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(Buffer) {'use strict'
+
+	function isArguments (object) {
+	  return Object.prototype.toString.call(object) === '[object Arguments]'
+	}
+
+	function deeper (a, b) {
+	  return deeper_(a, b, [], [])
+	}
+
+	module.exports = deeper
+
+	try {
+	  deeper.fastEqual = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"buffertools\""); e.code = 'MODULE_NOT_FOUND'; throw e; }())).equals
+	} catch (e) {
+	  // whoops, nobody told buffertools it wasn't installed
+	}
+
+	/**
+	 * This is a Node-specific version of a structural equality test, modeled on
+	 * bits and pieces of loads of other implementations of this algorithm, most
+	 * notably the one in the Node.js source and the Underscore library. It doesn't
+	 * throw and handles cycles.
+	 *
+	 * Everybody who writes one of these functions puts the documentation
+	 * inline, which makes it incredibly hard to follow. Here's what this version
+	 * of the algorithm does, in order:
+	 *
+	 * 1. `===` only tests objects and functions by reference. `null` is an object.
+	 *    Any pairs of identical entities failing this test are therefore objects
+	 *    (including `null`), which need to be recursed into and compared attribute by
+	 *    attribute.
+	 * 2. Since the only entities to get to this test must be objects, if `a` or `b`
+	 *    is not an object, they're clearly not the same. All unfiltered `a` and `b`
+	 *    getting past this are objects (including `null`).
+	 * 3. `null` is an object, but `null === null.` All unfiltered `a` and `b` are
+	 *    non-null `Objects`.
+	 * 4. Buffers need to be special-cased because they live partially on the wrong
+	 *    side of the C++ / JavaScript barrier. Still, calling this on structures
+	 *    that can contain Buffers is a bad idea, because they can contain
+	 *    multiple megabytes of data and comparing them byte-by-byte is hella
+	 *    expensive.
+	 * 5. It's much faster to compare dates by numeric value (`.getTime()`) than by
+	 *    lexical value.
+	 * 6. Compare `RegExps` by their components, not the objects themselves.
+	 * 7. Treat argumens objects like arrays. The parts of an arguments list most
+	 *    people care about are the arguments themselves, not `callee`, which you
+	 *    shouldn't be looking at anyway.
+	 * 8. Objects are more complex:
+	 *     1. Ensure that `a` and `b` are on the same constructor chain.
+	 *     2. Ensure that `a` and `b` have the same number of own properties (which is
+	 *        what `Object.keys()` returns).
+	 *     3. Ensure that cyclical references don't blow up the stack.
+	 *     4. Ensure that all the key names match (faster).
+	 *     5. Ensure that all of the associated values match, recursively (slower).
+	 *
+	 * (somewhat untested) assumptions:
+	 *
+	 * - Functions are only considered identical if they unify to the same
+	 *   reference. To anything else is to invite the wrath of the halting problem.
+	 * - V8 is smart enough to optimize treating an Array like any other kind of
+	 *   object.
+	 * - Users of this function are cool with mutually recursive data structures
+	 *   that are otherwise identical being treated as the same.
+	 */
+	function deeper_ (a, b, ca, cb) {
+	  if (a === b) {
+	    return true
+	  } else if (typeof a !== 'object' || typeof b !== 'object') {
+	    return false
+	  } else if (a === null || b === null) {
+	    return false
+	  } else if (Buffer.isBuffer(a) && Buffer.isBuffer(b)) {
+	    if (a.equals) {
+	      return a.equals(b)
+	    } else if (deeper.fastEqual) {
+	      return deeper.fastEqual.call(a, b)
+	    } else {
+	      if (a.length !== b.length) return false
+
+	      for (var i = 0; i < a.length; i++) if (a[i] !== b[i]) return false
+
+	      return true
+	    }
+	  } else if (a instanceof Date && b instanceof Date) {
+	    return a.getTime() === b.getTime()
+	  } else if (a instanceof RegExp && b instanceof RegExp) {
+	    return a.source === b.source &&
+	    a.global === b.global &&
+	    a.multiline === b.multiline &&
+	    a.lastIndex === b.lastIndex &&
+	    a.ignoreCase === b.ignoreCase
+	  } else if (isArguments(a) || isArguments(b)) {
+	    if (!(isArguments(a) && isArguments(b))) return false
+
+	    var slice = Array.prototype.slice
+	    return deeper_(slice.call(a), slice.call(b), ca, cb)
+	  } else {
+	    if (a.constructor !== b.constructor) return false
+
+	    var ka = Object.keys(a)
+	    var kb = Object.keys(b)
+	    // don't bother with stack acrobatics if there's nothing there
+	    if (ka.length === 0 && kb.length === 0) return true
+	    if (ka.length !== kb.length) return false
+
+	    var cal = ca.length
+	    while (cal--) if (ca[cal] === a) return cb[cal] === b
+	    ca.push(a); cb.push(b)
+
+	    ka.sort(); kb.sort()
+	    for (var j = ka.length - 1; j >= 0; j--) if (ka[j] !== kb[j]) return false
+
+	    var key
+	    for (var k = ka.length - 1; k >= 0; k--) {
+	      key = ka[k]
+	      if (!deeper_(a[key], b[key], ca, cb)) return false
+	    }
+
+	    ca.pop(); cb.pop()
+
+	    return true
+	  }
+	}
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(167).Buffer))
+
+/***/ },
+/* 167 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(Buffer, global) {/*!
+	 * The buffer module from node.js, for the browser.
+	 *
+	 * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+	 * @license  MIT
+	 */
+	/* eslint-disable no-proto */
+
+	'use strict'
+
+	var base64 = __webpack_require__(168)
+	var ieee754 = __webpack_require__(169)
+	var isArray = __webpack_require__(170)
+
+	exports.Buffer = Buffer
+	exports.SlowBuffer = SlowBuffer
+	exports.INSPECT_MAX_BYTES = 50
+	Buffer.poolSize = 8192 // not used by this implementation
+
+	var rootParent = {}
+
+	/**
+	 * If `Buffer.TYPED_ARRAY_SUPPORT`:
+	 *   === true    Use Uint8Array implementation (fastest)
+	 *   === false   Use Object implementation (most compatible, even IE6)
+	 *
+	 * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
+	 * Opera 11.6+, iOS 4.2+.
+	 *
+	 * Due to various browser bugs, sometimes the Object implementation will be used even
+	 * when the browser supports typed arrays.
+	 *
+	 * Note:
+	 *
+	 *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
+	 *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
+	 *
+	 *   - Safari 5-7 lacks support for changing the `Object.prototype.constructor` property
+	 *     on objects.
+	 *
+	 *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
+	 *
+	 *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
+	 *     incorrect length in some situations.
+
+	 * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
+	 * get the Object implementation, which is slower but behaves correctly.
+	 */
+	Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
+	  ? global.TYPED_ARRAY_SUPPORT
+	  : typedArraySupport()
+
+	function typedArraySupport () {
+	  function Bar () {}
+	  try {
+	    var arr = new Uint8Array(1)
+	    arr.foo = function () { return 42 }
+	    arr.constructor = Bar
+	    return arr.foo() === 42 && // typed array instances can be augmented
+	        arr.constructor === Bar && // constructor can be set
+	        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
+	        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
+	  } catch (e) {
+	    return false
+	  }
+	}
+
+	function kMaxLength () {
+	  return Buffer.TYPED_ARRAY_SUPPORT
+	    ? 0x7fffffff
+	    : 0x3fffffff
+	}
+
+	/**
+	 * Class: Buffer
+	 * =============
+	 *
+	 * The Buffer constructor returns instances of `Uint8Array` that are augmented
+	 * with function properties for all the node `Buffer` API functions. We use
+	 * `Uint8Array` so that square bracket notation works as expected -- it returns
+	 * a single octet.
+	 *
+	 * By augmenting the instances, we can avoid modifying the `Uint8Array`
+	 * prototype.
+	 */
+	function Buffer (arg) {
+	  if (!(this instanceof Buffer)) {
+	    // Avoid going through an ArgumentsAdaptorTrampoline in the common case.
+	    if (arguments.length > 1) return new Buffer(arg, arguments[1])
+	    return new Buffer(arg)
+	  }
+
+	  if (!Buffer.TYPED_ARRAY_SUPPORT) {
+	    this.length = 0
+	    this.parent = undefined
+	  }
+
+	  // Common case.
+	  if (typeof arg === 'number') {
+	    return fromNumber(this, arg)
+	  }
+
+	  // Slightly less common case.
+	  if (typeof arg === 'string') {
+	    return fromString(this, arg, arguments.length > 1 ? arguments[1] : 'utf8')
+	  }
+
+	  // Unusual.
+	  return fromObject(this, arg)
+	}
+
+	function fromNumber (that, length) {
+	  that = allocate(that, length < 0 ? 0 : checked(length) | 0)
+	  if (!Buffer.TYPED_ARRAY_SUPPORT) {
+	    for (var i = 0; i < length; i++) {
+	      that[i] = 0
+	    }
+	  }
+	  return that
+	}
+
+	function fromString (that, string, encoding) {
+	  if (typeof encoding !== 'string' || encoding === '') encoding = 'utf8'
+
+	  // Assumption: byteLength() return value is always < kMaxLength.
+	  var length = byteLength(string, encoding) | 0
+	  that = allocate(that, length)
+
+	  that.write(string, encoding)
+	  return that
+	}
+
+	function fromObject (that, object) {
+	  if (Buffer.isBuffer(object)) return fromBuffer(that, object)
+
+	  if (isArray(object)) return fromArray(that, object)
+
+	  if (object == null) {
+	    throw new TypeError('must start with number, buffer, array or string')
+	  }
+
+	  if (typeof ArrayBuffer !== 'undefined') {
+	    if (object.buffer instanceof ArrayBuffer) {
+	      return fromTypedArray(that, object)
+	    }
+	    if (object instanceof ArrayBuffer) {
+	      return fromArrayBuffer(that, object)
+	    }
+	  }
+
+	  if (object.length) return fromArrayLike(that, object)
+
+	  return fromJsonObject(that, object)
+	}
+
+	function fromBuffer (that, buffer) {
+	  var length = checked(buffer.length) | 0
+	  that = allocate(that, length)
+	  buffer.copy(that, 0, 0, length)
+	  return that
+	}
+
+	function fromArray (that, array) {
+	  var length = checked(array.length) | 0
+	  that = allocate(that, length)
+	  for (var i = 0; i < length; i += 1) {
+	    that[i] = array[i] & 255
+	  }
+	  return that
+	}
+
+	// Duplicate of fromArray() to keep fromArray() monomorphic.
+	function fromTypedArray (that, array) {
+	  var length = checked(array.length) | 0
+	  that = allocate(that, length)
+	  // Truncating the elements is probably not what people expect from typed
+	  // arrays with BYTES_PER_ELEMENT > 1 but it's compatible with the behavior
+	  // of the old Buffer constructor.
+	  for (var i = 0; i < length; i += 1) {
+	    that[i] = array[i] & 255
+	  }
+	  return that
+	}
+
+	function fromArrayBuffer (that, array) {
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    // Return an augmented `Uint8Array` instance, for best performance
+	    array.byteLength
+	    that = Buffer._augment(new Uint8Array(array))
+	  } else {
+	    // Fallback: Return an object instance of the Buffer class
+	    that = fromTypedArray(that, new Uint8Array(array))
+	  }
+	  return that
+	}
+
+	function fromArrayLike (that, array) {
+	  var length = checked(array.length) | 0
+	  that = allocate(that, length)
+	  for (var i = 0; i < length; i += 1) {
+	    that[i] = array[i] & 255
+	  }
+	  return that
+	}
+
+	// Deserialize { type: 'Buffer', data: [1,2,3,...] } into a Buffer object.
+	// Returns a zero-length buffer for inputs that don't conform to the spec.
+	function fromJsonObject (that, object) {
+	  var array
+	  var length = 0
+
+	  if (object.type === 'Buffer' && isArray(object.data)) {
+	    array = object.data
+	    length = checked(array.length) | 0
+	  }
+	  that = allocate(that, length)
+
+	  for (var i = 0; i < length; i += 1) {
+	    that[i] = array[i] & 255
+	  }
+	  return that
+	}
+
+	if (Buffer.TYPED_ARRAY_SUPPORT) {
+	  Buffer.prototype.__proto__ = Uint8Array.prototype
+	  Buffer.__proto__ = Uint8Array
+	} else {
+	  // pre-set for values that may exist in the future
+	  Buffer.prototype.length = undefined
+	  Buffer.prototype.parent = undefined
+	}
+
+	function allocate (that, length) {
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    // Return an augmented `Uint8Array` instance, for best performance
+	    that = Buffer._augment(new Uint8Array(length))
+	    that.__proto__ = Buffer.prototype
+	  } else {
+	    // Fallback: Return an object instance of the Buffer class
+	    that.length = length
+	    that._isBuffer = true
+	  }
+
+	  var fromPool = length !== 0 && length <= Buffer.poolSize >>> 1
+	  if (fromPool) that.parent = rootParent
+
+	  return that
+	}
+
+	function checked (length) {
+	  // Note: cannot use `length < kMaxLength` here because that fails when
+	  // length is NaN (which is otherwise coerced to zero.)
+	  if (length >= kMaxLength()) {
+	    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+	                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
+	  }
+	  return length | 0
+	}
+
+	function SlowBuffer (subject, encoding) {
+	  if (!(this instanceof SlowBuffer)) return new SlowBuffer(subject, encoding)
+
+	  var buf = new Buffer(subject, encoding)
+	  delete buf.parent
+	  return buf
+	}
+
+	Buffer.isBuffer = function isBuffer (b) {
+	  return !!(b != null && b._isBuffer)
+	}
+
+	Buffer.compare = function compare (a, b) {
+	  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
+	    throw new TypeError('Arguments must be Buffers')
+	  }
+
+	  if (a === b) return 0
+
+	  var x = a.length
+	  var y = b.length
+
+	  var i = 0
+	  var len = Math.min(x, y)
+	  while (i < len) {
+	    if (a[i] !== b[i]) break
+
+	    ++i
+	  }
+
+	  if (i !== len) {
+	    x = a[i]
+	    y = b[i]
+	  }
+
+	  if (x < y) return -1
+	  if (y < x) return 1
+	  return 0
+	}
+
+	Buffer.isEncoding = function isEncoding (encoding) {
+	  switch (String(encoding).toLowerCase()) {
+	    case 'hex':
+	    case 'utf8':
+	    case 'utf-8':
+	    case 'ascii':
+	    case 'binary':
+	    case 'base64':
+	    case 'raw':
+	    case 'ucs2':
+	    case 'ucs-2':
+	    case 'utf16le':
+	    case 'utf-16le':
+	      return true
+	    default:
+	      return false
+	  }
+	}
+
+	Buffer.concat = function concat (list, length) {
+	  if (!isArray(list)) throw new TypeError('list argument must be an Array of Buffers.')
+
+	  if (list.length === 0) {
+	    return new Buffer(0)
+	  }
+
+	  var i
+	  if (length === undefined) {
+	    length = 0
+	    for (i = 0; i < list.length; i++) {
+	      length += list[i].length
+	    }
+	  }
+
+	  var buf = new Buffer(length)
+	  var pos = 0
+	  for (i = 0; i < list.length; i++) {
+	    var item = list[i]
+	    item.copy(buf, pos)
+	    pos += item.length
+	  }
+	  return buf
+	}
+
+	function byteLength (string, encoding) {
+	  if (typeof string !== 'string') string = '' + string
+
+	  var len = string.length
+	  if (len === 0) return 0
+
+	  // Use a for loop to avoid recursion
+	  var loweredCase = false
+	  for (;;) {
+	    switch (encoding) {
+	      case 'ascii':
+	      case 'binary':
+	      // Deprecated
+	      case 'raw':
+	      case 'raws':
+	        return len
+	      case 'utf8':
+	      case 'utf-8':
+	        return utf8ToBytes(string).length
+	      case 'ucs2':
+	      case 'ucs-2':
+	      case 'utf16le':
+	      case 'utf-16le':
+	        return len * 2
+	      case 'hex':
+	        return len >>> 1
+	      case 'base64':
+	        return base64ToBytes(string).length
+	      default:
+	        if (loweredCase) return utf8ToBytes(string).length // assume utf8
+	        encoding = ('' + encoding).toLowerCase()
+	        loweredCase = true
+	    }
+	  }
+	}
+	Buffer.byteLength = byteLength
+
+	function slowToString (encoding, start, end) {
+	  var loweredCase = false
+
+	  start = start | 0
+	  end = end === undefined || end === Infinity ? this.length : end | 0
+
+	  if (!encoding) encoding = 'utf8'
+	  if (start < 0) start = 0
+	  if (end > this.length) end = this.length
+	  if (end <= start) return ''
+
+	  while (true) {
+	    switch (encoding) {
+	      case 'hex':
+	        return hexSlice(this, start, end)
+
+	      case 'utf8':
+	      case 'utf-8':
+	        return utf8Slice(this, start, end)
+
+	      case 'ascii':
+	        return asciiSlice(this, start, end)
+
+	      case 'binary':
+	        return binarySlice(this, start, end)
+
+	      case 'base64':
+	        return base64Slice(this, start, end)
+
+	      case 'ucs2':
+	      case 'ucs-2':
+	      case 'utf16le':
+	      case 'utf-16le':
+	        return utf16leSlice(this, start, end)
+
+	      default:
+	        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+	        encoding = (encoding + '').toLowerCase()
+	        loweredCase = true
+	    }
+	  }
+	}
+
+	Buffer.prototype.toString = function toString () {
+	  var length = this.length | 0
+	  if (length === 0) return ''
+	  if (arguments.length === 0) return utf8Slice(this, 0, length)
+	  return slowToString.apply(this, arguments)
+	}
+
+	Buffer.prototype.equals = function equals (b) {
+	  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+	  if (this === b) return true
+	  return Buffer.compare(this, b) === 0
+	}
+
+	Buffer.prototype.inspect = function inspect () {
+	  var str = ''
+	  var max = exports.INSPECT_MAX_BYTES
+	  if (this.length > 0) {
+	    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
+	    if (this.length > max) str += ' ... '
+	  }
+	  return '<Buffer ' + str + '>'
+	}
+
+	Buffer.prototype.compare = function compare (b) {
+	  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+	  if (this === b) return 0
+	  return Buffer.compare(this, b)
+	}
+
+	Buffer.prototype.indexOf = function indexOf (val, byteOffset) {
+	  if (byteOffset > 0x7fffffff) byteOffset = 0x7fffffff
+	  else if (byteOffset < -0x80000000) byteOffset = -0x80000000
+	  byteOffset >>= 0
+
+	  if (this.length === 0) return -1
+	  if (byteOffset >= this.length) return -1
+
+	  // Negative offsets start from the end of the buffer
+	  if (byteOffset < 0) byteOffset = Math.max(this.length + byteOffset, 0)
+
+	  if (typeof val === 'string') {
+	    if (val.length === 0) return -1 // special case: looking for empty string always fails
+	    return String.prototype.indexOf.call(this, val, byteOffset)
+	  }
+	  if (Buffer.isBuffer(val)) {
+	    return arrayIndexOf(this, val, byteOffset)
+	  }
+	  if (typeof val === 'number') {
+	    if (Buffer.TYPED_ARRAY_SUPPORT && Uint8Array.prototype.indexOf === 'function') {
+	      return Uint8Array.prototype.indexOf.call(this, val, byteOffset)
+	    }
+	    return arrayIndexOf(this, [ val ], byteOffset)
+	  }
+
+	  function arrayIndexOf (arr, val, byteOffset) {
+	    var foundIndex = -1
+	    for (var i = 0; byteOffset + i < arr.length; i++) {
+	      if (arr[byteOffset + i] === val[foundIndex === -1 ? 0 : i - foundIndex]) {
+	        if (foundIndex === -1) foundIndex = i
+	        if (i - foundIndex + 1 === val.length) return byteOffset + foundIndex
+	      } else {
+	        foundIndex = -1
+	      }
+	    }
+	    return -1
+	  }
+
+	  throw new TypeError('val must be string, number or Buffer')
+	}
+
+	// `get` is deprecated
+	Buffer.prototype.get = function get (offset) {
+	  console.log('.get() is deprecated. Access using array indexes instead.')
+	  return this.readUInt8(offset)
+	}
+
+	// `set` is deprecated
+	Buffer.prototype.set = function set (v, offset) {
+	  console.log('.set() is deprecated. Access using array indexes instead.')
+	  return this.writeUInt8(v, offset)
+	}
+
+	function hexWrite (buf, string, offset, length) {
+	  offset = Number(offset) || 0
+	  var remaining = buf.length - offset
+	  if (!length) {
+	    length = remaining
+	  } else {
+	    length = Number(length)
+	    if (length > remaining) {
+	      length = remaining
+	    }
+	  }
+
+	  // must be an even number of digits
+	  var strLen = string.length
+	  if (strLen % 2 !== 0) throw new Error('Invalid hex string')
+
+	  if (length > strLen / 2) {
+	    length = strLen / 2
+	  }
+	  for (var i = 0; i < length; i++) {
+	    var parsed = parseInt(string.substr(i * 2, 2), 16)
+	    if (isNaN(parsed)) throw new Error('Invalid hex string')
+	    buf[offset + i] = parsed
+	  }
+	  return i
+	}
+
+	function utf8Write (buf, string, offset, length) {
+	  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
+	}
+
+	function asciiWrite (buf, string, offset, length) {
+	  return blitBuffer(asciiToBytes(string), buf, offset, length)
+	}
+
+	function binaryWrite (buf, string, offset, length) {
+	  return asciiWrite(buf, string, offset, length)
+	}
+
+	function base64Write (buf, string, offset, length) {
+	  return blitBuffer(base64ToBytes(string), buf, offset, length)
+	}
+
+	function ucs2Write (buf, string, offset, length) {
+	  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
+	}
+
+	Buffer.prototype.write = function write (string, offset, length, encoding) {
+	  // Buffer#write(string)
+	  if (offset === undefined) {
+	    encoding = 'utf8'
+	    length = this.length
+	    offset = 0
+	  // Buffer#write(string, encoding)
+	  } else if (length === undefined && typeof offset === 'string') {
+	    encoding = offset
+	    length = this.length
+	    offset = 0
+	  // Buffer#write(string, offset[, length][, encoding])
+	  } else if (isFinite(offset)) {
+	    offset = offset | 0
+	    if (isFinite(length)) {
+	      length = length | 0
+	      if (encoding === undefined) encoding = 'utf8'
+	    } else {
+	      encoding = length
+	      length = undefined
+	    }
+	  // legacy write(string, encoding, offset, length) - remove in v0.13
+	  } else {
+	    var swap = encoding
+	    encoding = offset
+	    offset = length | 0
+	    length = swap
+	  }
+
+	  var remaining = this.length - offset
+	  if (length === undefined || length > remaining) length = remaining
+
+	  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
+	    throw new RangeError('attempt to write outside buffer bounds')
+	  }
+
+	  if (!encoding) encoding = 'utf8'
+
+	  var loweredCase = false
+	  for (;;) {
+	    switch (encoding) {
+	      case 'hex':
+	        return hexWrite(this, string, offset, length)
+
+	      case 'utf8':
+	      case 'utf-8':
+	        return utf8Write(this, string, offset, length)
+
+	      case 'ascii':
+	        return asciiWrite(this, string, offset, length)
+
+	      case 'binary':
+	        return binaryWrite(this, string, offset, length)
+
+	      case 'base64':
+	        // Warning: maxLength not taken into account in base64Write
+	        return base64Write(this, string, offset, length)
+
+	      case 'ucs2':
+	      case 'ucs-2':
+	      case 'utf16le':
+	      case 'utf-16le':
+	        return ucs2Write(this, string, offset, length)
+
+	      default:
+	        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+	        encoding = ('' + encoding).toLowerCase()
+	        loweredCase = true
+	    }
+	  }
+	}
+
+	Buffer.prototype.toJSON = function toJSON () {
+	  return {
+	    type: 'Buffer',
+	    data: Array.prototype.slice.call(this._arr || this, 0)
+	  }
+	}
+
+	function base64Slice (buf, start, end) {
+	  if (start === 0 && end === buf.length) {
+	    return base64.fromByteArray(buf)
+	  } else {
+	    return base64.fromByteArray(buf.slice(start, end))
+	  }
+	}
+
+	function utf8Slice (buf, start, end) {
+	  end = Math.min(buf.length, end)
+	  var res = []
+
+	  var i = start
+	  while (i < end) {
+	    var firstByte = buf[i]
+	    var codePoint = null
+	    var bytesPerSequence = (firstByte > 0xEF) ? 4
+	      : (firstByte > 0xDF) ? 3
+	      : (firstByte > 0xBF) ? 2
+	      : 1
+
+	    if (i + bytesPerSequence <= end) {
+	      var secondByte, thirdByte, fourthByte, tempCodePoint
+
+	      switch (bytesPerSequence) {
+	        case 1:
+	          if (firstByte < 0x80) {
+	            codePoint = firstByte
+	          }
+	          break
+	        case 2:
+	          secondByte = buf[i + 1]
+	          if ((secondByte & 0xC0) === 0x80) {
+	            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)
+	            if (tempCodePoint > 0x7F) {
+	              codePoint = tempCodePoint
+	            }
+	          }
+	          break
+	        case 3:
+	          secondByte = buf[i + 1]
+	          thirdByte = buf[i + 2]
+	          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
+	            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)
+	            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
+	              codePoint = tempCodePoint
+	            }
+	          }
+	          break
+	        case 4:
+	          secondByte = buf[i + 1]
+	          thirdByte = buf[i + 2]
+	          fourthByte = buf[i + 3]
+	          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
+	            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)
+	            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
+	              codePoint = tempCodePoint
+	            }
+	          }
+	      }
+	    }
+
+	    if (codePoint === null) {
+	      // we did not generate a valid codePoint so insert a
+	      // replacement char (U+FFFD) and advance only 1 byte
+	      codePoint = 0xFFFD
+	      bytesPerSequence = 1
+	    } else if (codePoint > 0xFFFF) {
+	      // encode to utf16 (surrogate pair dance)
+	      codePoint -= 0x10000
+	      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
+	      codePoint = 0xDC00 | codePoint & 0x3FF
+	    }
+
+	    res.push(codePoint)
+	    i += bytesPerSequence
+	  }
+
+	  return decodeCodePointsArray(res)
+	}
+
+	// Based on http://stackoverflow.com/a/22747272/680742, the browser with
+	// the lowest limit is Chrome, with 0x10000 args.
+	// We go 1 magnitude less, for safety
+	var MAX_ARGUMENTS_LENGTH = 0x1000
+
+	function decodeCodePointsArray (codePoints) {
+	  var len = codePoints.length
+	  if (len <= MAX_ARGUMENTS_LENGTH) {
+	    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
+	  }
+
+	  // Decode in chunks to avoid "call stack size exceeded".
+	  var res = ''
+	  var i = 0
+	  while (i < len) {
+	    res += String.fromCharCode.apply(
+	      String,
+	      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
+	    )
+	  }
+	  return res
+	}
+
+	function asciiSlice (buf, start, end) {
+	  var ret = ''
+	  end = Math.min(buf.length, end)
+
+	  for (var i = start; i < end; i++) {
+	    ret += String.fromCharCode(buf[i] & 0x7F)
+	  }
+	  return ret
+	}
+
+	function binarySlice (buf, start, end) {
+	  var ret = ''
+	  end = Math.min(buf.length, end)
+
+	  for (var i = start; i < end; i++) {
+	    ret += String.fromCharCode(buf[i])
+	  }
+	  return ret
+	}
+
+	function hexSlice (buf, start, end) {
+	  var len = buf.length
+
+	  if (!start || start < 0) start = 0
+	  if (!end || end < 0 || end > len) end = len
+
+	  var out = ''
+	  for (var i = start; i < end; i++) {
+	    out += toHex(buf[i])
+	  }
+	  return out
+	}
+
+	function utf16leSlice (buf, start, end) {
+	  var bytes = buf.slice(start, end)
+	  var res = ''
+	  for (var i = 0; i < bytes.length; i += 2) {
+	    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)
+	  }
+	  return res
+	}
+
+	Buffer.prototype.slice = function slice (start, end) {
+	  var len = this.length
+	  start = ~~start
+	  end = end === undefined ? len : ~~end
+
+	  if (start < 0) {
+	    start += len
+	    if (start < 0) start = 0
+	  } else if (start > len) {
+	    start = len
+	  }
+
+	  if (end < 0) {
+	    end += len
+	    if (end < 0) end = 0
+	  } else if (end > len) {
+	    end = len
+	  }
+
+	  if (end < start) end = start
+
+	  var newBuf
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    newBuf = Buffer._augment(this.subarray(start, end))
+	  } else {
+	    var sliceLen = end - start
+	    newBuf = new Buffer(sliceLen, undefined)
+	    for (var i = 0; i < sliceLen; i++) {
+	      newBuf[i] = this[i + start]
+	    }
+	  }
+
+	  if (newBuf.length) newBuf.parent = this.parent || this
+
+	  return newBuf
+	}
+
+	/*
+	 * Need to make sure that buffer isn't trying to write out of bounds.
+	 */
+	function checkOffset (offset, ext, length) {
+	  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
+	  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
+	}
+
+	Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
+	  offset = offset | 0
+	  byteLength = byteLength | 0
+	  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+	  var val = this[offset]
+	  var mul = 1
+	  var i = 0
+	  while (++i < byteLength && (mul *= 0x100)) {
+	    val += this[offset + i] * mul
+	  }
+
+	  return val
+	}
+
+	Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
+	  offset = offset | 0
+	  byteLength = byteLength | 0
+	  if (!noAssert) {
+	    checkOffset(offset, byteLength, this.length)
+	  }
+
+	  var val = this[offset + --byteLength]
+	  var mul = 1
+	  while (byteLength > 0 && (mul *= 0x100)) {
+	    val += this[offset + --byteLength] * mul
+	  }
+
+	  return val
+	}
+
+	Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 1, this.length)
+	  return this[offset]
+	}
+
+	Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 2, this.length)
+	  return this[offset] | (this[offset + 1] << 8)
+	}
+
+	Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 2, this.length)
+	  return (this[offset] << 8) | this[offset + 1]
+	}
+
+	Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length)
+
+	  return ((this[offset]) |
+	      (this[offset + 1] << 8) |
+	      (this[offset + 2] << 16)) +
+	      (this[offset + 3] * 0x1000000)
+	}
+
+	Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length)
+
+	  return (this[offset] * 0x1000000) +
+	    ((this[offset + 1] << 16) |
+	    (this[offset + 2] << 8) |
+	    this[offset + 3])
+	}
+
+	Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
+	  offset = offset | 0
+	  byteLength = byteLength | 0
+	  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+	  var val = this[offset]
+	  var mul = 1
+	  var i = 0
+	  while (++i < byteLength && (mul *= 0x100)) {
+	    val += this[offset + i] * mul
+	  }
+	  mul *= 0x80
+
+	  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+	  return val
+	}
+
+	Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
+	  offset = offset | 0
+	  byteLength = byteLength | 0
+	  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+	  var i = byteLength
+	  var mul = 1
+	  var val = this[offset + --i]
+	  while (i > 0 && (mul *= 0x100)) {
+	    val += this[offset + --i] * mul
+	  }
+	  mul *= 0x80
+
+	  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+	  return val
+	}
+
+	Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 1, this.length)
+	  if (!(this[offset] & 0x80)) return (this[offset])
+	  return ((0xff - this[offset] + 1) * -1)
+	}
+
+	Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 2, this.length)
+	  var val = this[offset] | (this[offset + 1] << 8)
+	  return (val & 0x8000) ? val | 0xFFFF0000 : val
+	}
+
+	Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 2, this.length)
+	  var val = this[offset + 1] | (this[offset] << 8)
+	  return (val & 0x8000) ? val | 0xFFFF0000 : val
+	}
+
+	Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length)
+
+	  return (this[offset]) |
+	    (this[offset + 1] << 8) |
+	    (this[offset + 2] << 16) |
+	    (this[offset + 3] << 24)
+	}
+
+	Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length)
+
+	  return (this[offset] << 24) |
+	    (this[offset + 1] << 16) |
+	    (this[offset + 2] << 8) |
+	    (this[offset + 3])
+	}
+
+	Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length)
+	  return ieee754.read(this, offset, true, 23, 4)
+	}
+
+	Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length)
+	  return ieee754.read(this, offset, false, 23, 4)
+	}
+
+	Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 8, this.length)
+	  return ieee754.read(this, offset, true, 52, 8)
+	}
+
+	Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 8, this.length)
+	  return ieee754.read(this, offset, false, 52, 8)
+	}
+
+	function checkInt (buf, value, offset, ext, max, min) {
+	  if (!Buffer.isBuffer(buf)) throw new TypeError('buffer must be a Buffer instance')
+	  if (value > max || value < min) throw new RangeError('value is out of bounds')
+	  if (offset + ext > buf.length) throw new RangeError('index out of range')
+	}
+
+	Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
+	  value = +value
+	  offset = offset | 0
+	  byteLength = byteLength | 0
+	  if (!noAssert) checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
+
+	  var mul = 1
+	  var i = 0
+	  this[offset] = value & 0xFF
+	  while (++i < byteLength && (mul *= 0x100)) {
+	    this[offset + i] = (value / mul) & 0xFF
+	  }
+
+	  return offset + byteLength
+	}
+
+	Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
+	  value = +value
+	  offset = offset | 0
+	  byteLength = byteLength | 0
+	  if (!noAssert) checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
+
+	  var i = byteLength - 1
+	  var mul = 1
+	  this[offset + i] = value & 0xFF
+	  while (--i >= 0 && (mul *= 0x100)) {
+	    this[offset + i] = (value / mul) & 0xFF
+	  }
+
+	  return offset + byteLength
+	}
+
+	Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
+	  value = +value
+	  offset = offset | 0
+	  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
+	  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+	  this[offset] = (value & 0xff)
+	  return offset + 1
+	}
+
+	function objectWriteUInt16 (buf, value, offset, littleEndian) {
+	  if (value < 0) value = 0xffff + value + 1
+	  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; i++) {
+	    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+	      (littleEndian ? i : 1 - i) * 8
+	  }
+	}
+
+	Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
+	  value = +value
+	  offset = offset | 0
+	  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = (value & 0xff)
+	    this[offset + 1] = (value >>> 8)
+	  } else {
+	    objectWriteUInt16(this, value, offset, true)
+	  }
+	  return offset + 2
+	}
+
+	Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
+	  value = +value
+	  offset = offset | 0
+	  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = (value >>> 8)
+	    this[offset + 1] = (value & 0xff)
+	  } else {
+	    objectWriteUInt16(this, value, offset, false)
+	  }
+	  return offset + 2
+	}
+
+	function objectWriteUInt32 (buf, value, offset, littleEndian) {
+	  if (value < 0) value = 0xffffffff + value + 1
+	  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; i++) {
+	    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
+	  }
+	}
+
+	Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
+	  value = +value
+	  offset = offset | 0
+	  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset + 3] = (value >>> 24)
+	    this[offset + 2] = (value >>> 16)
+	    this[offset + 1] = (value >>> 8)
+	    this[offset] = (value & 0xff)
+	  } else {
+	    objectWriteUInt32(this, value, offset, true)
+	  }
+	  return offset + 4
+	}
+
+	Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
+	  value = +value
+	  offset = offset | 0
+	  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = (value >>> 24)
+	    this[offset + 1] = (value >>> 16)
+	    this[offset + 2] = (value >>> 8)
+	    this[offset + 3] = (value & 0xff)
+	  } else {
+	    objectWriteUInt32(this, value, offset, false)
+	  }
+	  return offset + 4
+	}
+
+	Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
+	  value = +value
+	  offset = offset | 0
+	  if (!noAssert) {
+	    var limit = Math.pow(2, 8 * byteLength - 1)
+
+	    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+	  }
+
+	  var i = 0
+	  var mul = 1
+	  var sub = value < 0 ? 1 : 0
+	  this[offset] = value & 0xFF
+	  while (++i < byteLength && (mul *= 0x100)) {
+	    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+	  }
+
+	  return offset + byteLength
+	}
+
+	Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
+	  value = +value
+	  offset = offset | 0
+	  if (!noAssert) {
+	    var limit = Math.pow(2, 8 * byteLength - 1)
+
+	    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+	  }
+
+	  var i = byteLength - 1
+	  var mul = 1
+	  var sub = value < 0 ? 1 : 0
+	  this[offset + i] = value & 0xFF
+	  while (--i >= 0 && (mul *= 0x100)) {
+	    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+	  }
+
+	  return offset + byteLength
+	}
+
+	Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
+	  value = +value
+	  offset = offset | 0
+	  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
+	  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+	  if (value < 0) value = 0xff + value + 1
+	  this[offset] = (value & 0xff)
+	  return offset + 1
+	}
+
+	Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
+	  value = +value
+	  offset = offset | 0
+	  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = (value & 0xff)
+	    this[offset + 1] = (value >>> 8)
+	  } else {
+	    objectWriteUInt16(this, value, offset, true)
+	  }
+	  return offset + 2
+	}
+
+	Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
+	  value = +value
+	  offset = offset | 0
+	  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = (value >>> 8)
+	    this[offset + 1] = (value & 0xff)
+	  } else {
+	    objectWriteUInt16(this, value, offset, false)
+	  }
+	  return offset + 2
+	}
+
+	Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
+	  value = +value
+	  offset = offset | 0
+	  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = (value & 0xff)
+	    this[offset + 1] = (value >>> 8)
+	    this[offset + 2] = (value >>> 16)
+	    this[offset + 3] = (value >>> 24)
+	  } else {
+	    objectWriteUInt32(this, value, offset, true)
+	  }
+	  return offset + 4
+	}
+
+	Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
+	  value = +value
+	  offset = offset | 0
+	  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+	  if (value < 0) value = 0xffffffff + value + 1
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = (value >>> 24)
+	    this[offset + 1] = (value >>> 16)
+	    this[offset + 2] = (value >>> 8)
+	    this[offset + 3] = (value & 0xff)
+	  } else {
+	    objectWriteUInt32(this, value, offset, false)
+	  }
+	  return offset + 4
+	}
+
+	function checkIEEE754 (buf, value, offset, ext, max, min) {
+	  if (value > max || value < min) throw new RangeError('value is out of bounds')
+	  if (offset + ext > buf.length) throw new RangeError('index out of range')
+	  if (offset < 0) throw new RangeError('index out of range')
+	}
+
+	function writeFloat (buf, value, offset, littleEndian, noAssert) {
+	  if (!noAssert) {
+	    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
+	  }
+	  ieee754.write(buf, value, offset, littleEndian, 23, 4)
+	  return offset + 4
+	}
+
+	Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
+	  return writeFloat(this, value, offset, true, noAssert)
+	}
+
+	Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
+	  return writeFloat(this, value, offset, false, noAssert)
+	}
+
+	function writeDouble (buf, value, offset, littleEndian, noAssert) {
+	  if (!noAssert) {
+	    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
+	  }
+	  ieee754.write(buf, value, offset, littleEndian, 52, 8)
+	  return offset + 8
+	}
+
+	Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
+	  return writeDouble(this, value, offset, true, noAssert)
+	}
+
+	Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
+	  return writeDouble(this, value, offset, false, noAssert)
+	}
+
+	// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+	Buffer.prototype.copy = function copy (target, targetStart, start, end) {
+	  if (!start) start = 0
+	  if (!end && end !== 0) end = this.length
+	  if (targetStart >= target.length) targetStart = target.length
+	  if (!targetStart) targetStart = 0
+	  if (end > 0 && end < start) end = start
+
+	  // Copy 0 bytes; we're done
+	  if (end === start) return 0
+	  if (target.length === 0 || this.length === 0) return 0
+
+	  // Fatal error conditions
+	  if (targetStart < 0) {
+	    throw new RangeError('targetStart out of bounds')
+	  }
+	  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
+	  if (end < 0) throw new RangeError('sourceEnd out of bounds')
+
+	  // Are we oob?
+	  if (end > this.length) end = this.length
+	  if (target.length - targetStart < end - start) {
+	    end = target.length - targetStart + start
+	  }
+
+	  var len = end - start
+	  var i
+
+	  if (this === target && start < targetStart && targetStart < end) {
+	    // descending copy from end
+	    for (i = len - 1; i >= 0; i--) {
+	      target[i + targetStart] = this[i + start]
+	    }
+	  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
+	    // ascending copy from start
+	    for (i = 0; i < len; i++) {
+	      target[i + targetStart] = this[i + start]
+	    }
+	  } else {
+	    target._set(this.subarray(start, start + len), targetStart)
+	  }
+
+	  return len
+	}
+
+	// fill(value, start=0, end=buffer.length)
+	Buffer.prototype.fill = function fill (value, start, end) {
+	  if (!value) value = 0
+	  if (!start) start = 0
+	  if (!end) end = this.length
+
+	  if (end < start) throw new RangeError('end < start')
+
+	  // Fill 0 bytes; we're done
+	  if (end === start) return
+	  if (this.length === 0) return
+
+	  if (start < 0 || start >= this.length) throw new RangeError('start out of bounds')
+	  if (end < 0 || end > this.length) throw new RangeError('end out of bounds')
+
+	  var i
+	  if (typeof value === 'number') {
+	    for (i = start; i < end; i++) {
+	      this[i] = value
+	    }
+	  } else {
+	    var bytes = utf8ToBytes(value.toString())
+	    var len = bytes.length
+	    for (i = start; i < end; i++) {
+	      this[i] = bytes[i % len]
+	    }
+	  }
+
+	  return this
+	}
+
+	/**
+	 * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
+	 * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
+	 */
+	Buffer.prototype.toArrayBuffer = function toArrayBuffer () {
+	  if (typeof Uint8Array !== 'undefined') {
+	    if (Buffer.TYPED_ARRAY_SUPPORT) {
+	      return (new Buffer(this)).buffer
+	    } else {
+	      var buf = new Uint8Array(this.length)
+	      for (var i = 0, len = buf.length; i < len; i += 1) {
+	        buf[i] = this[i]
+	      }
+	      return buf.buffer
+	    }
+	  } else {
+	    throw new TypeError('Buffer.toArrayBuffer not supported in this browser')
+	  }
+	}
+
+	// HELPER FUNCTIONS
+	// ================
+
+	var BP = Buffer.prototype
+
+	/**
+	 * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
+	 */
+	Buffer._augment = function _augment (arr) {
+	  arr.constructor = Buffer
+	  arr._isBuffer = true
+
+	  // save reference to original Uint8Array set method before overwriting
+	  arr._set = arr.set
+
+	  // deprecated
+	  arr.get = BP.get
+	  arr.set = BP.set
+
+	  arr.write = BP.write
+	  arr.toString = BP.toString
+	  arr.toLocaleString = BP.toString
+	  arr.toJSON = BP.toJSON
+	  arr.equals = BP.equals
+	  arr.compare = BP.compare
+	  arr.indexOf = BP.indexOf
+	  arr.copy = BP.copy
+	  arr.slice = BP.slice
+	  arr.readUIntLE = BP.readUIntLE
+	  arr.readUIntBE = BP.readUIntBE
+	  arr.readUInt8 = BP.readUInt8
+	  arr.readUInt16LE = BP.readUInt16LE
+	  arr.readUInt16BE = BP.readUInt16BE
+	  arr.readUInt32LE = BP.readUInt32LE
+	  arr.readUInt32BE = BP.readUInt32BE
+	  arr.readIntLE = BP.readIntLE
+	  arr.readIntBE = BP.readIntBE
+	  arr.readInt8 = BP.readInt8
+	  arr.readInt16LE = BP.readInt16LE
+	  arr.readInt16BE = BP.readInt16BE
+	  arr.readInt32LE = BP.readInt32LE
+	  arr.readInt32BE = BP.readInt32BE
+	  arr.readFloatLE = BP.readFloatLE
+	  arr.readFloatBE = BP.readFloatBE
+	  arr.readDoubleLE = BP.readDoubleLE
+	  arr.readDoubleBE = BP.readDoubleBE
+	  arr.writeUInt8 = BP.writeUInt8
+	  arr.writeUIntLE = BP.writeUIntLE
+	  arr.writeUIntBE = BP.writeUIntBE
+	  arr.writeUInt16LE = BP.writeUInt16LE
+	  arr.writeUInt16BE = BP.writeUInt16BE
+	  arr.writeUInt32LE = BP.writeUInt32LE
+	  arr.writeUInt32BE = BP.writeUInt32BE
+	  arr.writeIntLE = BP.writeIntLE
+	  arr.writeIntBE = BP.writeIntBE
+	  arr.writeInt8 = BP.writeInt8
+	  arr.writeInt16LE = BP.writeInt16LE
+	  arr.writeInt16BE = BP.writeInt16BE
+	  arr.writeInt32LE = BP.writeInt32LE
+	  arr.writeInt32BE = BP.writeInt32BE
+	  arr.writeFloatLE = BP.writeFloatLE
+	  arr.writeFloatBE = BP.writeFloatBE
+	  arr.writeDoubleLE = BP.writeDoubleLE
+	  arr.writeDoubleBE = BP.writeDoubleBE
+	  arr.fill = BP.fill
+	  arr.inspect = BP.inspect
+	  arr.toArrayBuffer = BP.toArrayBuffer
+
+	  return arr
+	}
+
+	var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
+
+	function base64clean (str) {
+	  // Node strips out invalid characters like \n and \t from the string, base64-js does not
+	  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
+	  // Node converts strings with length < 2 to ''
+	  if (str.length < 2) return ''
+	  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
+	  while (str.length % 4 !== 0) {
+	    str = str + '='
+	  }
+	  return str
+	}
+
+	function stringtrim (str) {
+	  if (str.trim) return str.trim()
+	  return str.replace(/^\s+|\s+$/g, '')
+	}
+
+	function toHex (n) {
+	  if (n < 16) return '0' + n.toString(16)
+	  return n.toString(16)
+	}
+
+	function utf8ToBytes (string, units) {
+	  units = units || Infinity
+	  var codePoint
+	  var length = string.length
+	  var leadSurrogate = null
+	  var bytes = []
+
+	  for (var i = 0; i < length; i++) {
+	    codePoint = string.charCodeAt(i)
+
+	    // is surrogate component
+	    if (codePoint > 0xD7FF && codePoint < 0xE000) {
+	      // last char was a lead
+	      if (!leadSurrogate) {
+	        // no lead yet
+	        if (codePoint > 0xDBFF) {
+	          // unexpected trail
+	          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+	          continue
+	        } else if (i + 1 === length) {
+	          // unpaired lead
+	          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+	          continue
+	        }
+
+	        // valid lead
+	        leadSurrogate = codePoint
+
+	        continue
+	      }
+
+	      // 2 leads in a row
+	      if (codePoint < 0xDC00) {
+	        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+	        leadSurrogate = codePoint
+	        continue
+	      }
+
+	      // valid surrogate pair
+	      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
+	    } else if (leadSurrogate) {
+	      // valid bmp char, but last char was a lead
+	      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+	    }
+
+	    leadSurrogate = null
+
+	    // encode utf8
+	    if (codePoint < 0x80) {
+	      if ((units -= 1) < 0) break
+	      bytes.push(codePoint)
+	    } else if (codePoint < 0x800) {
+	      if ((units -= 2) < 0) break
+	      bytes.push(
+	        codePoint >> 0x6 | 0xC0,
+	        codePoint & 0x3F | 0x80
+	      )
+	    } else if (codePoint < 0x10000) {
+	      if ((units -= 3) < 0) break
+	      bytes.push(
+	        codePoint >> 0xC | 0xE0,
+	        codePoint >> 0x6 & 0x3F | 0x80,
+	        codePoint & 0x3F | 0x80
+	      )
+	    } else if (codePoint < 0x110000) {
+	      if ((units -= 4) < 0) break
+	      bytes.push(
+	        codePoint >> 0x12 | 0xF0,
+	        codePoint >> 0xC & 0x3F | 0x80,
+	        codePoint >> 0x6 & 0x3F | 0x80,
+	        codePoint & 0x3F | 0x80
+	      )
+	    } else {
+	      throw new Error('Invalid code point')
+	    }
+	  }
+
+	  return bytes
+	}
+
+	function asciiToBytes (str) {
+	  var byteArray = []
+	  for (var i = 0; i < str.length; i++) {
+	    // Node's code seems to be doing this and not & 0x7F..
+	    byteArray.push(str.charCodeAt(i) & 0xFF)
+	  }
+	  return byteArray
+	}
+
+	function utf16leToBytes (str, units) {
+	  var c, hi, lo
+	  var byteArray = []
+	  for (var i = 0; i < str.length; i++) {
+	    if ((units -= 2) < 0) break
+
+	    c = str.charCodeAt(i)
+	    hi = c >> 8
+	    lo = c % 256
+	    byteArray.push(lo)
+	    byteArray.push(hi)
+	  }
+
+	  return byteArray
+	}
+
+	function base64ToBytes (str) {
+	  return base64.toByteArray(base64clean(str))
+	}
+
+	function blitBuffer (src, dst, offset, length) {
+	  for (var i = 0; i < length; i++) {
+	    if ((i + offset >= dst.length) || (i >= src.length)) break
+	    dst[i + offset] = src[i]
+	  }
+	  return i
+	}
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(167).Buffer, (function() { return this; }())))
+
+/***/ },
+/* 168 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+	;(function (exports) {
+		'use strict';
+
+	  var Arr = (typeof Uint8Array !== 'undefined')
+	    ? Uint8Array
+	    : Array
+
+		var PLUS   = '+'.charCodeAt(0)
+		var SLASH  = '/'.charCodeAt(0)
+		var NUMBER = '0'.charCodeAt(0)
+		var LOWER  = 'a'.charCodeAt(0)
+		var UPPER  = 'A'.charCodeAt(0)
+		var PLUS_URL_SAFE = '-'.charCodeAt(0)
+		var SLASH_URL_SAFE = '_'.charCodeAt(0)
+
+		function decode (elt) {
+			var code = elt.charCodeAt(0)
+			if (code === PLUS ||
+			    code === PLUS_URL_SAFE)
+				return 62 // '+'
+			if (code === SLASH ||
+			    code === SLASH_URL_SAFE)
+				return 63 // '/'
+			if (code < NUMBER)
+				return -1 //no match
+			if (code < NUMBER + 10)
+				return code - NUMBER + 26 + 26
+			if (code < UPPER + 26)
+				return code - UPPER
+			if (code < LOWER + 26)
+				return code - LOWER + 26
+		}
+
+		function b64ToByteArray (b64) {
+			var i, j, l, tmp, placeHolders, arr
+
+			if (b64.length % 4 > 0) {
+				throw new Error('Invalid string. Length must be a multiple of 4')
+			}
+
+			// the number of equal signs (place holders)
+			// if there are two placeholders, than the two characters before it
+			// represent one byte
+			// if there is only one, then the three characters before it represent 2 bytes
+			// this is just a cheap hack to not do indexOf twice
+			var len = b64.length
+			placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
+
+			// base64 is 4/3 + up to two characters of the original data
+			arr = new Arr(b64.length * 3 / 4 - placeHolders)
+
+			// if there are placeholders, only get up to the last complete 4 chars
+			l = placeHolders > 0 ? b64.length - 4 : b64.length
+
+			var L = 0
+
+			function push (v) {
+				arr[L++] = v
+			}
+
+			for (i = 0, j = 0; i < l; i += 4, j += 3) {
+				tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
+				push((tmp & 0xFF0000) >> 16)
+				push((tmp & 0xFF00) >> 8)
+				push(tmp & 0xFF)
+			}
+
+			if (placeHolders === 2) {
+				tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
+				push(tmp & 0xFF)
+			} else if (placeHolders === 1) {
+				tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
+				push((tmp >> 8) & 0xFF)
+				push(tmp & 0xFF)
+			}
+
+			return arr
+		}
+
+		function uint8ToBase64 (uint8) {
+			var i,
+				extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+				output = "",
+				temp, length
+
+			function encode (num) {
+				return lookup.charAt(num)
+			}
+
+			function tripletToBase64 (num) {
+				return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
+			}
+
+			// go through the array every three bytes, we'll deal with trailing stuff later
+			for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+				temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+				output += tripletToBase64(temp)
+			}
+
+			// pad the end with zeros, but make sure to not forget the extra bytes
+			switch (extraBytes) {
+				case 1:
+					temp = uint8[uint8.length - 1]
+					output += encode(temp >> 2)
+					output += encode((temp << 4) & 0x3F)
+					output += '=='
+					break
+				case 2:
+					temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
+					output += encode(temp >> 10)
+					output += encode((temp >> 4) & 0x3F)
+					output += encode((temp << 2) & 0x3F)
+					output += '='
+					break
+			}
+
+			return output
+		}
+
+		exports.toByteArray = b64ToByteArray
+		exports.fromByteArray = uint8ToBase64
+	}( false ? (this.base64js = {}) : exports))
+
+
+/***/ },
+/* 169 */
+/***/ function(module, exports) {
+
+	exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+	  var e, m
+	  var eLen = nBytes * 8 - mLen - 1
+	  var eMax = (1 << eLen) - 1
+	  var eBias = eMax >> 1
+	  var nBits = -7
+	  var i = isLE ? (nBytes - 1) : 0
+	  var d = isLE ? -1 : 1
+	  var s = buffer[offset + i]
+
+	  i += d
+
+	  e = s & ((1 << (-nBits)) - 1)
+	  s >>= (-nBits)
+	  nBits += eLen
+	  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+	  m = e & ((1 << (-nBits)) - 1)
+	  e >>= (-nBits)
+	  nBits += mLen
+	  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+	  if (e === 0) {
+	    e = 1 - eBias
+	  } else if (e === eMax) {
+	    return m ? NaN : ((s ? -1 : 1) * Infinity)
+	  } else {
+	    m = m + Math.pow(2, mLen)
+	    e = e - eBias
+	  }
+	  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+	}
+
+	exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+	  var e, m, c
+	  var eLen = nBytes * 8 - mLen - 1
+	  var eMax = (1 << eLen) - 1
+	  var eBias = eMax >> 1
+	  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+	  var i = isLE ? 0 : (nBytes - 1)
+	  var d = isLE ? 1 : -1
+	  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+	  value = Math.abs(value)
+
+	  if (isNaN(value) || value === Infinity) {
+	    m = isNaN(value) ? 1 : 0
+	    e = eMax
+	  } else {
+	    e = Math.floor(Math.log(value) / Math.LN2)
+	    if (value * (c = Math.pow(2, -e)) < 1) {
+	      e--
+	      c *= 2
+	    }
+	    if (e + eBias >= 1) {
+	      value += rt / c
+	    } else {
+	      value += rt * Math.pow(2, 1 - eBias)
+	    }
+	    if (value * c >= 2) {
+	      e++
+	      c /= 2
+	    }
+
+	    if (e + eBias >= eMax) {
+	      m = 0
+	      e = eMax
+	    } else if (e + eBias >= 1) {
+	      m = (value * c - 1) * Math.pow(2, mLen)
+	      e = e + eBias
+	    } else {
+	      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+	      e = 0
+	    }
+	  }
+
+	  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+	  e = (e << mLen) | m
+	  eLen += mLen
+	  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+	  buffer[offset + i - d] |= s * 128
+	}
+
+
+/***/ },
+/* 170 */
+/***/ function(module, exports) {
+
+	var toString = {}.toString;
+
+	module.exports = Array.isArray || function (arr) {
+	  return toString.call(arr) == '[object Array]';
+	};
+
+
+/***/ },
+/* 171 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var REQUIRED_FIELD_SYMBOL = "*";
+
+	function TitleField(props) {
+	  var id = props.id;
+	  var title = props.title;
+	  var required = props.required;
+
+	  var legend = required ? title + REQUIRED_FIELD_SYMBOL : title;
+	  return _react2.default.createElement(
+	    "legend",
+	    { id: id },
+	    legend
+	  );
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  TitleField.propTypes = {
+	    id: _react.PropTypes.string,
+	    title: _react.PropTypes.string,
+	    required: _react.PropTypes.bool
+	  };
+	}
+
+	exports.default = TitleField;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 172 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function DescriptionField(props) {
+	  var id = props.id;
+	  var description = props.description;
+
+	  return _react2.default.createElement(
+	    "div",
+	    { id: id, className: "field-description" },
+	    description
+	  );
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  DescriptionField.propTypes = {
+	    id: _react.PropTypes.string,
+	    description: _react.PropTypes.string
+	  };
+	}
+
+	exports.default = DescriptionField;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _BaseInput = __webpack_require__(174);
+
+	var _BaseInput2 = _interopRequireDefault(_BaseInput);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function PasswordWidget(props) {
+	  return _react2.default.createElement(_BaseInput2.default, _extends({ type: "password" }, props));
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  PasswordWidget.propTypes = {
+	    value: _react.PropTypes.string
+	  };
+	}
+
+	exports.default = PasswordWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function BaseInput(props) {
+	  var value = props.value;
+	  var readonly = props.readonly;
+	  var _onChange = props.onChange;
+
+	  return _react2.default.createElement("input", _extends({}, props, {
+	    className: "form-control",
+	    readOnly: readonly,
+	    value: typeof value === "undefined" ? "" : value,
+	    onChange: function onChange(event) {
+	      return _onChange(event.target.value);
+	    } }));
+	}
+
+	BaseInput.defaultProps = {
+	  type: "text",
+	  required: false,
+	  disabled: false,
+	  readonly: false
+	};
+
+	if (process.env.NODE_ENV !== "production") {
+	  BaseInput.propTypes = {
+	    id: _react.PropTypes.string.isRequired,
+	    placeholder: _react.PropTypes.string,
+	    value: _react.PropTypes.any,
+	    required: _react.PropTypes.bool,
+	    disabled: _react.PropTypes.bool,
+	    readonly: _react.PropTypes.bool,
+	    onChange: _react.PropTypes.func
+	  };
+	}
+
+	exports.default = BaseInput;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function RadioWidget(_ref) {
+	  var schema = _ref.schema;
+	  var options = _ref.options;
+	  var placeholder = _ref.placeholder;
+	  var value = _ref.value;
+	  var required = _ref.required;
+	  var disabled = _ref.disabled;
+	  var _onChange = _ref.onChange;
+
+	  // Generating a unique field name to identify this set of radio buttons
+	  var name = Math.random().toString();
+	  return _react2.default.createElement(
+	    "div",
+	    { className: "field-radio-group" },
+	    options.map(function (option, i) {
+	      var checked = option.value === value;
+	      return _react2.default.createElement(
+	        "div",
+	        { key: i, className: "radio " + (disabled ? "disabled" : "") },
+	        _react2.default.createElement(
+	          "label",
+	          null,
+	          _react2.default.createElement("input", { type: "radio",
+	            name: name,
+	            value: option.value,
+	            checked: checked,
+	            disabled: disabled,
+	            placeholder: placeholder,
+	            onChange: function onChange(_) {
+	              return _onChange(option.value);
+	            } }),
+	          option.label
+	        )
+	      );
+	    })
+	  );
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  RadioWidget.propTypes = {
+	    schema: _react.PropTypes.object.isRequired,
+	    id: _react.PropTypes.string.isRequired,
+	    options: _react.PropTypes.array.isRequired,
+	    placeholder: _react.PropTypes.string,
+	    value: _react.PropTypes.any,
+	    required: _react.PropTypes.bool,
+	    onChange: _react.PropTypes.func
+	  };
+	}
+	exports.default = RadioWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _BaseInput = __webpack_require__(174);
+
+	var _BaseInput2 = _interopRequireDefault(_BaseInput);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function rangeSpec(schema) {
+	  var spec = {};
+	  if (schema.multipleOf) {
+	    spec.step = schema.multipleOf;
+	  }
+	  if (schema.minimum) {
+	    spec.min = schema.minimum;
+	  }
+	  if (schema.maximum) {
+	    spec.max = schema.maximum;
+	  }
+	  return spec;
+	}
+
+	function UpDownWidget(props) {
+	  return _react2.default.createElement(_BaseInput2.default, _extends({ type: "number" }, props, rangeSpec(props.schema)));
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  UpDownWidget.propTypes = {
+	    value: _react.PropTypes.oneOfType([_react.PropTypes.number, _react.PropTypes.string])
+	  };
+	}
+
+	exports.default = UpDownWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 177 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _BaseInput = __webpack_require__(174);
+
+	var _BaseInput2 = _interopRequireDefault(_BaseInput);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function rangeSpec(schema) {
+	  var spec = {};
+	  if (schema.multipleOf) {
+	    spec.step = schema.multipleOf;
+	  }
+	  if (schema.minimum) {
+	    spec.min = schema.minimum;
+	  }
+	  if (schema.maximum) {
+	    spec.max = schema.maximum;
+	  }
+	  return spec;
+	}
+
+	function RangeWidget(props) {
+	  var schema = props.schema;
+	  var value = props.value;
+
+	  return _react2.default.createElement(
+	    "div",
+	    { className: "field-range-wrapper" },
+	    _react2.default.createElement(_BaseInput2.default, _extends({
+	      type: "range"
+	    }, props, rangeSpec(schema))),
+	    _react2.default.createElement(
+	      "span",
+	      { className: "range-view" },
+	      value
+	    )
+	  );
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  RangeWidget.propTypes = {
+	    value: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.number])
+	  };
+	}
+
+	exports.default = RangeWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _utils = __webpack_require__(163);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * This is a silly limitation in the DOM where option change event values are
+	 * always retrieved as strings.
+	 */
+	function processValue(type, value) {
+	  if (type === "boolean") {
+	    return value === "true";
+	  } else if (type === "number") {
+	    return (0, _utils.asNumber)(value);
+	  }
+	  return value;
+	}
+
+	function SelectWidget(_ref) {
+	  var schema = _ref.schema;
+	  var id = _ref.id;
+	  var options = _ref.options;
+	  var placeholder = _ref.placeholder;
+	  var value = _ref.value;
+	  var required = _ref.required;
+	  var disabled = _ref.disabled;
+	  var readonly = _ref.readonly;
+	  var multiple = _ref.multiple;
+	  var _onChange = _ref.onChange;
+
+	  return _react2.default.createElement(
+	    "select",
+	    {
+	      id: id,
+	      multiple: multiple,
+	      className: "form-control",
+	      title: placeholder,
+	      value: value,
+	      required: required,
+	      disabled: disabled,
+	      readOnly: readonly,
+	      onChange: function onChange(event) {
+	        var newValue = void 0;
+	        if (multiple) {
+	          newValue = [].filter.call(event.target.options, function (o) {
+	            return o.selected;
+	          }).map(function (o) {
+	            return o.value;
+	          });
+	        } else {
+	          newValue = event.target.value;
+	        }
+
+	        _onChange(processValue(schema.type, newValue));
+	      } },
+	    options.map(function (_ref2, i) {
+	      var value = _ref2.value;
+	      var label = _ref2.label;
+
+	      return _react2.default.createElement(
+	        "option",
+	        { key: i, value: value },
+	        label
+	      );
+	    })
+	  );
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  SelectWidget.propTypes = {
+	    schema: _react.PropTypes.object.isRequired,
+	    id: _react.PropTypes.string.isRequired,
+	    options: _react.PropTypes.array.isRequired,
+	    placeholder: _react.PropTypes.string,
+	    value: _react.PropTypes.any,
+	    required: _react.PropTypes.bool,
+	    multiple: _react.PropTypes.bool,
+	    onChange: _react.PropTypes.func
+	  };
+	}
+
+	exports.default = SelectWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _BaseInput = __webpack_require__(174);
+
+	var _BaseInput2 = _interopRequireDefault(_BaseInput);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function TextWidget(props) {
+	  return _react2.default.createElement(_BaseInput2.default, props);
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  TextWidget.propTypes = {
+	    value: _react.PropTypes.oneOfType([_react2.default.PropTypes.string, _react2.default.PropTypes.number])
+	  };
+	}
+
+	exports.default = TextWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 180 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _BaseInput = __webpack_require__(174);
+
+	var _BaseInput2 = _interopRequireDefault(_BaseInput);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function DateWidget(props) {
+	  return _react2.default.createElement(_BaseInput2.default, _extends({ type: "date" }, props));
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  DateWidget.propTypes = {
+	    value: _react.PropTypes.string
+	  };
+	}
+
+	exports.default = DateWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 181 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _BaseInput = __webpack_require__(174);
+
+	var _BaseInput2 = _interopRequireDefault(_BaseInput);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function fromJSONDate(jsonDate) {
+	  return jsonDate ? jsonDate.slice(0, 19) : "";
+	}
+
+	function toJSONDate(dateString) {
+	  if (dateString) {
+	    return new Date(dateString).toJSON();
+	  }
+	}
+
+	function DateTimeWidget(props) {
+	  var value = props.value;
+	  var _onChange = props.onChange;
+
+	  return _react2.default.createElement(_BaseInput2.default, _extends({
+	    type: "datetime-local"
+	  }, props, {
+	    value: fromJSONDate(value),
+	    onChange: function onChange(value) {
+	      return _onChange(toJSONDate(value));
+	    }
+	  }));
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  DateTimeWidget.propTypes = {
+	    value: _react.PropTypes.string
+	  };
+	}
+
+	exports.default = DateTimeWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 182 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _utils = __webpack_require__(163);
+
+	var _SelectWidget = __webpack_require__(178);
+
+	var _SelectWidget2 = _interopRequireDefault(_SelectWidget);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	function rangeOptions(type, start, stop) {
+	  var options = [{ value: -1, label: type }];
+	  for (var i = start; i <= stop; i++) {
+	    options.push({ value: i, label: (0, _utils.pad)(i, 2) });
+	  }
+	  return options;
+	}
+
+	function readyForChange(state) {
+	  return Object.keys(state).every(function (key) {
+	    return state[key] !== -1;
+	  });
+	}
+
+	function DateElement(props) {
+	  var type = props.type;
+	  var range = props.range;
+	  var value = props.value;
+	  var select = props.select;
+	  var rootId = props.rootId;
+	  var disabled = props.disabled;
+	  var readonly = props.readonly;
+
+	  var id = rootId + "_" + type;
+	  return _react2.default.createElement(_SelectWidget2.default, {
+	    schema: { type: "integer" },
+	    id: id,
+	    className: "form-control",
+	    options: rangeOptions(type, range[0], range[1]),
+	    value: value,
+	    disabled: disabled,
+	    readonly: readonly,
+	    onChange: function onChange(value) {
+	      return select(type, value);
+	    } });
+	}
+
+	var AltDateWidget = function (_Component) {
+	  _inherits(AltDateWidget, _Component);
+
+	  function AltDateWidget(props) {
+	    _classCallCheck(this, AltDateWidget);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AltDateWidget).call(this, props));
+
+	    _this.onChange = function (property, value) {
+	      _this.setState(_defineProperty({}, property, value), function () {
+	        // Only propagate to parent state if we have a complete date{time}
+	        if (readyForChange(_this.state)) {
+	          _this.props.onChange((0, _utils.toDateString)(_this.state, _this.props.time));
+	        }
+	      });
+	    };
+
+	    _this.setNow = function (event) {
+	      event.preventDefault();
+	      var _this$props = _this.props;
+	      var time = _this$props.time;
+	      var disabled = _this$props.disabled;
+	      var readonly = _this$props.readonly;
+	      var onChange = _this$props.onChange;
+
+	      if (disabled || readonly) {
+	        return;
+	      }
+	      var nowDateObj = (0, _utils.parseDateString)(new Date().toJSON(), time);
+	      _this.setState(nowDateObj, function () {
+	        return onChange((0, _utils.toDateString)(_this.state, time));
+	      });
+	    };
+
+	    _this.clear = function (event) {
+	      event.preventDefault();
+	      var _this$props2 = _this.props;
+	      var time = _this$props2.time;
+	      var disabled = _this$props2.disabled;
+	      var readonly = _this$props2.readonly;
+	      var onChange = _this$props2.onChange;
+
+	      if (disabled || readonly) {
+	        return;
+	      }
+	      _this.setState((0, _utils.parseDateString)("", time), function () {
+	        return onChange(undefined);
+	      });
+	    };
+
+	    _this.state = (0, _utils.parseDateString)(props.value, props.time);
+	    return _this;
+	  }
+
+	  _createClass(AltDateWidget, [{
+	    key: "componentWillReceiveProps",
+	    value: function componentWillReceiveProps(nextProps) {
+	      this.setState((0, _utils.parseDateString)(nextProps.value, nextProps.time));
+	    }
+	  }, {
+	    key: "shouldComponentUpdate",
+	    value: function shouldComponentUpdate(nextProps, nextState) {
+	      return (0, _utils.shouldRender)(this, nextProps, nextState);
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      var _this2 = this;
+
+	      var _props = this.props;
+	      var id = _props.id;
+	      var disabled = _props.disabled;
+	      var readonly = _props.readonly;
+
+	      return _react2.default.createElement(
+	        "ul",
+	        { className: "list-inline" },
+	        this.dateElementProps.map(function (elemProps, i) {
+	          return _react2.default.createElement(
+	            "li",
+	            { key: i },
+	            _react2.default.createElement(DateElement, _extends({
+	              rootId: id,
+	              select: _this2.onChange
+	            }, elemProps, {
+	              disabled: disabled,
+	              readonly: readonly }))
+	          );
+	        }),
+	        _react2.default.createElement(
+	          "li",
+	          null,
+	          _react2.default.createElement(
+	            "a",
+	            { href: "#", className: "btn btn-info btn-now",
+	              onClick: this.setNow },
+	            "Now"
+	          )
+	        ),
+	        _react2.default.createElement(
+	          "li",
+	          null,
+	          _react2.default.createElement(
+	            "a",
+	            { href: "#", className: "btn btn-warning btn-clear",
+	              onClick: this.clear },
+	            "Clear"
+	          )
+	        )
+	      );
+	    }
+	  }, {
+	    key: "dateElementProps",
+	    get: function get() {
+	      var time = this.props.time;
+	      var _state = this.state;
+	      var year = _state.year;
+	      var month = _state.month;
+	      var day = _state.day;
+	      var hour = _state.hour;
+	      var minute = _state.minute;
+	      var second = _state.second;
+
+	      var data = [{ type: "year", range: [1900, 2020], value: year }, { type: "month", range: [1, 12], value: month }, { type: "day", range: [1, 31], value: day }];
+	      if (time) {
+	        data.push({ type: "hour", range: [0, 23], value: hour }, { type: "minute", range: [0, 59], value: minute }, { type: "second", range: [0, 59], value: second });
+	      }
+	      return data;
+	    }
+	  }]);
+
+	  return AltDateWidget;
+	}(_react.Component);
+
+	AltDateWidget.defaultProps = {
+	  time: false,
+	  disabled: false,
+	  readonly: false
+	};
+
+
+	if (process.env.NODE_ENV !== "production") {
+	  AltDateWidget.propTypes = {
+	    schema: _react.PropTypes.object.isRequired,
+	    id: _react.PropTypes.string.isRequired,
+	    placeholder: _react.PropTypes.string,
+	    value: _react2.default.PropTypes.string,
+	    required: _react.PropTypes.bool,
+	    disabled: _react.PropTypes.bool,
+	    readonly: _react.PropTypes.bool,
+	    onChange: _react.PropTypes.func,
+	    time: _react.PropTypes.bool
+	  };
+	}
+
+	exports.default = AltDateWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 183 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _AltDateWidget = __webpack_require__(182);
+
+	var _AltDateWidget2 = _interopRequireDefault(_AltDateWidget);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function AltDateTimeWidget(props) {
+	  return _react2.default.createElement(_AltDateWidget2.default, _extends({ time: true }, props));
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  AltDateTimeWidget.propTypes = {
+	    schema: _react.PropTypes.object.isRequired,
+	    id: _react.PropTypes.string.isRequired,
+	    placeholder: _react.PropTypes.string,
+	    value: _react2.default.PropTypes.string,
+	    required: _react.PropTypes.bool,
+	    onChange: _react.PropTypes.func
+	  };
+	}
+
+	exports.default = AltDateTimeWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _BaseInput = __webpack_require__(174);
+
+	var _BaseInput2 = _interopRequireDefault(_BaseInput);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function EmailWidget(props) {
+	  return _react2.default.createElement(_BaseInput2.default, _extends({ type: "email" }, props));
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  EmailWidget.propTypes = {
+	    value: _react.PropTypes.string
+	  };
+	}
+
+	exports.default = EmailWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _BaseInput = __webpack_require__(174);
+
+	var _BaseInput2 = _interopRequireDefault(_BaseInput);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function URLWidget(props) {
+	  return _react2.default.createElement(_BaseInput2.default, _extends({ type: "url" }, props));
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  URLWidget.propTypes = {
+	    value: _react.PropTypes.string
+	  };
+	}
+
+	exports.default = URLWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function TextWidget(_ref) {
+	  var schema = _ref.schema;
+	  var id = _ref.id;
+	  var placeholder = _ref.placeholder;
+	  var value = _ref.value;
+	  var required = _ref.required;
+	  var disabled = _ref.disabled;
+	  var readonly = _ref.readonly;
+	  var _onChange = _ref.onChange;
+
+	  return _react2.default.createElement("textarea", {
+	    id: id,
+	    className: "form-control",
+	    value: typeof value === "undefined" ? "" : value,
+	    placeholder: placeholder,
+	    required: required,
+	    disabled: disabled,
+	    readOnly: readonly,
+	    onChange: function onChange(event) {
+	      return _onChange(event.target.value);
+	    } });
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  TextWidget.propTypes = {
+	    schema: _react.PropTypes.object.isRequired,
+	    id: _react.PropTypes.string.isRequired,
+	    placeholder: _react.PropTypes.string,
+	    value: _react.PropTypes.string,
+	    required: _react.PropTypes.bool,
+	    onChange: _react.PropTypes.func
+	  };
+	}
+
+	exports.default = TextWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 187 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function HiddenWidget(_ref) {
+	  var id = _ref.id;
+	  var value = _ref.value;
+
+	  return _react2.default.createElement("input", { type: "hidden", id: id, value: value });
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  HiddenWidget.propTypes = {
+	    id: _react.PropTypes.string.isRequired,
+	    value: _react.PropTypes.oneOfType([_react2.default.PropTypes.string, _react2.default.PropTypes.number, _react2.default.PropTypes.bool])
+	  };
+	}
+
+	exports.default = HiddenWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 188 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _BaseInput = __webpack_require__(174);
+
+	var _BaseInput2 = _interopRequireDefault(_BaseInput);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function ColorWidget(props) {
+	  return _react2.default.createElement(_BaseInput2.default, _extends({ type: "color" }, props));
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  ColorWidget.propTypes = {
+	    value: _react.PropTypes.string
+	  };
+	}
+
+	exports.default = ColorWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _utils = __webpack_require__(163);
+
+	var _SelectWidget = __webpack_require__(178);
+
+	var _SelectWidget2 = _interopRequireDefault(_SelectWidget);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	function ArrayFieldTitle(_ref) {
+	  var TitleField = _ref.TitleField;
+	  var idSchema = _ref.idSchema;
+	  var title = _ref.title;
+	  var required = _ref.required;
+
+	  if (!title) {
+	    return null;
+	  }
+	  var id = idSchema.id + "__title";
+	  return _react2.default.createElement(TitleField, { id: id, title: title, required: required });
+	}
+
+	function ArrayFieldDescription(_ref2) {
+	  var DescriptionField = _ref2.DescriptionField;
+	  var idSchema = _ref2.idSchema;
+	  var description = _ref2.description;
+
+	  if (!description) {
+	    return null;
+	  }
+	  var id = idSchema.id + "__description";
+	  return _react2.default.createElement(DescriptionField, { id: id, description: description });
+	}
+
+	var ArrayField = function (_Component) {
+	  _inherits(ArrayField, _Component);
+
+	  function ArrayField(props) {
+	    _classCallCheck(this, ArrayField);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ArrayField).call(this, props));
+
+	    _this.onAddClick = function (event) {
+	      event.preventDefault();
+	      var items = _this.state.items;
+	      var _this$props = _this.props;
+	      var schema = _this$props.schema;
+	      var registry = _this$props.registry;
+	      var definitions = registry.definitions;
+
+	      var itemSchema = schema.items;
+	      if ((0, _utils.isFixedItems)(schema) && (0, _utils.allowAdditionalItems)(schema)) {
+	        itemSchema = schema.additionalItems;
+	      }
+	      _this.asyncSetState({
+	        items: items.concat([(0, _utils.getDefaultFormState)(itemSchema, undefined, definitions)])
+	      });
+	    };
+
+	    _this.onDropIndexClick = function (index) {
+	      return function (event) {
+	        event.preventDefault();
+	        _this.asyncSetState({
+	          items: _this.state.items.filter(function (_, i) {
+	            return i !== index;
+	          })
+	        }, { validate: true }); // refs #195
+	      };
+	    };
+
+	    _this.onChangeForIndex = function (index) {
+	      return function (value) {
+	        _this.asyncSetState({
+	          items: _this.state.items.map(function (item, i) {
+	            return index === i ? value : item;
+	          })
+	        });
+	      };
+	    };
+
+	    _this.onSelectChange = function (value) {
+	      _this.asyncSetState({ items: value });
+	    };
+
+	    _this.state = _this.getStateFromProps(props);
+	    return _this;
+	  }
+
+	  _createClass(ArrayField, [{
+	    key: "componentWillReceiveProps",
+	    value: function componentWillReceiveProps(nextProps) {
+	      this.setState(this.getStateFromProps(nextProps));
+	    }
+	  }, {
+	    key: "getStateFromProps",
+	    value: function getStateFromProps(props) {
+	      var formData = Array.isArray(props.formData) ? props.formData : null;
+	      var definitions = this.props.registry.definitions;
+
+	      return {
+	        items: (0, _utils.getDefaultFormState)(props.schema, formData, definitions) || []
+	      };
+	    }
+	  }, {
+	    key: "shouldComponentUpdate",
+	    value: function shouldComponentUpdate(nextProps, nextState) {
+	      return (0, _utils.shouldRender)(this, nextProps, nextState);
+	    }
+	  }, {
+	    key: "isItemRequired",
+	    value: function isItemRequired(itemsSchema) {
+	      return itemsSchema.type === "string" && itemsSchema.minLength > 0;
+	    }
+	  }, {
+	    key: "asyncSetState",
+	    value: function asyncSetState(state) {
+	      var _this2 = this;
+
+	      var options = arguments.length <= 1 || arguments[1] === undefined ? { validate: false } : arguments[1];
+
+	      (0, _utils.setState)(this, state, function () {
+	        _this2.props.onChange(_this2.state.items, options);
+	      });
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      var schema = this.props.schema;
+
+	      if ((0, _utils.isFixedItems)(schema)) {
+	        return this.renderFixedArray();
+	      }
+	      if ((0, _utils.isMultiSelect)(schema)) {
+	        return this.renderMultiSelect();
+	      }
+	      return this.renderNormalArray();
+	    }
+	  }, {
+	    key: "renderNormalArray",
+	    value: function renderNormalArray() {
+	      var _this3 = this;
+
+	      var _props = this.props;
+	      var schema = _props.schema;
+	      var uiSchema = _props.uiSchema;
+	      var errorSchema = _props.errorSchema;
+	      var idSchema = _props.idSchema;
+	      var name = _props.name;
+	      var required = _props.required;
+	      var disabled = _props.disabled;
+	      var readonly = _props.readonly;
+
+	      var title = schema.title || name;
+	      var items = this.state.items;
+	      var _props$registry = this.props.registry;
+	      var definitions = _props$registry.definitions;
+	      var fields = _props$registry.fields;
+	      var TitleField = fields.TitleField;
+	      var DescriptionField = fields.DescriptionField;
+
+	      var itemsSchema = (0, _utils.retrieveSchema)(schema.items, definitions);
+
+	      return _react2.default.createElement(
+	        "fieldset",
+	        {
+	          className: "field field-array field-array-of-" + itemsSchema.type },
+	        _react2.default.createElement(ArrayFieldTitle, {
+	          TitleField: TitleField,
+	          idSchema: idSchema,
+	          title: title,
+	          required: required }),
+	        schema.description ? _react2.default.createElement(ArrayFieldDescription, {
+	          DescriptionField: DescriptionField,
+	          idSchema: idSchema,
+	          description: schema.description }) : null,
+	        _react2.default.createElement(
+	          "div",
+	          { className: "row array-item-list" },
+	          items.map(function (item, index) {
+	            var itemErrorSchema = errorSchema ? errorSchema[index] : undefined;
+	            var itemIdPrefix = idSchema.id + "_" + index;
+	            var itemIdSchema = (0, _utils.toIdSchema)(itemsSchema, itemIdPrefix, definitions);
+	            return _this3.renderArrayFieldItem({
+	              index: index,
+	              itemSchema: itemsSchema,
+	              itemIdSchema: itemIdSchema,
+	              itemErrorSchema: itemErrorSchema,
+	              itemData: items[index],
+	              itemUiSchema: uiSchema.items
+	            });
+	          })
+	        ),
+	        _react2.default.createElement(AddButton, {
+	          onClick: this.onAddClick, disabled: disabled || readonly })
+	      );
+	    }
+	  }, {
+	    key: "renderMultiSelect",
+	    value: function renderMultiSelect() {
+	      var _props2 = this.props;
+	      var schema = _props2.schema;
+	      var idSchema = _props2.idSchema;
+	      var name = _props2.name;
+	      var disabled = _props2.disabled;
+	      var readonly = _props2.readonly;
+
+	      var title = schema.title || name;
+	      var items = this.state.items;
+	      var definitions = this.props.registry.definitions;
+
+	      var itemsSchema = (0, _utils.retrieveSchema)(schema.items, definitions);
+	      return _react2.default.createElement(_SelectWidget2.default, {
+	        id: idSchema && idSchema.id,
+	        multiple: true,
+	        onChange: this.onSelectChange,
+	        options: (0, _utils.optionsList)(itemsSchema),
+	        schema: schema,
+	        title: title,
+	        value: items,
+	        disabled: disabled,
+	        readonly: readonly
+	      });
+	    }
+	  }, {
+	    key: "renderFixedArray",
+	    value: function renderFixedArray() {
+	      var _this4 = this;
+
+	      var _props3 = this.props;
+	      var schema = _props3.schema;
+	      var uiSchema = _props3.uiSchema;
+	      var errorSchema = _props3.errorSchema;
+	      var idSchema = _props3.idSchema;
+	      var name = _props3.name;
+	      var required = _props3.required;
+	      var disabled = _props3.disabled;
+	      var readonly = _props3.readonly;
+
+	      var title = schema.title || name;
+	      var items = this.state.items;
+	      var _props$registry2 = this.props.registry;
+	      var definitions = _props$registry2.definitions;
+	      var fields = _props$registry2.fields;
+	      var TitleField = fields.TitleField;
+
+	      var itemSchemas = schema.items.map(function (item) {
+	        return (0, _utils.retrieveSchema)(item, definitions);
+	      });
+	      var additionalSchema = (0, _utils.allowAdditionalItems)(schema) ? (0, _utils.retrieveSchema)(schema.additionalItems, definitions) : null;
+
+	      if (!items || items.length < itemSchemas.length) {
+	        // to make sure at least all fixed items are generated
+	        items = items || [];
+	        items = items.concat(new Array(itemSchemas.length - items.length));
+	      }
+
+	      return _react2.default.createElement(
+	        "fieldset",
+	        { className: "field field-array field-array-fixed-items" },
+	        _react2.default.createElement(ArrayFieldTitle, {
+	          TitleField: TitleField,
+	          idSchema: idSchema,
+	          title: title,
+	          required: required }),
+	        schema.description ? _react2.default.createElement(
+	          "div",
+	          { className: "field-description" },
+	          schema.description
+	        ) : null,
+	        _react2.default.createElement(
+	          "div",
+	          { className: "row array-item-list" },
+	          items.map(function (item, index) {
+	            var additional = index >= itemSchemas.length;
+	            var itemSchema = additional ? additionalSchema : itemSchemas[index];
+	            var itemIdPrefix = idSchema.id + "_" + index;
+	            var itemIdSchema = (0, _utils.toIdSchema)(itemSchema, itemIdPrefix, definitions);
+	            var itemUiSchema = additional ? uiSchema.additionalItems || {} : Array.isArray(uiSchema.items) ? uiSchema.items[index] : uiSchema.items || {};
+	            var itemErrorSchema = errorSchema ? errorSchema[index] : undefined;
+
+	            return _this4.renderArrayFieldItem({
+	              index: index,
+	              removable: additional,
+	              itemSchema: itemSchema,
+	              itemData: item,
+	              itemUiSchema: itemUiSchema,
+	              itemIdSchema: itemIdSchema,
+	              itemErrorSchema: itemErrorSchema
+	            });
+	          })
+	        ),
+	        additionalSchema ? _react2.default.createElement(AddButton, {
+	          onClick: this.onAddClick,
+	          disabled: disabled || readonly }) : null
+	      );
+	    }
+	  }, {
+	    key: "renderArrayFieldItem",
+	    value: function renderArrayFieldItem(_ref3) {
+	      var index = _ref3.index;
+	      var _ref3$removable = _ref3.removable;
+	      var removable = _ref3$removable === undefined ? true : _ref3$removable;
+	      var itemSchema = _ref3.itemSchema;
+	      var itemData = _ref3.itemData;
+	      var itemUiSchema = _ref3.itemUiSchema;
+	      var itemIdSchema = _ref3.itemIdSchema;
+	      var itemErrorSchema = _ref3.itemErrorSchema;
+	      var SchemaField = this.props.registry.fields.SchemaField;
+	      var _props4 = this.props;
+	      var disabled = _props4.disabled;
+	      var readonly = _props4.readonly;
+
+	      return _react2.default.createElement(
+	        "div",
+	        { key: index },
+	        _react2.default.createElement(
+	          "div",
+	          { className: removable ? "col-xs-10" : "col-xs-12" },
+	          _react2.default.createElement(SchemaField, {
+	            schema: itemSchema,
+	            uiSchema: itemUiSchema,
+	            formData: itemData,
+	            errorSchema: itemErrorSchema,
+	            idSchema: itemIdSchema,
+	            required: this.isItemRequired(itemSchema),
+	            onChange: this.onChangeForIndex(index),
+	            registry: this.props.registry,
+	            disabled: this.props.disabled,
+	            readonly: this.props.readonly })
+	        ),
+	        removable ? _react2.default.createElement(
+	          "div",
+	          { className: "col-xs-2 array-item-remove text-right" },
+	          _react2.default.createElement(
+	            "button",
+	            { type: "button", className: "btn btn-danger col-xs-12",
+	              tabIndex: "-1",
+	              disabled: disabled || readonly,
+	              onClick: this.onDropIndexClick(index) },
+	            "Delete"
+	          )
+	        ) : null
+	      );
+	    }
+	  }, {
+	    key: "itemTitle",
+	    get: function get() {
+	      var schema = this.props.schema;
+
+	      return schema.items.title || schema.items.description || "Item";
+	    }
+	  }]);
+
+	  return ArrayField;
+	}(_react.Component);
+
+	ArrayField.defaultProps = {
+	  uiSchema: {},
+	  idSchema: {},
+	  registry: (0, _utils.getDefaultRegistry)(),
+	  required: false,
+	  disabled: false,
+	  readonly: false
+	};
+
+
+	function AddButton(_ref4) {
+	  var onClick = _ref4.onClick;
+	  var disabled = _ref4.disabled;
+
+	  return _react2.default.createElement(
+	    "div",
+	    { className: "row" },
+	    _react2.default.createElement(
+	      "p",
+	      { className: "col-xs-2 col-xs-offset-10 array-item-add text-right" },
+	      _react2.default.createElement(
+	        "button",
+	        { type: "button", className: "btn btn-info col-xs-12",
+	          tabIndex: "-1", onClick: onClick,
+	          disabled: disabled },
+	        "Add"
+	      )
+	    )
+	  );
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  ArrayField.propTypes = {
+	    schema: _react.PropTypes.object.isRequired,
+	    uiSchema: _react.PropTypes.object,
+	    idSchema: _react.PropTypes.object,
+	    errorSchema: _react.PropTypes.object,
+	    onChange: _react.PropTypes.func.isRequired,
+	    formData: _react.PropTypes.array,
+	    required: _react.PropTypes.bool,
+	    disabled: _react.PropTypes.bool,
+	    readonly: _react.PropTypes.bool,
+	    registry: _react.PropTypes.shape({
+	      widgets: _react.PropTypes.objectOf(_react.PropTypes.func).isRequired,
+	      fields: _react.PropTypes.objectOf(_react.PropTypes.func).isRequired,
+	      definitions: _react.PropTypes.object.isRequired
+	    })
+	  };
+	}
+
+	exports.default = ArrayField;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 190 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _utils = __webpack_require__(163);
+
+	var _CheckboxWidget = __webpack_require__(191);
+
+	var _CheckboxWidget2 = _interopRequireDefault(_CheckboxWidget);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function buildOptions(schema) {
+	  return (0, _utils.optionsList)(Object.assign({
+	    enumNames: ["true", "false"],
+	    enum: [true, false]
+	  }, { enumNames: schema.enumNames }));
+	}
+
+	function BooleanField(props) {
+	  var schema = props.schema;
+	  var name = props.name;
+	  var uiSchema = props.uiSchema;
+	  var idSchema = props.idSchema;
+	  var formData = props.formData;
+	  var registry = props.registry;
+	  var required = props.required;
+	  var disabled = props.disabled;
+	  var readonly = props.readonly;
+	  var onChange = props.onChange;
+	  var title = schema.title;
+	  var description = schema.description;
+	  var widgets = registry.widgets;
+
+	  var widget = uiSchema["ui:widget"];
+	  var commonProps = {
+	    schema: schema,
+	    id: idSchema && idSchema.id,
+	    onChange: onChange,
+	    label: title || name,
+	    placeholder: description,
+	    value: (0, _utils.defaultFieldValue)(formData, schema),
+	    required: required,
+	    disabled: disabled,
+	    readonly: readonly
+	  };
+	  if (widget) {
+	    var Widget = (0, _utils.getAlternativeWidget)(schema, widget, widgets);
+	    return _react2.default.createElement(Widget, _extends({ options: buildOptions(schema) }, commonProps));
+	  }
+	  return _react2.default.createElement(_CheckboxWidget2.default, commonProps);
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  BooleanField.propTypes = {
+	    schema: _react.PropTypes.object.isRequired,
+	    uiSchema: _react.PropTypes.object,
+	    idSchema: _react.PropTypes.object,
+	    onChange: _react.PropTypes.func.isRequired,
+	    formData: _react.PropTypes.bool,
+	    required: _react.PropTypes.bool,
+	    disabled: _react.PropTypes.bool,
+	    readonly: _react.PropTypes.bool,
+	    registry: _react.PropTypes.shape({
+	      widgets: _react.PropTypes.objectOf(_react.PropTypes.func).isRequired,
+	      fields: _react.PropTypes.objectOf(_react.PropTypes.func).isRequired,
+	      definitions: _react.PropTypes.object.isRequired
+	    })
+	  };
+	}
+
+	BooleanField.defaultProps = {
+	  uiSchema: {},
+	  registry: (0, _utils.getDefaultRegistry)(),
+	  disabled: false,
+	  readonly: false
+	};
+
+	exports.default = BooleanField;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 191 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function CheckboxWidget(_ref) {
+	  var schema = _ref.schema;
+	  var id = _ref.id;
+	  var value = _ref.value;
+	  var required = _ref.required;
+	  var disabled = _ref.disabled;
+	  var placeholder = _ref.placeholder;
+	  var _onChange = _ref.onChange;
+	  var label = _ref.label;
+
+	  return _react2.default.createElement(
+	    "div",
+	    { className: "checkbox " + (disabled ? "disabled" : "") },
+	    _react2.default.createElement(
+	      "label",
+	      null,
+	      _react2.default.createElement("input", { type: "checkbox",
+	        id: id,
+	        title: placeholder,
+	        checked: typeof value === "undefined" ? false : value,
+	        required: required,
+	        disabled: disabled,
+	        onChange: function onChange(event) {
+	          return _onChange(event.target.checked);
+	        } }),
+	      _react2.default.createElement(
+	        "strong",
+	        null,
+	        label
+	      )
+	    )
+	  );
+	}
+	if (process.env.NODE_ENV !== "production") {
+	  CheckboxWidget.propTypes = {
+	    schema: _react.PropTypes.object.isRequired,
+	    id: _react.PropTypes.string.isRequired,
+	    onChange: _react.PropTypes.func,
+	    value: _react.PropTypes.bool,
+	    required: _react.PropTypes.bool,
+	    placeholder: _react.PropTypes.string
+	  };
+	}
+
+	exports.default = CheckboxWidget;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 192 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _utils = __webpack_require__(163);
+
+	var _StringField = __webpack_require__(193);
+
+	var _StringField2 = _interopRequireDefault(_StringField);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function NumberField(props) {
+	  return _react2.default.createElement(_StringField2.default, _extends({}, props, {
+	    onChange: function onChange(value) {
+	      return props.onChange((0, _utils.asNumber)(value));
+	    } }));
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  NumberField.propTypes = {
+	    schema: _react.PropTypes.object.isRequired,
+	    idSchema: _react.PropTypes.object,
+	    onChange: _react.PropTypes.func.isRequired,
+	    formData: _react.PropTypes.oneOfType([_react.PropTypes.number, _react.PropTypes.string]),
+	    required: _react.PropTypes.bool
+	  };
+	}
+
+	NumberField.defaultProps = {
+	  uiSchema: {}
+	};
+
+	exports.default = NumberField;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _utils = __webpack_require__(163);
+
+	var _TextWidget = __webpack_require__(179);
+
+	var _TextWidget2 = _interopRequireDefault(_TextWidget);
+
+	var _SelectWidget = __webpack_require__(178);
+
+	var _SelectWidget2 = _interopRequireDefault(_SelectWidget);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function StringField(props) {
+	  var schema = props.schema;
+	  var name = props.name;
+	  var uiSchema = props.uiSchema;
+	  var idSchema = props.idSchema;
+	  var formData = props.formData;
+	  var registry = props.registry;
+	  var required = props.required;
+	  var disabled = props.disabled;
+	  var readonly = props.readonly;
+	  var onChange = props.onChange;
+	  var title = schema.title;
+	  var description = schema.description;
+	  var widgets = registry.widgets;
+
+	  var widget = uiSchema["ui:widget"] || schema.format;
+	  var commonProps = {
+	    schema: schema,
+	    id: idSchema && idSchema.id,
+	    label: title || name,
+	    placeholder: description,
+	    onChange: onChange,
+	    value: (0, _utils.defaultFieldValue)(formData, schema),
+	    required: required,
+	    disabled: disabled,
+	    readonly: readonly
+	  };
+	  if (Array.isArray(schema.enum)) {
+	    if (widget) {
+	      var Widget = (0, _utils.getAlternativeWidget)(schema, widget, widgets);
+	      return _react2.default.createElement(Widget, _extends({ options: (0, _utils.optionsList)(schema) }, commonProps));
+	    }
+	    return _react2.default.createElement(_SelectWidget2.default, _extends({ options: (0, _utils.optionsList)(schema) }, commonProps));
+	  }
+	  if (widget) {
+	    var _Widget = (0, _utils.getAlternativeWidget)(schema, widget, widgets);
+	    return _react2.default.createElement(_Widget, commonProps);
+	  }
+	  return _react2.default.createElement(_TextWidget2.default, commonProps);
+	}
+
+	if (process.env.NODE_ENV !== "production") {
+	  StringField.propTypes = {
+	    schema: _react.PropTypes.object.isRequired,
+	    idSchema: _react.PropTypes.object,
+	    onChange: _react.PropTypes.func.isRequired,
+	    formData: _react.PropTypes.oneOfType([_react2.default.PropTypes.string, _react2.default.PropTypes.number]),
+	    registry: _react.PropTypes.shape({
+	      widgets: _react.PropTypes.objectOf(_react.PropTypes.func).isRequired,
+	      fields: _react.PropTypes.objectOf(_react.PropTypes.func).isRequired,
+	      definitions: _react.PropTypes.object.isRequired
+	    }),
+	    required: _react.PropTypes.bool,
+	    disabled: _react.PropTypes.bool,
+	    readonly: _react.PropTypes.bool
+	  };
+	}
+
+	StringField.defaultProps = {
+	  uiSchema: {},
+	  registry: (0, _utils.getDefaultRegistry)(),
+	  disabled: false,
+	  readonly: false
+	};
+
+	exports.default = StringField;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 194 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _utils = __webpack_require__(163);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var ObjectField = function (_Component) {
+	  _inherits(ObjectField, _Component);
+
+	  function ObjectField(props) {
+	    _classCallCheck(this, ObjectField);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ObjectField).call(this, props));
+
+	    _this.onPropertyChange = function (name) {
+	      return function (value, options) {
+	        _this.asyncSetState(_defineProperty({}, name, value), options);
+	      };
+	    };
+
+	    _this.state = _this.getStateFromProps(props);
+	    return _this;
+	  }
+
+	  _createClass(ObjectField, [{
+	    key: "componentWillReceiveProps",
+	    value: function componentWillReceiveProps(nextProps) {
+	      this.setState(this.getStateFromProps(nextProps));
+	    }
+	  }, {
+	    key: "getStateFromProps",
+	    value: function getStateFromProps(props) {
+	      var schema = props.schema;
+	      var formData = props.formData;
+	      var registry = props.registry;
+
+	      return (0, _utils.getDefaultFormState)(schema, formData, registry.definitions) || {};
+	    }
+	  }, {
+	    key: "shouldComponentUpdate",
+	    value: function shouldComponentUpdate(nextProps, nextState) {
+	      return (0, _utils.shouldRender)(this, nextProps, nextState);
+	    }
+	  }, {
+	    key: "isRequired",
+	    value: function isRequired(name) {
+	      var schema = this.props.schema;
+	      return Array.isArray(schema.required) && schema.required.indexOf(name) !== -1;
+	    }
+	  }, {
+	    key: "asyncSetState",
+	    value: function asyncSetState(state) {
+	      var _this2 = this;
+
+	      var options = arguments.length <= 1 || arguments[1] === undefined ? { validate: false } : arguments[1];
+
+	      (0, _utils.setState)(this, state, function () {
+	        _this2.props.onChange(_this2.state, options);
+	      });
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      var _this3 = this;
+
+	      var _props = this.props;
+	      var uiSchema = _props.uiSchema;
+	      var errorSchema = _props.errorSchema;
+	      var idSchema = _props.idSchema;
+	      var name = _props.name;
+	      var required = _props.required;
+	      var disabled = _props.disabled;
+	      var readonly = _props.readonly;
+	      var _props$registry = this.props.registry;
+	      var definitions = _props$registry.definitions;
+	      var fields = _props$registry.fields;
+	      var SchemaField = fields.SchemaField;
+	      var TitleField = fields.TitleField;
+	      var DescriptionField = fields.DescriptionField;
+
+	      var schema = (0, _utils.retrieveSchema)(this.props.schema, definitions);
+	      var title = schema.title || name;
+	      var orderedProperties = void 0;
+	      try {
+	        var properties = Object.keys(schema.properties);
+	        orderedProperties = (0, _utils.orderProperties)(properties, uiSchema["ui:order"]);
+	      } catch (err) {
+	        return _react2.default.createElement(
+	          "div",
+	          null,
+	          _react2.default.createElement(
+	            "p",
+	            { className: "config-error", style: { color: "red" } },
+	            "Invalid ",
+	            name || "root",
+	            " object field configuration:",
+	            _react2.default.createElement(
+	              "em",
+	              null,
+	              err.message
+	            ),
+	            "."
+	          ),
+	          _react2.default.createElement(
+	            "pre",
+	            null,
+	            JSON.stringify(schema)
+	          )
+	        );
+	      }
+	      return _react2.default.createElement(
+	        "fieldset",
+	        null,
+	        title ? _react2.default.createElement(TitleField, {
+	          id: idSchema.id + "__title",
+	          title: title,
+	          required: required }) : null,
+	        schema.description ? _react2.default.createElement(DescriptionField, {
+	          id: idSchema.id + "__description",
+	          description: schema.description
+	        }) : null,
+	        orderedProperties.map(function (name, index) {
+	          return _react2.default.createElement(SchemaField, { key: index,
+	            name: name,
+	            required: _this3.isRequired(name),
+	            schema: schema.properties[name],
+	            uiSchema: uiSchema[name],
+	            errorSchema: errorSchema[name],
+	            idSchema: idSchema[name],
+	            formData: _this3.state[name],
+	            onChange: _this3.onPropertyChange(name),
+	            registry: _this3.props.registry,
+	            disabled: disabled,
+	            readonly: readonly });
+	        })
+	      );
+	    }
+	  }]);
+
+	  return ObjectField;
+	}(_react.Component);
+
+	ObjectField.defaultProps = {
+	  uiSchema: {},
+	  errorSchema: {},
+	  idSchema: {},
+	  registry: (0, _utils.getDefaultRegistry)(),
+	  required: false,
+	  disabled: false,
+	  readonly: false
+	};
+
+
+	if (process.env.NODE_ENV !== "production") {
+	  ObjectField.propTypes = {
+	    schema: _react.PropTypes.object.isRequired,
+	    uiSchema: _react.PropTypes.object,
+	    errorSchema: _react.PropTypes.object,
+	    idSchema: _react.PropTypes.object,
+	    onChange: _react.PropTypes.func.isRequired,
+	    formData: _react.PropTypes.object,
+	    required: _react.PropTypes.bool,
+	    disabled: _react.PropTypes.bool,
+	    readonly: _react.PropTypes.bool,
+	    registry: _react.PropTypes.shape({
+	      widgets: _react.PropTypes.objectOf(_react.PropTypes.func).isRequired,
+	      fields: _react.PropTypes.objectOf(_react.PropTypes.func).isRequired,
+	      definitions: _react.PropTypes.object.isRequired
+	    })
+	  };
+	}
+
+	exports.default = ObjectField;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ },
+/* 195 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = UnsupportedField;
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function UnsupportedField(_ref) {
+	  var schema = _ref.schema;
+
+	  // XXX render json as string so dev can inspect faulty subschema
+	  return _react2.default.createElement(
+	    "div",
+	    { className: "unsupported-field" },
+	    "Unsupported field schema ",
+	    JSON.stringify(schema, null, 2),
+	    "."
+	  );
+	}
+
+/***/ },
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = ErrorList;
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function ErrorList(_ref) {
+	  var errors = _ref.errors;
+
+	  return _react2.default.createElement(
+	    "div",
+	    { className: "panel panel-danger errors" },
+	    _react2.default.createElement(
+	      "div",
+	      { className: "panel-heading" },
+	      _react2.default.createElement(
+	        "h3",
+	        { className: "panel-title" },
+	        "Errors"
+	      )
+	    ),
+	    _react2.default.createElement(
+	      "ul",
+	      { className: "list-group" },
+	      errors.map(function (error, i) {
+	        return _react2.default.createElement(
+	          "li",
+	          { key: i, className: "list-group-item text-danger" },
+	          error.stack
+	        );
+	      })
+	    )
+	  );
+	}
+
+/***/ },
+/* 197 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	exports.toErrorList = toErrorList;
+	exports.default = validateFormData;
+
+	var _jsonschema = __webpack_require__(198);
+
+	var _utils = __webpack_require__(163);
+
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+	var RE_ERROR_ARRAY_PATH = /\[\d+]/g;
+
+	function errorPropertyToPath(property) {
+	  // Parse array indices, eg. "instance.level1.level2[2].level3"
+	  // => ["instance", "level1", "level2", 2, "level3"]
+	  return property.split(".").reduce(function (path, node) {
+	    var match = node.match(RE_ERROR_ARRAY_PATH);
+	    if (match) {
+	      var nodeName = node.slice(0, node.indexOf("["));
+	      var indices = match.map(function (str) {
+	        return parseInt(str.slice(1, -1), 10);
+	      });
+	      path = path.concat(nodeName, indices);
+	    } else {
+	      path.push(node);
+	    }
+	    return path;
+	  }, []);
+	}
+
+	function toErrorSchema(errors) {
+	  // Transforms a jsonschema validation errors list:
+	  // [
+	  //   {property: "instance.level1.level2[2].level3", message: "err a"},
+	  //   {property: "instance.level1.level2[2].level3", message: "err b"},
+	  //   {property: "instance.level1.level2[4].level3", message: "err b"},
+	  // ]
+	  // Into an error tree:
+	  // {
+	  //   level1: {
+	  //     level2: {
+	  //       2: {level3: {errors: ["err a", "err b"]}},
+	  //       4: {level3: {errors: ["err b"]}},
+	  //     }
+	  //   }
+	  // };
+	  if (!errors.length) {
+	    return {};
+	  }
+	  return errors.reduce(function (errorSchema, error) {
+	    var property = error.property;
+	    var message = error.message;
+
+	    var path = errorPropertyToPath(property);
+	    var parent = errorSchema;
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+
+	    try {
+	      for (var _iterator = path.slice(1)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	        var segment = _step.value;
+
+	        if (!(segment in parent)) {
+	          parent[segment] = {};
+	        }
+	        parent = parent[segment];
+	      }
+	    } catch (err) {
+	      _didIteratorError = true;
+	      _iteratorError = err;
+	    } finally {
+	      try {
+	        if (!_iteratorNormalCompletion && _iterator.return) {
+	          _iterator.return();
+	        }
+	      } finally {
+	        if (_didIteratorError) {
+	          throw _iteratorError;
+	        }
+	      }
+	    }
+
+	    if (Array.isArray(parent.__errors)) {
+	      // We store the list of errors for this node in a property named __errors
+	      // to avoid name collision with a possible sub schema field named
+	      // "errors" (see `validate.createErrorHandler`).
+	      parent.__errors = parent.__errors.concat(message);
+	    } else {
+	      parent.__errors = [message];
+	    }
+	    return errorSchema;
+	  }, {});
+	}
+
+	function toErrorList(errorSchema) {
+	  var fieldName = arguments.length <= 1 || arguments[1] === undefined ? "root" : arguments[1];
+
+	  // XXX: We should transform fieldName as a full field path string.
+	  var errorList = [];
+	  if ("__errors" in errorSchema) {
+	    errorList = errorList.concat(errorSchema.__errors.map(function (stack) {
+	      return {
+	        stack: fieldName + ": " + stack
+	      };
+	    }));
+	  }
+	  return Object.keys(errorSchema).reduce(function (acc, key) {
+	    if (key !== "__errors") {
+	      acc = acc.concat(toErrorList(errorSchema[key], key));
+	    }
+	    return acc;
+	  }, errorList);
+	}
+
+	function createErrorHandler(formData) {
+	  var handler = {
+	    // We store the list of errors for this node in a property named __errors
+	    // to avoid name collision with a possible sub schema field named
+	    // "errors" (see `utils.toErrorSchema`).
+	    __errors: [],
+	    addError: function addError(message) {
+	      this.__errors.push(message);
+	    }
+	  };
+	  if ((0, _utils.isObject)(formData)) {
+	    return Object.keys(formData).reduce(function (acc, key) {
+	      return _extends({}, acc, _defineProperty({}, key, createErrorHandler(formData[key])));
+	    }, handler);
+	  }
+	  return handler;
+	}
+
+	function unwrapErrorHandler(errorHandler) {
+	  return Object.keys(errorHandler).reduce(function (acc, key) {
+	    if (key === "addError") {
+	      return acc;
+	    } else if (key === "__errors") {
+	      return _extends({}, acc, _defineProperty({}, key, errorHandler[key]));
+	    }
+	    return _extends({}, acc, _defineProperty({}, key, unwrapErrorHandler(errorHandler[key])));
+	  }, {});
+	}
+
+	/**
+	 * This function processes the formData with a user `validate` contributed
+	 * function, which receives the form data and an `errorHandler` object that
+	 * will be used to add custom validation errors for each field.
+	 */
+	function validateFormData(formData, schema, customValidate) {
+	  var _jsonValidate = (0, _jsonschema.validate)(formData, schema);
+
+	  var errors = _jsonValidate.errors;
+
+	  var errorSchema = toErrorSchema(errors);
+
+	  if (typeof customValidate !== "function") {
+	    return { errors: errors, errorSchema: errorSchema };
+	  }
+
+	  var errorHandler = customValidate(formData, createErrorHandler(formData));
+	  var userErrorSchema = unwrapErrorHandler(errorHandler);
+	  var newErrorSchema = (0, _utils.mergeObjects)(errorSchema, userErrorSchema, true);
+	  // XXX: The errors list produced is not fully compliant with the format
+	  // exposed by the jsonschema lib, which contains full field paths and other
+	  // properties.
+	  var newErrors = toErrorList(newErrorSchema);
+
+	  return { errors: newErrors, errorSchema: newErrorSchema };
+	}
+
+/***/ },
+/* 198 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Validator = module.exports.Validator = __webpack_require__(199);
+
+	module.exports.ValidatorResult = __webpack_require__(207).ValidatorResult;
+	module.exports.ValidationError = __webpack_require__(207).ValidationError;
+	module.exports.SchemaError = __webpack_require__(207).SchemaError;
+
+	module.exports.validate = function (instance, schema, options) {
+	  var v = new Validator();
+	  return v.validate(instance, schema, options);
+	};
+
+
+/***/ },
+/* 199 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var urilib = __webpack_require__(200);
+
+	var attribute = __webpack_require__(206);
+	var helpers = __webpack_require__(207);
+	var ValidatorResult = helpers.ValidatorResult;
+	var SchemaError = helpers.SchemaError;
+	var SchemaContext = helpers.SchemaContext;
+
+	/**
+	 * Creates a new Validator object
+	 * @name Validator
+	 * @constructor
+	 */
+	var Validator = function Validator () {
+	  // Allow a validator instance to override global custom formats or to have their
+	  // own custom formats.
+	  this.customFormats = Object.create(Validator.prototype.customFormats);
+	  this.schemas = {};
+	  this.unresolvedRefs = [];
+
+	  // Use Object.create to make this extensible without Validator instances stepping on each other's toes.
+	  this.types = Object.create(types);
+	  this.attributes = Object.create(attribute.validators);
+	};
+
+	// Allow formats to be registered globally.
+	Validator.prototype.customFormats = {};
+
+	// Hint at the presence of a property
+	Validator.prototype.schemas = null;
+	Validator.prototype.types = null;
+	Validator.prototype.attributes = null;
+	Validator.prototype.unresolvedRefs = null;
+
+	/**
+	 * Adds a schema with a certain urn to the Validator instance.
+	 * @param schema
+	 * @param urn
+	 * @return {Object}
+	 */
+	Validator.prototype.addSchema = function addSchema (schema, uri) {
+	  if (!schema) {
+	    return null;
+	  }
+	  var ourUri = uri || schema.id;
+	  this.addSubSchema(ourUri, schema);
+	  if (ourUri) {
+	    this.schemas[ourUri] = schema;
+	  }
+	  return this.schemas[ourUri];
+	};
+
+	Validator.prototype.addSubSchema = function addSubSchema(baseuri, schema) {
+	  if(!schema || typeof schema!='object') return;
+	  // Mark all referenced schemas so we can tell later which schemas are referred to, but never defined
+	  if(schema.$ref){
+	    var resolvedUri = urilib.resolve(baseuri, schema.$ref);
+	    // Only mark unknown schemas as unresolved
+	    if (this.schemas[resolvedUri] === undefined) {
+	      this.schemas[resolvedUri] = null;
+	      this.unresolvedRefs.push(resolvedUri);
+	    }
+	    return;
+	  }
+	  var ourUri = schema.id && urilib.resolve(baseuri, schema.id);
+	  var ourBase = ourUri || baseuri;
+	  if (ourUri) {
+	    if(this.schemas[ourUri]){
+	      if(!helpers.deepCompareStrict(this.schemas[ourUri], schema)){
+	        throw new Error('Schema <'+schema+'> already exists with different definition');
+	      }
+	      return this.schemas[ourUri];
+	    }
+	    this.schemas[ourUri] = schema;
+	    var documentUri = ourUri.replace(/^([^#]*)#$/, '$1');
+	    this.schemas[documentUri] = schema;
+	  }
+	  this.addSubSchemaArray(ourBase, ((schema.items instanceof Array)?schema.items:[schema.items]));
+	  this.addSubSchemaArray(ourBase, ((schema.extends instanceof Array)?schema.extends:[schema.extends]));
+	  this.addSubSchema(ourBase, schema.additionalItems);
+	  this.addSubSchemaObject(ourBase, schema.properties);
+	  this.addSubSchema(ourBase, schema.additionalProperties);
+	  this.addSubSchemaObject(ourBase, schema.definitions);
+	  this.addSubSchemaObject(ourBase, schema.patternProperties);
+	  this.addSubSchemaObject(ourBase, schema.dependencies);
+	  this.addSubSchemaArray(ourBase, schema.disallow);
+	  this.addSubSchemaArray(ourBase, schema.allOf);
+	  this.addSubSchemaArray(ourBase, schema.anyOf);
+	  this.addSubSchemaArray(ourBase, schema.oneOf);
+	  this.addSubSchema(ourBase, schema.not);
+	  return this.schemas[ourUri];
+	};
+
+	Validator.prototype.addSubSchemaArray = function addSubSchemaArray(baseuri, schemas) {
+	  if(!(schemas instanceof Array)) return;
+	  for(var i=0; i<schemas.length; i++){
+	    this.addSubSchema(baseuri, schemas[i]);
+	  }
+	};
+
+	Validator.prototype.addSubSchemaObject = function addSubSchemaArray(baseuri, schemas) {
+	  if(!schemas || typeof schemas!='object') return;
+	  for(var p in schemas){
+	    this.addSubSchema(baseuri, schemas[p]);
+	  }
+	};
+
+
+
+	/**
+	 * Sets all the schemas of the Validator instance.
+	 * @param schemas
+	 */
+	Validator.prototype.setSchemas = function setSchemas (schemas) {
+	  this.schemas = schemas;
+	};
+
+	/**
+	 * Returns the schema of a certain urn
+	 * @param urn
+	 */
+	Validator.prototype.getSchema = function getSchema (urn) {
+	  return this.schemas[urn];
+	};
+
+	/**
+	 * Validates instance against the provided schema
+	 * @param instance
+	 * @param schema
+	 * @param [options]
+	 * @param [ctx]
+	 * @return {Array}
+	 */
+	Validator.prototype.validate = function validate (instance, schema, options, ctx) {
+	  if (!options) {
+	    options = {};
+	  }
+	  var propertyName = options.propertyName || 'instance';
+	  // This will work so long as the function at uri.resolve() will resolve a relative URI to a relative URI
+	  var base = urilib.resolve(options.base||'/', schema.id||'');
+	  if(!ctx){
+	    ctx = new SchemaContext(schema, options, propertyName, base, Object.create(this.schemas));
+	    if (!ctx.schemas[base]) {
+	      ctx.schemas[base] = schema;
+	    }
+	  }
+	  if (schema) {
+	    var result = this.validateSchema(instance, schema, options, ctx);
+	    if (!result) {
+	      throw new Error('Result undefined');
+	    }
+	    return result;
+	  }
+	  throw new SchemaError('no schema specified', schema);
+	};
+
+	/**
+	 * Validates an instance against the schema (the actual work horse)
+	 * @param instance
+	 * @param schema
+	 * @param options
+	 * @param ctx
+	 * @private
+	 * @return {ValidatorResult}
+	 */
+	Validator.prototype.validateSchema = function validateSchema (instance, schema, options, ctx) {
+	  var self = this;
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (!schema) {
+	    throw new Error("schema is undefined");
+	  }
+
+	  /**
+	  * @param Object schema
+	  * @return mixed schema uri or false
+	  */
+	  function shouldResolve(schema) {
+	    var ref = (typeof schema === 'string') ? schema : schema.$ref;
+	    if (typeof ref=='string') return ref;
+	    return false;
+	  }
+	  /**
+	  * @param Object schema
+	  * @param SchemaContext ctx
+	  * @returns Object schema or resolved schema
+	  */
+	  function resolve(schema, ctx) {
+	    var ref;
+	    if(ref = shouldResolve(schema)) {
+	      return self.resolve(schema, ref, ctx).subschema;
+	    }
+	    return schema;
+	  }
+
+	  if (schema['extends']) {
+	    if (schema['extends'] instanceof Array) {
+	      schema['extends'].forEach(function (s) {
+	        schema = helpers.deepMerge(schema, resolve(s, ctx));
+	      });
+	    } else {
+	      schema = helpers.deepMerge(schema, resolve(schema['extends'], ctx));
+	    }
+	  }
+
+	  var switchSchema;
+	  if (switchSchema = shouldResolve(schema)) {
+	    var resolved = this.resolve(schema, switchSchema, ctx);
+	    var subctx = new SchemaContext(resolved.subschema, options, ctx.propertyPath, resolved.switchSchema, ctx.schemas);
+	    return this.validateSchema(instance, resolved.subschema, options, subctx);
+	  }
+
+	  var skipAttributes = options && options.skipAttributes || [];
+	  // Validate each schema attribute against the instance
+	  for (var key in schema) {
+	    if (!attribute.ignoreProperties[key] && skipAttributes.indexOf(key) < 0) {
+	      var validatorErr = null;
+	      var validator = self.attributes[key];
+	      if (validator) {
+	        validatorErr = validator.call(self, instance, schema, options, ctx);
+	      } else if (options.allowUnknownAttributes === false) {
+	        // This represents an error with the schema itself, not an invalid instance
+	        throw new SchemaError("Unsupported attribute: " + key, schema);
+	      }
+	      if (validatorErr) {
+	        result.importErrors(validatorErr);
+	      }
+	    }
+	  }
+
+	  if (typeof options.rewrite == 'function') {
+	    var value = options.rewrite.call(this, instance, schema, options, ctx);
+	    result.instance = value;
+	  }
+	  return result;
+	};
+
+	/**
+	* @private
+	* @param Object schema
+	* @param Object switchSchema
+	* @param SchemaContext ctx
+	* @return Object resolved schemas {subschema:String, switchSchema: String}
+	* @thorws SchemaError
+	*/
+	Validator.prototype.resolve = function resolve (schema, switchSchema, ctx) {
+	  switchSchema = ctx.resolve(switchSchema);
+	  // First see if the schema exists under the provided URI
+	  if (ctx.schemas[switchSchema]) {
+	    return {subschema: ctx.schemas[switchSchema], switchSchema: switchSchema};
+	  }
+	  // Else try walking the property pointer
+	  var parsed = urilib.parse(switchSchema);
+	  var fragment = parsed && parsed.hash;
+	  var document = fragment && fragment.length && switchSchema.substr(0, switchSchema.length - fragment.length);
+	  if (!document || !ctx.schemas[document]) {
+	    throw new SchemaError("no such schema <" + switchSchema + ">", schema);
+	  }
+	  var subschema = helpers.objectGetPath(ctx.schemas[document], fragment.substr(1));
+	  if(subschema===undefined){
+	    throw new SchemaError("no such schema " + fragment + " located in <" + document + ">", schema);
+	  }
+	  return {subschema: subschema, switchSchema: switchSchema};
+	};
+
+	/**
+	 * Tests whether the instance if of a certain type.
+	 * @private
+	 * @param instance
+	 * @param schema
+	 * @param options
+	 * @param ctx
+	 * @param type
+	 * @return {boolean}
+	 */
+	Validator.prototype.testType = function validateType (instance, schema, options, ctx, type) {
+	  if (typeof this.types[type] == 'function') {
+	    return this.types[type].call(this, instance);
+	  }
+	  if (type && typeof type == 'object') {
+	    var res = this.validateSchema(instance, type, options, ctx);
+	    return res === undefined || !(res && res.errors.length);
+	  }
+	  // Undefined or properties not on the list are acceptable, same as not being defined
+	  return true;
+	};
+
+	var types = Validator.prototype.types = {};
+	types.string = function testString (instance) {
+	  return typeof instance == 'string';
+	};
+	types.number = function testNumber (instance) {
+	  // isFinite returns false for NaN, Infinity, and -Infinity
+	  return typeof instance == 'number' && isFinite(instance);
+	};
+	types.integer = function testInteger (instance) {
+	  return (typeof instance == 'number') && instance % 1 === 0;
+	};
+	types.boolean = function testBoolean (instance) {
+	  return typeof instance == 'boolean';
+	};
+	types.array = function testArray (instance) {
+	  return instance instanceof Array;
+	};
+	types['null'] = function testNull (instance) {
+	  return instance === null;
+	};
+	types.date = function testDate (instance) {
+	  return instance instanceof Date;
+	};
+	types.any = function testAny (instance) {
+	  return true;
+	};
+	types.object = function testObject (instance) {
+	  // TODO: fix this - see #15
+	  return instance && (typeof instance) === 'object' && !(instance instanceof Array) && !(instance instanceof Date);
+	};
+
+	module.exports = Validator;
+
+
+/***/ },
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// Copyright Joyent, Inc. and other Node contributors.
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a
+	// copy of this software and associated documentation files (the
+	// "Software"), to deal in the Software without restriction, including
+	// without limitation the rights to use, copy, modify, merge, publish,
+	// distribute, sublicense, and/or sell copies of the Software, and to permit
+	// persons to whom the Software is furnished to do so, subject to the
+	// following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included
+	// in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+	// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+	var punycode = __webpack_require__(201);
+
+	exports.parse = urlParse;
+	exports.resolve = urlResolve;
+	exports.resolveObject = urlResolveObject;
+	exports.format = urlFormat;
+
+	exports.Url = Url;
+
+	function Url() {
+	  this.protocol = null;
+	  this.slashes = null;
+	  this.auth = null;
+	  this.host = null;
+	  this.port = null;
+	  this.hostname = null;
+	  this.hash = null;
+	  this.search = null;
+	  this.query = null;
+	  this.pathname = null;
+	  this.path = null;
+	  this.href = null;
+	}
+
+	// Reference: RFC 3986, RFC 1808, RFC 2396
+
+	// define these here so at least they only have to be
+	// compiled once on the first module load.
+	var protocolPattern = /^([a-z0-9.+-]+:)/i,
+	    portPattern = /:[0-9]*$/,
+
+	    // RFC 2396: characters reserved for delimiting URLs.
+	    // We actually just auto-escape these.
+	    delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
+
+	    // RFC 2396: characters not allowed for various reasons.
+	    unwise = ['{', '}', '|', '\\', '^', '`'].concat(delims),
+
+	    // Allowed by RFCs, but cause of XSS attacks.  Always escape these.
+	    autoEscape = ['\''].concat(unwise),
+	    // Characters that are never ever allowed in a hostname.
+	    // Note that any invalid chars are also handled, but these
+	    // are the ones that are *expected* to be seen, so we fast-path
+	    // them.
+	    nonHostChars = ['%', '/', '?', ';', '#'].concat(autoEscape),
+	    hostEndingChars = ['/', '?', '#'],
+	    hostnameMaxLen = 255,
+	    hostnamePartPattern = /^[a-z0-9A-Z_-]{0,63}$/,
+	    hostnamePartStart = /^([a-z0-9A-Z_-]{0,63})(.*)$/,
+	    // protocols that can allow "unsafe" and "unwise" chars.
+	    unsafeProtocol = {
+	      'javascript': true,
+	      'javascript:': true
+	    },
+	    // protocols that never have a hostname.
+	    hostlessProtocol = {
+	      'javascript': true,
+	      'javascript:': true
+	    },
+	    // protocols that always contain a // bit.
+	    slashedProtocol = {
+	      'http': true,
+	      'https': true,
+	      'ftp': true,
+	      'gopher': true,
+	      'file': true,
+	      'http:': true,
+	      'https:': true,
+	      'ftp:': true,
+	      'gopher:': true,
+	      'file:': true
+	    },
+	    querystring = __webpack_require__(203);
+
+	function urlParse(url, parseQueryString, slashesDenoteHost) {
+	  if (url && isObject(url) && url instanceof Url) return url;
+
+	  var u = new Url;
+	  u.parse(url, parseQueryString, slashesDenoteHost);
+	  return u;
+	}
+
+	Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
+	  if (!isString(url)) {
+	    throw new TypeError("Parameter 'url' must be a string, not " + typeof url);
+	  }
+
+	  var rest = url;
+
+	  // trim before proceeding.
+	  // This is to support parse stuff like "  http://foo.com  \n"
+	  rest = rest.trim();
+
+	  var proto = protocolPattern.exec(rest);
+	  if (proto) {
+	    proto = proto[0];
+	    var lowerProto = proto.toLowerCase();
+	    this.protocol = lowerProto;
+	    rest = rest.substr(proto.length);
+	  }
+
+	  // figure out if it's got a host
+	  // user@server is *always* interpreted as a hostname, and url
+	  // resolution will treat //foo/bar as host=foo,path=bar because that's
+	  // how the browser resolves relative URLs.
+	  if (slashesDenoteHost || proto || rest.match(/^\/\/[^@\/]+@[^@\/]+/)) {
+	    var slashes = rest.substr(0, 2) === '//';
+	    if (slashes && !(proto && hostlessProtocol[proto])) {
+	      rest = rest.substr(2);
+	      this.slashes = true;
+	    }
+	  }
+
+	  if (!hostlessProtocol[proto] &&
+	      (slashes || (proto && !slashedProtocol[proto]))) {
+
+	    // there's a hostname.
+	    // the first instance of /, ?, ;, or # ends the host.
+	    //
+	    // If there is an @ in the hostname, then non-host chars *are* allowed
+	    // to the left of the last @ sign, unless some host-ending character
+	    // comes *before* the @-sign.
+	    // URLs are obnoxious.
+	    //
+	    // ex:
+	    // http://a@b@c/ => user:a@b host:c
+	    // http://a@b?@c => user:a host:c path:/?@c
+
+	    // v0.12 TODO(isaacs): This is not quite how Chrome does things.
+	    // Review our test case against browsers more comprehensively.
+
+	    // find the first instance of any hostEndingChars
+	    var hostEnd = -1;
+	    for (var i = 0; i < hostEndingChars.length; i++) {
+	      var hec = rest.indexOf(hostEndingChars[i]);
+	      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd))
+	        hostEnd = hec;
+	    }
+
+	    // at this point, either we have an explicit point where the
+	    // auth portion cannot go past, or the last @ char is the decider.
+	    var auth, atSign;
+	    if (hostEnd === -1) {
+	      // atSign can be anywhere.
+	      atSign = rest.lastIndexOf('@');
+	    } else {
+	      // atSign must be in auth portion.
+	      // http://a@b/c@d => host:b auth:a path:/c@d
+	      atSign = rest.lastIndexOf('@', hostEnd);
+	    }
+
+	    // Now we have a portion which is definitely the auth.
+	    // Pull that off.
+	    if (atSign !== -1) {
+	      auth = rest.slice(0, atSign);
+	      rest = rest.slice(atSign + 1);
+	      this.auth = decodeURIComponent(auth);
+	    }
+
+	    // the host is the remaining to the left of the first non-host char
+	    hostEnd = -1;
+	    for (var i = 0; i < nonHostChars.length; i++) {
+	      var hec = rest.indexOf(nonHostChars[i]);
+	      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd))
+	        hostEnd = hec;
+	    }
+	    // if we still have not hit it, then the entire thing is a host.
+	    if (hostEnd === -1)
+	      hostEnd = rest.length;
+
+	    this.host = rest.slice(0, hostEnd);
+	    rest = rest.slice(hostEnd);
+
+	    // pull out port.
+	    this.parseHost();
+
+	    // we've indicated that there is a hostname,
+	    // so even if it's empty, it has to be present.
+	    this.hostname = this.hostname || '';
+
+	    // if hostname begins with [ and ends with ]
+	    // assume that it's an IPv6 address.
+	    var ipv6Hostname = this.hostname[0] === '[' &&
+	        this.hostname[this.hostname.length - 1] === ']';
+
+	    // validate a little.
+	    if (!ipv6Hostname) {
+	      var hostparts = this.hostname.split(/\./);
+	      for (var i = 0, l = hostparts.length; i < l; i++) {
+	        var part = hostparts[i];
+	        if (!part) continue;
+	        if (!part.match(hostnamePartPattern)) {
+	          var newpart = '';
+	          for (var j = 0, k = part.length; j < k; j++) {
+	            if (part.charCodeAt(j) > 127) {
+	              // we replace non-ASCII char with a temporary placeholder
+	              // we need this to make sure size of hostname is not
+	              // broken by replacing non-ASCII by nothing
+	              newpart += 'x';
+	            } else {
+	              newpart += part[j];
+	            }
+	          }
+	          // we test again with ASCII char only
+	          if (!newpart.match(hostnamePartPattern)) {
+	            var validParts = hostparts.slice(0, i);
+	            var notHost = hostparts.slice(i + 1);
+	            var bit = part.match(hostnamePartStart);
+	            if (bit) {
+	              validParts.push(bit[1]);
+	              notHost.unshift(bit[2]);
+	            }
+	            if (notHost.length) {
+	              rest = '/' + notHost.join('.') + rest;
+	            }
+	            this.hostname = validParts.join('.');
+	            break;
+	          }
+	        }
+	      }
+	    }
+
+	    if (this.hostname.length > hostnameMaxLen) {
+	      this.hostname = '';
+	    } else {
+	      // hostnames are always lower case.
+	      this.hostname = this.hostname.toLowerCase();
+	    }
+
+	    if (!ipv6Hostname) {
+	      // IDNA Support: Returns a puny coded representation of "domain".
+	      // It only converts the part of the domain name that
+	      // has non ASCII characters. I.e. it dosent matter if
+	      // you call it with a domain that already is in ASCII.
+	      var domainArray = this.hostname.split('.');
+	      var newOut = [];
+	      for (var i = 0; i < domainArray.length; ++i) {
+	        var s = domainArray[i];
+	        newOut.push(s.match(/[^A-Za-z0-9_-]/) ?
+	            'xn--' + punycode.encode(s) : s);
+	      }
+	      this.hostname = newOut.join('.');
+	    }
+
+	    var p = this.port ? ':' + this.port : '';
+	    var h = this.hostname || '';
+	    this.host = h + p;
+	    this.href += this.host;
+
+	    // strip [ and ] from the hostname
+	    // the host field still retains them, though
+	    if (ipv6Hostname) {
+	      this.hostname = this.hostname.substr(1, this.hostname.length - 2);
+	      if (rest[0] !== '/') {
+	        rest = '/' + rest;
+	      }
+	    }
+	  }
+
+	  // now rest is set to the post-host stuff.
+	  // chop off any delim chars.
+	  if (!unsafeProtocol[lowerProto]) {
+
+	    // First, make 100% sure that any "autoEscape" chars get
+	    // escaped, even if encodeURIComponent doesn't think they
+	    // need to be.
+	    for (var i = 0, l = autoEscape.length; i < l; i++) {
+	      var ae = autoEscape[i];
+	      var esc = encodeURIComponent(ae);
+	      if (esc === ae) {
+	        esc = escape(ae);
+	      }
+	      rest = rest.split(ae).join(esc);
+	    }
+	  }
+
+
+	  // chop off from the tail first.
+	  var hash = rest.indexOf('#');
+	  if (hash !== -1) {
+	    // got a fragment string.
+	    this.hash = rest.substr(hash);
+	    rest = rest.slice(0, hash);
+	  }
+	  var qm = rest.indexOf('?');
+	  if (qm !== -1) {
+	    this.search = rest.substr(qm);
+	    this.query = rest.substr(qm + 1);
+	    if (parseQueryString) {
+	      this.query = querystring.parse(this.query);
+	    }
+	    rest = rest.slice(0, qm);
+	  } else if (parseQueryString) {
+	    // no query string, but parseQueryString still requested
+	    this.search = '';
+	    this.query = {};
+	  }
+	  if (rest) this.pathname = rest;
+	  if (slashedProtocol[lowerProto] &&
+	      this.hostname && !this.pathname) {
+	    this.pathname = '/';
+	  }
+
+	  //to support http.request
+	  if (this.pathname || this.search) {
+	    var p = this.pathname || '';
+	    var s = this.search || '';
+	    this.path = p + s;
+	  }
+
+	  // finally, reconstruct the href based on what has been validated.
+	  this.href = this.format();
+	  return this;
+	};
+
+	// format a parsed object into a url string
+	function urlFormat(obj) {
+	  // ensure it's an object, and not a string url.
+	  // If it's an obj, this is a no-op.
+	  // this way, you can call url_format() on strings
+	  // to clean up potentially wonky urls.
+	  if (isString(obj)) obj = urlParse(obj);
+	  if (!(obj instanceof Url)) return Url.prototype.format.call(obj);
+	  return obj.format();
+	}
+
+	Url.prototype.format = function() {
+	  var auth = this.auth || '';
+	  if (auth) {
+	    auth = encodeURIComponent(auth);
+	    auth = auth.replace(/%3A/i, ':');
+	    auth += '@';
+	  }
+
+	  var protocol = this.protocol || '',
+	      pathname = this.pathname || '',
+	      hash = this.hash || '',
+	      host = false,
+	      query = '';
+
+	  if (this.host) {
+	    host = auth + this.host;
+	  } else if (this.hostname) {
+	    host = auth + (this.hostname.indexOf(':') === -1 ?
+	        this.hostname :
+	        '[' + this.hostname + ']');
+	    if (this.port) {
+	      host += ':' + this.port;
+	    }
+	  }
+
+	  if (this.query &&
+	      isObject(this.query) &&
+	      Object.keys(this.query).length) {
+	    query = querystring.stringify(this.query);
+	  }
+
+	  var search = this.search || (query && ('?' + query)) || '';
+
+	  if (protocol && protocol.substr(-1) !== ':') protocol += ':';
+
+	  // only the slashedProtocols get the //.  Not mailto:, xmpp:, etc.
+	  // unless they had them to begin with.
+	  if (this.slashes ||
+	      (!protocol || slashedProtocol[protocol]) && host !== false) {
+	    host = '//' + (host || '');
+	    if (pathname && pathname.charAt(0) !== '/') pathname = '/' + pathname;
+	  } else if (!host) {
+	    host = '';
+	  }
+
+	  if (hash && hash.charAt(0) !== '#') hash = '#' + hash;
+	  if (search && search.charAt(0) !== '?') search = '?' + search;
+
+	  pathname = pathname.replace(/[?#]/g, function(match) {
+	    return encodeURIComponent(match);
+	  });
+	  search = search.replace('#', '%23');
+
+	  return protocol + host + pathname + search + hash;
+	};
+
+	function urlResolve(source, relative) {
+	  return urlParse(source, false, true).resolve(relative);
+	}
+
+	Url.prototype.resolve = function(relative) {
+	  return this.resolveObject(urlParse(relative, false, true)).format();
+	};
+
+	function urlResolveObject(source, relative) {
+	  if (!source) return relative;
+	  return urlParse(source, false, true).resolveObject(relative);
+	}
+
+	Url.prototype.resolveObject = function(relative) {
+	  if (isString(relative)) {
+	    var rel = new Url();
+	    rel.parse(relative, false, true);
+	    relative = rel;
+	  }
+
+	  var result = new Url();
+	  Object.keys(this).forEach(function(k) {
+	    result[k] = this[k];
+	  }, this);
+
+	  // hash is always overridden, no matter what.
+	  // even href="" will remove it.
+	  result.hash = relative.hash;
+
+	  // if the relative url is empty, then there's nothing left to do here.
+	  if (relative.href === '') {
+	    result.href = result.format();
+	    return result;
+	  }
+
+	  // hrefs like //foo/bar always cut to the protocol.
+	  if (relative.slashes && !relative.protocol) {
+	    // take everything except the protocol from relative
+	    Object.keys(relative).forEach(function(k) {
+	      if (k !== 'protocol')
+	        result[k] = relative[k];
+	    });
+
+	    //urlParse appends trailing / to urls like http://www.example.com
+	    if (slashedProtocol[result.protocol] &&
+	        result.hostname && !result.pathname) {
+	      result.path = result.pathname = '/';
+	    }
+
+	    result.href = result.format();
+	    return result;
+	  }
+
+	  if (relative.protocol && relative.protocol !== result.protocol) {
+	    // if it's a known url protocol, then changing
+	    // the protocol does weird things
+	    // first, if it's not file:, then we MUST have a host,
+	    // and if there was a path
+	    // to begin with, then we MUST have a path.
+	    // if it is file:, then the host is dropped,
+	    // because that's known to be hostless.
+	    // anything else is assumed to be absolute.
+	    if (!slashedProtocol[relative.protocol]) {
+	      Object.keys(relative).forEach(function(k) {
+	        result[k] = relative[k];
+	      });
+	      result.href = result.format();
+	      return result;
+	    }
+
+	    result.protocol = relative.protocol;
+	    if (!relative.host && !hostlessProtocol[relative.protocol]) {
+	      var relPath = (relative.pathname || '').split('/');
+	      while (relPath.length && !(relative.host = relPath.shift()));
+	      if (!relative.host) relative.host = '';
+	      if (!relative.hostname) relative.hostname = '';
+	      if (relPath[0] !== '') relPath.unshift('');
+	      if (relPath.length < 2) relPath.unshift('');
+	      result.pathname = relPath.join('/');
+	    } else {
+	      result.pathname = relative.pathname;
+	    }
+	    result.search = relative.search;
+	    result.query = relative.query;
+	    result.host = relative.host || '';
+	    result.auth = relative.auth;
+	    result.hostname = relative.hostname || relative.host;
+	    result.port = relative.port;
+	    // to support http.request
+	    if (result.pathname || result.search) {
+	      var p = result.pathname || '';
+	      var s = result.search || '';
+	      result.path = p + s;
+	    }
+	    result.slashes = result.slashes || relative.slashes;
+	    result.href = result.format();
+	    return result;
+	  }
+
+	  var isSourceAbs = (result.pathname && result.pathname.charAt(0) === '/'),
+	      isRelAbs = (
+	          relative.host ||
+	          relative.pathname && relative.pathname.charAt(0) === '/'
+	      ),
+	      mustEndAbs = (isRelAbs || isSourceAbs ||
+	                    (result.host && relative.pathname)),
+	      removeAllDots = mustEndAbs,
+	      srcPath = result.pathname && result.pathname.split('/') || [],
+	      relPath = relative.pathname && relative.pathname.split('/') || [],
+	      psychotic = result.protocol && !slashedProtocol[result.protocol];
+
+	  // if the url is a non-slashed url, then relative
+	  // links like ../.. should be able
+	  // to crawl up to the hostname, as well.  This is strange.
+	  // result.protocol has already been set by now.
+	  // Later on, put the first path part into the host field.
+	  if (psychotic) {
+	    result.hostname = '';
+	    result.port = null;
+	    if (result.host) {
+	      if (srcPath[0] === '') srcPath[0] = result.host;
+	      else srcPath.unshift(result.host);
+	    }
+	    result.host = '';
+	    if (relative.protocol) {
+	      relative.hostname = null;
+	      relative.port = null;
+	      if (relative.host) {
+	        if (relPath[0] === '') relPath[0] = relative.host;
+	        else relPath.unshift(relative.host);
+	      }
+	      relative.host = null;
+	    }
+	    mustEndAbs = mustEndAbs && (relPath[0] === '' || srcPath[0] === '');
+	  }
+
+	  if (isRelAbs) {
+	    // it's absolute.
+	    result.host = (relative.host || relative.host === '') ?
+	                  relative.host : result.host;
+	    result.hostname = (relative.hostname || relative.hostname === '') ?
+	                      relative.hostname : result.hostname;
+	    result.search = relative.search;
+	    result.query = relative.query;
+	    srcPath = relPath;
+	    // fall through to the dot-handling below.
+	  } else if (relPath.length) {
+	    // it's relative
+	    // throw away the existing file, and take the new path instead.
+	    if (!srcPath) srcPath = [];
+	    srcPath.pop();
+	    srcPath = srcPath.concat(relPath);
+	    result.search = relative.search;
+	    result.query = relative.query;
+	  } else if (!isNullOrUndefined(relative.search)) {
+	    // just pull out the search.
+	    // like href='?foo'.
+	    // Put this after the other two cases because it simplifies the booleans
+	    if (psychotic) {
+	      result.hostname = result.host = srcPath.shift();
+	      //occationaly the auth can get stuck only in host
+	      //this especialy happens in cases like
+	      //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
+	      var authInHost = result.host && result.host.indexOf('@') > 0 ?
+	                       result.host.split('@') : false;
+	      if (authInHost) {
+	        result.auth = authInHost.shift();
+	        result.host = result.hostname = authInHost.shift();
+	      }
+	    }
+	    result.search = relative.search;
+	    result.query = relative.query;
+	    //to support http.request
+	    if (!isNull(result.pathname) || !isNull(result.search)) {
+	      result.path = (result.pathname ? result.pathname : '') +
+	                    (result.search ? result.search : '');
+	    }
+	    result.href = result.format();
+	    return result;
+	  }
+
+	  if (!srcPath.length) {
+	    // no path at all.  easy.
+	    // we've already handled the other stuff above.
+	    result.pathname = null;
+	    //to support http.request
+	    if (result.search) {
+	      result.path = '/' + result.search;
+	    } else {
+	      result.path = null;
+	    }
+	    result.href = result.format();
+	    return result;
+	  }
+
+	  // if a url ENDs in . or .., then it must get a trailing slash.
+	  // however, if it ends in anything else non-slashy,
+	  // then it must NOT get a trailing slash.
+	  var last = srcPath.slice(-1)[0];
+	  var hasTrailingSlash = (
+	      (result.host || relative.host) && (last === '.' || last === '..') ||
+	      last === '');
+
+	  // strip single dots, resolve double dots to parent dir
+	  // if the path tries to go above the root, `up` ends up > 0
+	  var up = 0;
+	  for (var i = srcPath.length; i >= 0; i--) {
+	    last = srcPath[i];
+	    if (last == '.') {
+	      srcPath.splice(i, 1);
+	    } else if (last === '..') {
+	      srcPath.splice(i, 1);
+	      up++;
+	    } else if (up) {
+	      srcPath.splice(i, 1);
+	      up--;
+	    }
+	  }
+
+	  // if the path is allowed to go above the root, restore leading ..s
+	  if (!mustEndAbs && !removeAllDots) {
+	    for (; up--; up) {
+	      srcPath.unshift('..');
+	    }
+	  }
+
+	  if (mustEndAbs && srcPath[0] !== '' &&
+	      (!srcPath[0] || srcPath[0].charAt(0) !== '/')) {
+	    srcPath.unshift('');
+	  }
+
+	  if (hasTrailingSlash && (srcPath.join('/').substr(-1) !== '/')) {
+	    srcPath.push('');
+	  }
+
+	  var isAbsolute = srcPath[0] === '' ||
+	      (srcPath[0] && srcPath[0].charAt(0) === '/');
+
+	  // put the host back
+	  if (psychotic) {
+	    result.hostname = result.host = isAbsolute ? '' :
+	                                    srcPath.length ? srcPath.shift() : '';
+	    //occationaly the auth can get stuck only in host
+	    //this especialy happens in cases like
+	    //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
+	    var authInHost = result.host && result.host.indexOf('@') > 0 ?
+	                     result.host.split('@') : false;
+	    if (authInHost) {
+	      result.auth = authInHost.shift();
+	      result.host = result.hostname = authInHost.shift();
+	    }
+	  }
+
+	  mustEndAbs = mustEndAbs || (result.host && srcPath.length);
+
+	  if (mustEndAbs && !isAbsolute) {
+	    srcPath.unshift('');
+	  }
+
+	  if (!srcPath.length) {
+	    result.pathname = null;
+	    result.path = null;
+	  } else {
+	    result.pathname = srcPath.join('/');
+	  }
+
+	  //to support request.http
+	  if (!isNull(result.pathname) || !isNull(result.search)) {
+	    result.path = (result.pathname ? result.pathname : '') +
+	                  (result.search ? result.search : '');
+	  }
+	  result.auth = relative.auth || result.auth;
+	  result.slashes = result.slashes || relative.slashes;
+	  result.href = result.format();
+	  return result;
+	};
+
+	Url.prototype.parseHost = function() {
+	  var host = this.host;
+	  var port = portPattern.exec(host);
+	  if (port) {
+	    port = port[0];
+	    if (port !== ':') {
+	      this.port = port.substr(1);
+	    }
+	    host = host.substr(0, host.length - port.length);
+	  }
+	  if (host) this.hostname = host;
+	};
+
+	function isString(arg) {
+	  return typeof arg === "string";
+	}
+
+	function isObject(arg) {
+	  return typeof arg === 'object' && arg !== null;
+	}
+
+	function isNull(arg) {
+	  return arg === null;
+	}
+	function isNullOrUndefined(arg) {
+	  return  arg == null;
+	}
+
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/*! https://mths.be/punycode v1.3.2 by @mathias */
+	;(function(root) {
+
+		/** Detect free variables */
+		var freeExports = typeof exports == 'object' && exports &&
+			!exports.nodeType && exports;
+		var freeModule = typeof module == 'object' && module &&
+			!module.nodeType && module;
+		var freeGlobal = typeof global == 'object' && global;
+		if (
+			freeGlobal.global === freeGlobal ||
+			freeGlobal.window === freeGlobal ||
+			freeGlobal.self === freeGlobal
+		) {
+			root = freeGlobal;
+		}
+
+		/**
+		 * The `punycode` object.
+		 * @name punycode
+		 * @type Object
+		 */
+		var punycode,
+
+		/** Highest positive signed 32-bit float value */
+		maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
+
+		/** Bootstring parameters */
+		base = 36,
+		tMin = 1,
+		tMax = 26,
+		skew = 38,
+		damp = 700,
+		initialBias = 72,
+		initialN = 128, // 0x80
+		delimiter = '-', // '\x2D'
+
+		/** Regular expressions */
+		regexPunycode = /^xn--/,
+		regexNonASCII = /[^\x20-\x7E]/, // unprintable ASCII chars + non-ASCII chars
+		regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g, // RFC 3490 separators
+
+		/** Error messages */
+		errors = {
+			'overflow': 'Overflow: input needs wider integers to process',
+			'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
+			'invalid-input': 'Invalid input'
+		},
+
+		/** Convenience shortcuts */
+		baseMinusTMin = base - tMin,
+		floor = Math.floor,
+		stringFromCharCode = String.fromCharCode,
+
+		/** Temporary variable */
+		key;
+
+		/*--------------------------------------------------------------------------*/
+
+		/**
+		 * A generic error utility function.
+		 * @private
+		 * @param {String} type The error type.
+		 * @returns {Error} Throws a `RangeError` with the applicable error message.
+		 */
+		function error(type) {
+			throw RangeError(errors[type]);
+		}
+
+		/**
+		 * A generic `Array#map` utility function.
+		 * @private
+		 * @param {Array} array The array to iterate over.
+		 * @param {Function} callback The function that gets called for every array
+		 * item.
+		 * @returns {Array} A new array of values returned by the callback function.
+		 */
+		function map(array, fn) {
+			var length = array.length;
+			var result = [];
+			while (length--) {
+				result[length] = fn(array[length]);
+			}
+			return result;
+		}
+
+		/**
+		 * A simple `Array#map`-like wrapper to work with domain name strings or email
+		 * addresses.
+		 * @private
+		 * @param {String} domain The domain name or email address.
+		 * @param {Function} callback The function that gets called for every
+		 * character.
+		 * @returns {Array} A new string of characters returned by the callback
+		 * function.
+		 */
+		function mapDomain(string, fn) {
+			var parts = string.split('@');
+			var result = '';
+			if (parts.length > 1) {
+				// In email addresses, only the domain name should be punycoded. Leave
+				// the local part (i.e. everything up to `@`) intact.
+				result = parts[0] + '@';
+				string = parts[1];
+			}
+			// Avoid `split(regex)` for IE8 compatibility. See #17.
+			string = string.replace(regexSeparators, '\x2E');
+			var labels = string.split('.');
+			var encoded = map(labels, fn).join('.');
+			return result + encoded;
+		}
+
+		/**
+		 * Creates an array containing the numeric code points of each Unicode
+		 * character in the string. While JavaScript uses UCS-2 internally,
+		 * this function will convert a pair of surrogate halves (each of which
+		 * UCS-2 exposes as separate characters) into a single code point,
+		 * matching UTF-16.
+		 * @see `punycode.ucs2.encode`
+		 * @see <https://mathiasbynens.be/notes/javascript-encoding>
+		 * @memberOf punycode.ucs2
+		 * @name decode
+		 * @param {String} string The Unicode input string (UCS-2).
+		 * @returns {Array} The new array of code points.
+		 */
+		function ucs2decode(string) {
+			var output = [],
+			    counter = 0,
+			    length = string.length,
+			    value,
+			    extra;
+			while (counter < length) {
+				value = string.charCodeAt(counter++);
+				if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+					// high surrogate, and there is a next character
+					extra = string.charCodeAt(counter++);
+					if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+						output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+					} else {
+						// unmatched surrogate; only append this code unit, in case the next
+						// code unit is the high surrogate of a surrogate pair
+						output.push(value);
+						counter--;
+					}
+				} else {
+					output.push(value);
+				}
+			}
+			return output;
+		}
+
+		/**
+		 * Creates a string based on an array of numeric code points.
+		 * @see `punycode.ucs2.decode`
+		 * @memberOf punycode.ucs2
+		 * @name encode
+		 * @param {Array} codePoints The array of numeric code points.
+		 * @returns {String} The new Unicode string (UCS-2).
+		 */
+		function ucs2encode(array) {
+			return map(array, function(value) {
+				var output = '';
+				if (value > 0xFFFF) {
+					value -= 0x10000;
+					output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
+					value = 0xDC00 | value & 0x3FF;
+				}
+				output += stringFromCharCode(value);
+				return output;
+			}).join('');
+		}
+
+		/**
+		 * Converts a basic code point into a digit/integer.
+		 * @see `digitToBasic()`
+		 * @private
+		 * @param {Number} codePoint The basic numeric code point value.
+		 * @returns {Number} The numeric value of a basic code point (for use in
+		 * representing integers) in the range `0` to `base - 1`, or `base` if
+		 * the code point does not represent a value.
+		 */
+		function basicToDigit(codePoint) {
+			if (codePoint - 48 < 10) {
+				return codePoint - 22;
+			}
+			if (codePoint - 65 < 26) {
+				return codePoint - 65;
+			}
+			if (codePoint - 97 < 26) {
+				return codePoint - 97;
+			}
+			return base;
+		}
+
+		/**
+		 * Converts a digit/integer into a basic code point.
+		 * @see `basicToDigit()`
+		 * @private
+		 * @param {Number} digit The numeric value of a basic code point.
+		 * @returns {Number} The basic code point whose value (when used for
+		 * representing integers) is `digit`, which needs to be in the range
+		 * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
+		 * used; else, the lowercase form is used. The behavior is undefined
+		 * if `flag` is non-zero and `digit` has no uppercase form.
+		 */
+		function digitToBasic(digit, flag) {
+			//  0..25 map to ASCII a..z or A..Z
+			// 26..35 map to ASCII 0..9
+			return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
+		}
+
+		/**
+		 * Bias adaptation function as per section 3.4 of RFC 3492.
+		 * http://tools.ietf.org/html/rfc3492#section-3.4
+		 * @private
+		 */
+		function adapt(delta, numPoints, firstTime) {
+			var k = 0;
+			delta = firstTime ? floor(delta / damp) : delta >> 1;
+			delta += floor(delta / numPoints);
+			for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
+				delta = floor(delta / baseMinusTMin);
+			}
+			return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
+		}
+
+		/**
+		 * Converts a Punycode string of ASCII-only symbols to a string of Unicode
+		 * symbols.
+		 * @memberOf punycode
+		 * @param {String} input The Punycode string of ASCII-only symbols.
+		 * @returns {String} The resulting string of Unicode symbols.
+		 */
+		function decode(input) {
+			// Don't use UCS-2
+			var output = [],
+			    inputLength = input.length,
+			    out,
+			    i = 0,
+			    n = initialN,
+			    bias = initialBias,
+			    basic,
+			    j,
+			    index,
+			    oldi,
+			    w,
+			    k,
+			    digit,
+			    t,
+			    /** Cached calculation results */
+			    baseMinusT;
+
+			// Handle the basic code points: let `basic` be the number of input code
+			// points before the last delimiter, or `0` if there is none, then copy
+			// the first basic code points to the output.
+
+			basic = input.lastIndexOf(delimiter);
+			if (basic < 0) {
+				basic = 0;
+			}
+
+			for (j = 0; j < basic; ++j) {
+				// if it's not a basic code point
+				if (input.charCodeAt(j) >= 0x80) {
+					error('not-basic');
+				}
+				output.push(input.charCodeAt(j));
+			}
+
+			// Main decoding loop: start just after the last delimiter if any basic code
+			// points were copied; start at the beginning otherwise.
+
+			for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
+
+				// `index` is the index of the next character to be consumed.
+				// Decode a generalized variable-length integer into `delta`,
+				// which gets added to `i`. The overflow checking is easier
+				// if we increase `i` as we go, then subtract off its starting
+				// value at the end to obtain `delta`.
+				for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
+
+					if (index >= inputLength) {
+						error('invalid-input');
+					}
+
+					digit = basicToDigit(input.charCodeAt(index++));
+
+					if (digit >= base || digit > floor((maxInt - i) / w)) {
+						error('overflow');
+					}
+
+					i += digit * w;
+					t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+
+					if (digit < t) {
+						break;
+					}
+
+					baseMinusT = base - t;
+					if (w > floor(maxInt / baseMinusT)) {
+						error('overflow');
+					}
+
+					w *= baseMinusT;
+
+				}
+
+				out = output.length + 1;
+				bias = adapt(i - oldi, out, oldi == 0);
+
+				// `i` was supposed to wrap around from `out` to `0`,
+				// incrementing `n` each time, so we'll fix that now:
+				if (floor(i / out) > maxInt - n) {
+					error('overflow');
+				}
+
+				n += floor(i / out);
+				i %= out;
+
+				// Insert `n` at position `i` of the output
+				output.splice(i++, 0, n);
+
+			}
+
+			return ucs2encode(output);
+		}
+
+		/**
+		 * Converts a string of Unicode symbols (e.g. a domain name label) to a
+		 * Punycode string of ASCII-only symbols.
+		 * @memberOf punycode
+		 * @param {String} input The string of Unicode symbols.
+		 * @returns {String} The resulting Punycode string of ASCII-only symbols.
+		 */
+		function encode(input) {
+			var n,
+			    delta,
+			    handledCPCount,
+			    basicLength,
+			    bias,
+			    j,
+			    m,
+			    q,
+			    k,
+			    t,
+			    currentValue,
+			    output = [],
+			    /** `inputLength` will hold the number of code points in `input`. */
+			    inputLength,
+			    /** Cached calculation results */
+			    handledCPCountPlusOne,
+			    baseMinusT,
+			    qMinusT;
+
+			// Convert the input in UCS-2 to Unicode
+			input = ucs2decode(input);
+
+			// Cache the length
+			inputLength = input.length;
+
+			// Initialize the state
+			n = initialN;
+			delta = 0;
+			bias = initialBias;
+
+			// Handle the basic code points
+			for (j = 0; j < inputLength; ++j) {
+				currentValue = input[j];
+				if (currentValue < 0x80) {
+					output.push(stringFromCharCode(currentValue));
+				}
+			}
+
+			handledCPCount = basicLength = output.length;
+
+			// `handledCPCount` is the number of code points that have been handled;
+			// `basicLength` is the number of basic code points.
+
+			// Finish the basic string - if it is not empty - with a delimiter
+			if (basicLength) {
+				output.push(delimiter);
+			}
+
+			// Main encoding loop:
+			while (handledCPCount < inputLength) {
+
+				// All non-basic code points < n have been handled already. Find the next
+				// larger one:
+				for (m = maxInt, j = 0; j < inputLength; ++j) {
+					currentValue = input[j];
+					if (currentValue >= n && currentValue < m) {
+						m = currentValue;
+					}
+				}
+
+				// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
+				// but guard against overflow
+				handledCPCountPlusOne = handledCPCount + 1;
+				if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
+					error('overflow');
+				}
+
+				delta += (m - n) * handledCPCountPlusOne;
+				n = m;
+
+				for (j = 0; j < inputLength; ++j) {
+					currentValue = input[j];
+
+					if (currentValue < n && ++delta > maxInt) {
+						error('overflow');
+					}
+
+					if (currentValue == n) {
+						// Represent delta as a generalized variable-length integer
+						for (q = delta, k = base; /* no condition */; k += base) {
+							t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+							if (q < t) {
+								break;
+							}
+							qMinusT = q - t;
+							baseMinusT = base - t;
+							output.push(
+								stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
+							);
+							q = floor(qMinusT / baseMinusT);
+						}
+
+						output.push(stringFromCharCode(digitToBasic(q, 0)));
+						bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
+						delta = 0;
+						++handledCPCount;
+					}
+				}
+
+				++delta;
+				++n;
+
+			}
+			return output.join('');
+		}
+
+		/**
+		 * Converts a Punycode string representing a domain name or an email address
+		 * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
+		 * it doesn't matter if you call it on a string that has already been
+		 * converted to Unicode.
+		 * @memberOf punycode
+		 * @param {String} input The Punycoded domain name or email address to
+		 * convert to Unicode.
+		 * @returns {String} The Unicode representation of the given Punycode
+		 * string.
+		 */
+		function toUnicode(input) {
+			return mapDomain(input, function(string) {
+				return regexPunycode.test(string)
+					? decode(string.slice(4).toLowerCase())
+					: string;
+			});
+		}
+
+		/**
+		 * Converts a Unicode string representing a domain name or an email address to
+		 * Punycode. Only the non-ASCII parts of the domain name will be converted,
+		 * i.e. it doesn't matter if you call it with a domain that's already in
+		 * ASCII.
+		 * @memberOf punycode
+		 * @param {String} input The domain name or email address to convert, as a
+		 * Unicode string.
+		 * @returns {String} The Punycode representation of the given domain name or
+		 * email address.
+		 */
+		function toASCII(input) {
+			return mapDomain(input, function(string) {
+				return regexNonASCII.test(string)
+					? 'xn--' + encode(string)
+					: string;
+			});
+		}
+
+		/*--------------------------------------------------------------------------*/
+
+		/** Define the public API */
+		punycode = {
+			/**
+			 * A string representing the current Punycode.js version number.
+			 * @memberOf punycode
+			 * @type String
+			 */
+			'version': '1.3.2',
+			/**
+			 * An object of methods to convert from JavaScript's internal character
+			 * representation (UCS-2) to Unicode code points, and back.
+			 * @see <https://mathiasbynens.be/notes/javascript-encoding>
+			 * @memberOf punycode
+			 * @type Object
+			 */
+			'ucs2': {
+				'decode': ucs2decode,
+				'encode': ucs2encode
+			},
+			'decode': decode,
+			'encode': encode,
+			'toASCII': toASCII,
+			'toUnicode': toUnicode
+		};
+
+		/** Expose `punycode` */
+		// Some AMD build optimizers, like r.js, check for specific condition patterns
+		// like the following:
+		if (
+			true
+		) {
+			!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
+				return punycode;
+			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else if (freeExports && freeModule) {
+			if (module.exports == freeExports) { // in Node.js or RingoJS v0.8.0+
+				freeModule.exports = punycode;
+			} else { // in Narwhal or RingoJS v0.7.0-
+				for (key in punycode) {
+					punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
+				}
+			}
+		} else { // in Rhino or a web browser
+			root.punycode = punycode;
+		}
+
+	}(this));
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(202)(module), (function() { return this; }())))
+
+/***/ },
+/* 202 */
+/***/ function(module, exports) {
+
+	module.exports = function(module) {
+		if(!module.webpackPolyfill) {
+			module.deprecate = function() {};
+			module.paths = [];
+			// module.parent = undefined by default
+			module.children = [];
+			module.webpackPolyfill = 1;
+		}
+		return module;
+	}
+
+
+/***/ },
+/* 203 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.decode = exports.parse = __webpack_require__(204);
+	exports.encode = exports.stringify = __webpack_require__(205);
+
+
+/***/ },
+/* 204 */
+/***/ function(module, exports) {
+
+	// Copyright Joyent, Inc. and other Node contributors.
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a
+	// copy of this software and associated documentation files (the
+	// "Software"), to deal in the Software without restriction, including
+	// without limitation the rights to use, copy, modify, merge, publish,
+	// distribute, sublicense, and/or sell copies of the Software, and to permit
+	// persons to whom the Software is furnished to do so, subject to the
+	// following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included
+	// in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+	// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+	'use strict';
+
+	// If obj.hasOwnProperty has been overridden, then calling
+	// obj.hasOwnProperty(prop) will break.
+	// See: https://github.com/joyent/node/issues/1707
+	function hasOwnProperty(obj, prop) {
+	  return Object.prototype.hasOwnProperty.call(obj, prop);
+	}
+
+	module.exports = function(qs, sep, eq, options) {
+	  sep = sep || '&';
+	  eq = eq || '=';
+	  var obj = {};
+
+	  if (typeof qs !== 'string' || qs.length === 0) {
+	    return obj;
+	  }
+
+	  var regexp = /\+/g;
+	  qs = qs.split(sep);
+
+	  var maxKeys = 1000;
+	  if (options && typeof options.maxKeys === 'number') {
+	    maxKeys = options.maxKeys;
+	  }
+
+	  var len = qs.length;
+	  // maxKeys <= 0 means that we should not limit keys count
+	  if (maxKeys > 0 && len > maxKeys) {
+	    len = maxKeys;
+	  }
+
+	  for (var i = 0; i < len; ++i) {
+	    var x = qs[i].replace(regexp, '%20'),
+	        idx = x.indexOf(eq),
+	        kstr, vstr, k, v;
+
+	    if (idx >= 0) {
+	      kstr = x.substr(0, idx);
+	      vstr = x.substr(idx + 1);
+	    } else {
+	      kstr = x;
+	      vstr = '';
+	    }
+
+	    k = decodeURIComponent(kstr);
+	    v = decodeURIComponent(vstr);
+
+	    if (!hasOwnProperty(obj, k)) {
+	      obj[k] = v;
+	    } else if (Array.isArray(obj[k])) {
+	      obj[k].push(v);
+	    } else {
+	      obj[k] = [obj[k], v];
+	    }
+	  }
+
+	  return obj;
+	};
+
+
+/***/ },
+/* 205 */
+/***/ function(module, exports) {
+
+	// Copyright Joyent, Inc. and other Node contributors.
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a
+	// copy of this software and associated documentation files (the
+	// "Software"), to deal in the Software without restriction, including
+	// without limitation the rights to use, copy, modify, merge, publish,
+	// distribute, sublicense, and/or sell copies of the Software, and to permit
+	// persons to whom the Software is furnished to do so, subject to the
+	// following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included
+	// in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+	// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+	'use strict';
+
+	var stringifyPrimitive = function(v) {
+	  switch (typeof v) {
+	    case 'string':
+	      return v;
+
+	    case 'boolean':
+	      return v ? 'true' : 'false';
+
+	    case 'number':
+	      return isFinite(v) ? v : '';
+
+	    default:
+	      return '';
+	  }
+	};
+
+	module.exports = function(obj, sep, eq, name) {
+	  sep = sep || '&';
+	  eq = eq || '=';
+	  if (obj === null) {
+	    obj = undefined;
+	  }
+
+	  if (typeof obj === 'object') {
+	    return Object.keys(obj).map(function(k) {
+	      var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
+	      if (Array.isArray(obj[k])) {
+	        return obj[k].map(function(v) {
+	          return ks + encodeURIComponent(stringifyPrimitive(v));
+	        }).join(sep);
+	      } else {
+	        return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
+	      }
+	    }).join(sep);
+
+	  }
+
+	  if (!name) return '';
+	  return encodeURIComponent(stringifyPrimitive(name)) + eq +
+	         encodeURIComponent(stringifyPrimitive(obj));
+	};
+
+
+/***/ },
+/* 206 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var helpers = __webpack_require__(207);
+
+	/** @type ValidatorResult */
+	var ValidatorResult = helpers.ValidatorResult;
+	/** @type SchemaError */
+	var SchemaError = helpers.SchemaError;
+
+	var attribute = {};
+
+	attribute.ignoreProperties = {
+	  // informative properties
+	  'id': true,
+	  'default': true,
+	  'description': true,
+	  'title': true,
+	  // arguments to other properties
+	  'exclusiveMinimum': true,
+	  'exclusiveMaximum': true,
+	  'additionalItems': true,
+	  // special-handled properties
+	  '$schema': true,
+	  '$ref': true,
+	  'extends': true
+	};
+
+	/**
+	 * @name validators
+	 */
+	var validators = attribute.validators = {};
+
+	/**
+	 * Validates whether the instance if of a certain type
+	 * @param instance
+	 * @param schema
+	 * @param options
+	 * @param ctx
+	 * @return {ValidatorResult|null}
+	 */
+	validators.type = function validateType (instance, schema, options, ctx) {
+	  // Ignore undefined instances
+	  if (instance === undefined) {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  var types = (schema.type instanceof Array) ? schema.type : [schema.type];
+	  if (!types.some(this.testType.bind(this, instance, schema, options, ctx))) {
+	    var list = types.map(function (v) {
+	      return v.id && ('<' + v.id + '>') || (v+'');
+	    });
+	    result.addError({
+	      name: 'type',
+	      argument: list,
+	      message: "is not of a type(s) " + list,
+	    });
+	  }
+	  return result;
+	};
+
+	function testSchema(instance, options, ctx, schema){
+	  return this.validateSchema(instance, schema, options, ctx).valid;
+	}
+
+	/**
+	 * Validates whether the instance matches some of the given schemas
+	 * @param instance
+	 * @param schema
+	 * @param options
+	 * @param ctx
+	 * @return {ValidatorResult|null}
+	 */
+	validators.anyOf = function validateAnyOf (instance, schema, options, ctx) {
+	  // Ignore undefined instances
+	  if (instance === undefined) {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (!(schema.anyOf instanceof Array)){
+	    throw new SchemaError("anyOf must be an array");
+	  }
+	  if (!schema.anyOf.some(testSchema.bind(this, instance, options, ctx))) {
+	    var list = schema.anyOf.map(function (v, i) {
+	      return (v.id && ('<' + v.id + '>')) || (v.title && JSON.stringify(v.title)) || (v['$ref'] && ('<' + v['$ref'] + '>')) || '[subschema '+i+']';
+	    });
+	    result.addError({
+	      name: 'anyOf',
+	      argument: list,
+	      message: "is not any of " + list.join(','),
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates whether the instance matches every given schema
+	 * @param instance
+	 * @param schema
+	 * @param options
+	 * @param ctx
+	 * @return {String|null}
+	 */
+	validators.allOf = function validateAllOf (instance, schema, options, ctx) {
+	  // Ignore undefined instances
+	  if (instance === undefined) {
+	    return null;
+	  }
+	  if (!(schema.allOf instanceof Array)){
+	    throw new SchemaError("allOf must be an array");
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  var self = this;
+	  schema.allOf.forEach(function(v, i){
+	    var valid = self.validateSchema(instance, v, options, ctx);
+	    if(!valid.valid){
+	      var msg = (v.id && ('<' + v.id + '>')) || (v.title && JSON.stringify(v.title)) || (v['$ref'] && ('<' + v['$ref'] + '>')) || '[subschema '+i+']';
+	      result.addError({
+	        name: 'allOf',
+	        argument: { id: msg, length: valid.errors.length, valid: valid },
+	        message: 'does not match allOf schema ' + msg + ' with ' + valid.errors.length + ' error[s]:',
+	      });
+	      result.importErrors(valid);
+	    }
+	  });
+	  return result;
+	};
+
+	/**
+	 * Validates whether the instance matches exactly one of the given schemas
+	 * @param instance
+	 * @param schema
+	 * @param options
+	 * @param ctx
+	 * @return {String|null}
+	 */
+	validators.oneOf = function validateOneOf (instance, schema, options, ctx) {
+	  // Ignore undefined instances
+	  if (instance === undefined) {
+	    return null;
+	  }
+	  if (!(schema.oneOf instanceof Array)){
+	    throw new SchemaError("oneOf must be an array");
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  var count = schema.oneOf.filter(testSchema.bind(this, instance, options, ctx)).length;
+	  var list = schema.oneOf.map(function (v, i) {
+	    return (v.id && ('<' + v.id + '>')) || (v.title && JSON.stringify(v.title)) || (v['$ref'] && ('<' + v['$ref'] + '>')) || '[subschema '+i+']';
+	  });
+	  if (count!==1) {
+	    result.addError({
+	      name: 'oneOf',
+	      argument: list,
+	      message: "is not exactly one from " + list.join(','),
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates properties
+	 * @param instance
+	 * @param schema
+	 * @param options
+	 * @param ctx
+	 * @return {String|null|ValidatorResult}
+	 */
+	validators.properties = function validateProperties (instance, schema, options, ctx) {
+	  if(instance === undefined || !(instance instanceof Object)) return;
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  var properties = schema.properties || {};
+	  for (var property in properties) {
+	    var prop = (instance || undefined) && instance[property];
+	    var res = this.validateSchema(prop, properties[property], options, ctx.makeChild(properties[property], property));
+	    if(res.instance !== result.instance[property]) result.instance[property] = res.instance;
+	    result.importErrors(res);
+	  }
+	  return result;
+	};
+
+	/**
+	 * Test a specific property within in instance against the additionalProperties schema attribute
+	 * This ignores properties with definitions in the properties schema attribute, but no other attributes.
+	 * If too many more types of property-existance tests pop up they may need their own class of tests (like `type` has)
+	 * @private
+	 * @return {boolean}
+	 */
+	function testAdditionalProperty (instance, schema, options, ctx, property, result) {
+	  if (schema.properties && schema.properties[property] !== undefined) {
+	    return;
+	  }
+	  if (schema.additionalProperties === false) {
+	    result.addError({
+	      name: 'additionalProperties',
+	      argument: property,
+	      message: "additionalProperty " + JSON.stringify(property) + " exists in instance when not allowed",
+	    });
+	  } else {
+	    var additionalProperties = schema.additionalProperties || {};
+	    var res = this.validateSchema(instance[property], additionalProperties, options, ctx.makeChild(additionalProperties, property));
+	    if(res.instance !== result.instance[property]) result.instance[property] = res.instance;
+	    result.importErrors(res);
+	  }
+	}
+
+	/**
+	 * Validates patternProperties
+	 * @param instance
+	 * @param schema
+	 * @param options
+	 * @param ctx
+	 * @return {String|null|ValidatorResult}
+	 */
+	validators.patternProperties = function validatePatternProperties (instance, schema, options, ctx) {
+	  if(instance === undefined) return;
+	  if(!this.types.object(instance)) return;
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  var patternProperties = schema.patternProperties || {};
+
+	  for (var property in instance) {
+	    var test = true;
+	    for (var pattern in patternProperties) {
+	      var expr = new RegExp(pattern);
+	      if (!expr.test(property)) {
+	        continue;
+	      }
+	      test = false;
+	      var res = this.validateSchema(instance[property], patternProperties[pattern], options, ctx.makeChild(patternProperties[pattern], property));
+	      if(res.instance !== result.instance[property]) result.instance[property] = res.instance;
+	      result.importErrors(res);
+	    }
+	    if (test) {
+	      testAdditionalProperty.call(this, instance, schema, options, ctx, property, result);
+	    }
+	  }
+
+	  return result;
+	};
+
+	/**
+	 * Validates additionalProperties
+	 * @param instance
+	 * @param schema
+	 * @param options
+	 * @param ctx
+	 * @return {String|null|ValidatorResult}
+	 */
+	validators.additionalProperties = function validateAdditionalProperties (instance, schema, options, ctx) {
+	  if(instance === undefined) return;
+	  if(!this.types.object(instance)) return;
+	  // if patternProperties is defined then we'll test when that one is called instead
+	  if (schema.patternProperties) {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  for (var property in instance) {
+	    testAdditionalProperty.call(this, instance, schema, options, ctx, property, result);
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates whether the instance value is at least of a certain length, when the instance value is a string.
+	 * @param instance
+	 * @param schema
+	 * @return {String|null}
+	 */
+	validators.minProperties = function validateMinProperties (instance, schema, options, ctx) {
+	  if (!instance || typeof instance !== 'object') {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  var keys = Object.keys(instance);
+	  if (!(keys.length >= schema.minProperties)) {
+	    result.addError({
+	      name: 'minProperties',
+	      argument: schema.minProperties,
+	      message: "does not meet minimum property length of " + schema.minProperties,
+	    })
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates whether the instance value is at most of a certain length, when the instance value is a string.
+	 * @param instance
+	 * @param schema
+	 * @return {String|null}
+	 */
+	validators.maxProperties = function validateMaxProperties (instance, schema, options, ctx) {
+	  if (!instance || typeof instance !== 'object') {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  var keys = Object.keys(instance);
+	  if (!(keys.length <= schema.maxProperties)) {
+	    result.addError({
+	      name: 'maxProperties',
+	      argument: schema.maxProperties,
+	      message: "does not meet maximum property length of " + schema.maxProperties,
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates items when instance is an array
+	 * @param instance
+	 * @param schema
+	 * @param options
+	 * @param ctx
+	 * @return {String|null|ValidatorResult}
+	 */
+	validators.items = function validateItems (instance, schema, options, ctx) {
+	  if (!(instance instanceof Array)) {
+	    return null;
+	  }
+	  var self = this;
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (instance === undefined || !schema.items) {
+	    return result;
+	  }
+	  instance.every(function (value, i) {
+	    var items = (schema.items instanceof Array) ? (schema.items[i] || schema.additionalItems) : schema.items;
+	    if (items === undefined) {
+	      return true;
+	    }
+	    if (items === false) {
+	      result.addError({
+	        name: 'items',
+	        message: "additionalItems not permitted",
+	      });
+	      return false;
+	    }
+	    var res = self.validateSchema(value, items, options, ctx.makeChild(items, i));
+	    if(res.instance !== result.instance[i]) result.instance[i] = res.instance;
+	    result.importErrors(res);
+	    return true;
+	  });
+	  return result;
+	};
+
+	/**
+	 * Validates minimum and exclusiveMinimum when the type of the instance value is a number.
+	 * @param instance
+	 * @param schema
+	 * @return {String|null}
+	 */
+	validators.minimum = function validateMinimum (instance, schema, options, ctx) {
+	  if (typeof instance !== 'number') {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  var valid = true;
+	  if (schema.exclusiveMinimum && schema.exclusiveMinimum === true) {
+	    valid = instance > schema.minimum;
+	  } else {
+	    valid = instance >= schema.minimum;
+	  }
+	  if (!valid) {
+	    result.addError({
+	      name: 'minimum',
+	      argument: schema.minimum,
+	      message: "must have a minimum value of " + schema.minimum,
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates maximum and exclusiveMaximum when the type of the instance value is a number.
+	 * @param instance
+	 * @param schema
+	 * @return {String|null}
+	 */
+	validators.maximum = function validateMaximum (instance, schema, options, ctx) {
+	  if (typeof instance !== 'number') {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  var valid;
+	  if (schema.exclusiveMaximum && schema.exclusiveMaximum === true) {
+	    valid = instance < schema.maximum;
+	  } else {
+	    valid = instance <= schema.maximum;
+	  }
+	  if (!valid) {
+	    result.addError({
+	      name: 'maximum',
+	      argument: schema.maximum,
+	      message: "must have a maximum value of " + schema.maximum,
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates divisibleBy when the type of the instance value is a number.
+	 * Of course, this is susceptible to floating point error since it compares the floating points
+	 * and not the JSON byte sequences to arbitrary precision.
+	 * @param instance
+	 * @param schema
+	 * @return {String|null}
+	 */
+	validators.divisibleBy = function validateDivisibleBy (instance, schema, options, ctx) {
+	  if (typeof instance !== 'number') {
+	    return null;
+	  }
+
+	  if (schema.divisibleBy == 0) {
+	    throw new SchemaError("divisibleBy cannot be zero");
+	  }
+
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (instance / schema.divisibleBy % 1) {
+	    result.addError({
+	      name: 'divisibleBy',
+	      argument: schema.divisibleBy,
+	      message: "is not divisible by (multiple of) " + JSON.stringify(schema.divisibleBy),
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates divisibleBy when the type of the instance value is a number.
+	 * Of course, this is susceptible to floating point error since it compares the floating points
+	 * and not the JSON byte sequences to arbitrary precision.
+	 * @param instance
+	 * @param schema
+	 * @return {String|null}
+	 */
+	validators.multipleOf = function validateMultipleOf (instance, schema, options, ctx) {
+	  if (typeof instance !== 'number') {
+	    return null;
+	  }
+
+	  if (schema.multipleOf == 0) {
+	    throw new SchemaError("multipleOf cannot be zero");
+	  }
+
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (instance / schema.multipleOf % 1) {
+	    result.addError({
+	      name: 'multipleOf',
+	      argument:  schema.multipleOf,
+	      message: "is not a multiple of (divisible by) " + JSON.stringify(schema.multipleOf),
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates whether the instance value is present.
+	 * @param instance
+	 * @param schema
+	 * @return {String|null}
+	 */
+	validators.required = function validateRequired (instance, schema, options, ctx) {
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (instance === undefined && schema.required === true) {
+	    result.addError({
+	      name: 'required',
+	      message: "is required"
+	    });
+	  } else if (instance && typeof instance==='object' && Array.isArray(schema.required)) {
+	    schema.required.forEach(function(n){
+	      if(instance[n]===undefined){
+	        result.addError({
+	          name: 'required',
+	          argument: n,
+	          message: "requires property " + JSON.stringify(n),
+	        });
+	      }
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates whether the instance value matches the regular expression, when the instance value is a string.
+	 * @param instance
+	 * @param schema
+	 * @return {String|null}
+	 */
+	validators.pattern = function validatePattern (instance, schema, options, ctx) {
+	  if (typeof instance !== 'string') {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (!instance.match(schema.pattern)) {
+	    result.addError({
+	      name: 'pattern',
+	      argument: schema.pattern,
+	      message: "does not match pattern " + JSON.stringify(schema.pattern),
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates whether the instance value is of a certain defined format or a custom
+	 * format.
+	 * The following formats are supported for string types:
+	 *   - date-time
+	 *   - date
+	 *   - time
+	 *   - ip-address
+	 *   - ipv6
+	 *   - uri
+	 *   - color
+	 *   - host-name
+	 *   - alpha
+	 *   - alpha-numeric
+	 *   - utc-millisec
+	 * @param instance
+	 * @param schema
+	 * @param [options]
+	 * @param [ctx]
+	 * @return {String|null}
+	 */
+	validators.format = function validateFormat (instance, schema, options, ctx) {
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (!result.disableFormat && !helpers.isFormat(instance, schema.format, this)) {
+	    result.addError({
+	      name: 'format',
+	      argument: schema.format,
+	      message: "does not conform to the " + JSON.stringify(schema.format) + " format",
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates whether the instance value is at least of a certain length, when the instance value is a string.
+	 * @param instance
+	 * @param schema
+	 * @return {String|null}
+	 */
+	validators.minLength = function validateMinLength (instance, schema, options, ctx) {
+	  if (!(typeof instance === 'string')) {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (!(instance.length >= schema.minLength)) {
+	    result.addError({
+	      name: 'minLength',
+	      argument: schema.minLength,
+	      message: "does not meet minimum length of " + schema.minLength,
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates whether the instance value is at most of a certain length, when the instance value is a string.
+	 * @param instance
+	 * @param schema
+	 * @return {String|null}
+	 */
+	validators.maxLength = function validateMaxLength (instance, schema, options, ctx) {
+	  if (!(typeof instance === 'string')) {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (!(instance.length <= schema.maxLength)) {
+	    result.addError({
+	      name: 'maxLength',
+	      argument: schema.maxLength,
+	      message: "does not meet maximum length of " + schema.maxLength,
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates whether instance contains at least a minimum number of items, when the instance is an Array.
+	 * @param instance
+	 * @param schema
+	 * @return {String|null}
+	 */
+	validators.minItems = function validateMinItems (instance, schema, options, ctx) {
+	  if (!(instance instanceof Array)) {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (!(instance.length >= schema.minItems)) {
+	    result.addError({
+	      name: 'minItems',
+	      argument: schema.minItems,
+	      message: "does not meet minimum length of " + schema.minItems,
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates whether instance contains no more than a maximum number of items, when the instance is an Array.
+	 * @param instance
+	 * @param schema
+	 * @return {String|null}
+	 */
+	validators.maxItems = function validateMaxItems (instance, schema, options, ctx) {
+	  if (!(instance instanceof Array)) {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (!(instance.length <= schema.maxItems)) {
+	    result.addError({
+	      name: 'maxItems',
+	      argument: schema.maxItems,
+	      message: "does not meet maximum length of " + schema.maxItems,
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates that every item in an instance array is unique, when instance is an array
+	 * @param instance
+	 * @param schema
+	 * @param options
+	 * @param ctx
+	 * @return {String|null|ValidatorResult}
+	 */
+	validators.uniqueItems = function validateUniqueItems (instance, schema, options, ctx) {
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (!(instance instanceof Array)) {
+	    return result;
+	  }
+	  function testArrays (v, i, a) {
+	    for (var j = i + 1; j < a.length; j++) if (helpers.deepCompareStrict(v, a[j])) {
+	      return false;
+	    }
+	    return true;
+	  }
+	  if (!instance.every(testArrays)) {
+	    result.addError({
+	      name: 'uniqueItems',
+	      message: "contains duplicate item",
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Deep compares arrays for duplicates
+	 * @param v
+	 * @param i
+	 * @param a
+	 * @private
+	 * @return {boolean}
+	 */
+	function testArrays (v, i, a) {
+	  var j, len = a.length;
+	  for (j = i + 1, len; j < len; j++) {
+	    if (helpers.deepCompareStrict(v, a[j])) {
+	      return false;
+	    }
+	  }
+	  return true;
+	}
+
+	/**
+	 * Validates whether there are no duplicates, when the instance is an Array.
+	 * @param instance
+	 * @return {String|null}
+	 */
+	validators.uniqueItems = function validateUniqueItems (instance, schema, options, ctx) {
+	  if (!(instance instanceof Array)) {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (!instance.every(testArrays)) {
+	    result.addError({
+	      name: 'uniqueItems',
+	      message: "contains duplicate item",
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validate for the presence of dependency properties, if the instance is an object.
+	 * @param instance
+	 * @param schema
+	 * @param options
+	 * @param ctx
+	 * @return {null|ValidatorResult}
+	 */
+	validators.dependencies = function validateDependencies (instance, schema, options, ctx) {
+	  if (!instance || typeof instance != 'object') {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  for (var property in schema.dependencies) {
+	    if (instance[property] === undefined) {
+	      continue;
+	    }
+	    var dep = schema.dependencies[property];
+	    var childContext = ctx.makeChild(dep, property);
+	    if (typeof dep == 'string') {
+	      dep = [dep];
+	    }
+	    if (dep instanceof Array) {
+	      dep.forEach(function (prop) {
+	        if (instance[prop] === undefined) {
+	          result.addError({
+	            // FIXME there's two different "dependencies" errors here with slightly different outputs
+	            // Can we make these the same? Or should we create different error types?
+	            name: 'dependencies',
+	            argument: childContext.propertyPath,
+	            message: "property " + prop + " not found, required by " + childContext.propertyPath,
+	          });
+	        }
+	      });
+	    } else {
+	      var res = this.validateSchema(instance, dep, options, childContext);
+	      if(result.instance !== res.instance) result.instance = res.instance;
+	      if (res && res.errors.length) {
+	        result.addError({
+	          name: 'dependencies',
+	          argument: childContext.propertyPath,
+	          message: "does not meet dependency required by " + childContext.propertyPath,
+	        });
+	        result.importErrors(res);
+	      }
+	    }
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates whether the instance value is one of the enumerated values.
+	 *
+	 * @param instance
+	 * @param schema
+	 * @return {ValidatorResult|null}
+	 */
+	validators['enum'] = function validateEnum (instance, schema, options, ctx) {
+	  if (!(schema['enum'] instanceof Array)) {
+	    throw new SchemaError("enum expects an array", schema);
+	  }
+	  if (instance === undefined) {
+	    return null;
+	  }
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  if (!schema['enum'].some(helpers.deepCompareStrict.bind(null, instance))) {
+	    result.addError({
+	      name: 'enum',
+	      argument: schema['enum'],
+	      message: "is not one of enum values: " + schema['enum'].join(','),
+	    });
+	  }
+	  return result;
+	};
+
+	/**
+	 * Validates whether the instance if of a prohibited type.
+	 * @param instance
+	 * @param schema
+	 * @param options
+	 * @param ctx
+	 * @return {null|ValidatorResult}
+	 */
+	validators.not = validators.disallow = function validateNot (instance, schema, options, ctx) {
+	  var self = this;
+	  if(instance===undefined) return null;
+	  var result = new ValidatorResult(instance, schema, options, ctx);
+	  var notTypes = schema.not || schema.disallow;
+	  if(!notTypes) return null;
+	  if(!(notTypes instanceof Array)) notTypes=[notTypes];
+	  notTypes.forEach(function (type) {
+	    if (self.testType(instance, schema, options, ctx, type)) {
+	      var schemaId = type && type.id && ('<' + type.id + '>') || type;
+	      result.addError({
+	        name: 'not',
+	        argument: schemaId,
+	        message: "is of prohibited type " + schemaId,
+	      });
+	    }
+	  });
+	  return result;
+	};
+
+	module.exports = attribute;
+
+
+/***/ },
+/* 207 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var uri = __webpack_require__(200);
+
+	var ValidationError = exports.ValidationError = function ValidationError (message, instance, schema, propertyPath, name, argument) {
+	  if (propertyPath) {
+	    this.property = propertyPath;
+	  }
+	  if (message) {
+	    this.message = message;
+	  }
+	  if (schema) {
+	    if (schema.id) {
+	      this.schema = schema.id;
+	    } else {
+	      this.schema = schema;
+	    }
+	  }
+	  if (instance) {
+	    this.instance = instance;
+	  }
+	  this.name = name;
+	  this.argument = argument;
+	  this.stack = this.toString();
+	};
+
+	ValidationError.prototype.toString = function toString() {
+	  return this.property + ' ' + this.message;
+	};
+
+	var ValidatorResult = exports.ValidatorResult = function ValidatorResult(instance, schema, options, ctx) {
+	  this.instance = instance;
+	  this.schema = schema;
+	  this.propertyPath = ctx.propertyPath;
+	  this.errors = [];
+	  this.throwError = options && options.throwError;
+	  this.disableFormat = options && options.disableFormat === true;
+	};
+
+	ValidatorResult.prototype.addError = function addError(detail) {
+	  var err;
+	  if (typeof detail == 'string') {
+	    err = new ValidationError(detail, this.instance, this.schema, this.propertyPath);
+	  } else {
+	    if (!detail) throw new Error('Missing error detail');
+	    if (!detail.message) throw new Error('Missing error message');
+	    if (!detail.name) throw new Error('Missing validator type');
+	    err = new ValidationError(detail.message, this.instance, this.schema, this.propertyPath, detail.name, detail.argument);
+	  }
+
+	  if (this.throwError) {
+	    throw err;
+	  }
+	  this.errors.push(err);
+	  return err;
+	};
+
+	ValidatorResult.prototype.importErrors = function importErrors(res) {
+	  if (typeof res == 'string' || (res && res.validatorType)) {
+	    this.addError(res);
+	  } else if (res && res.errors) {
+	    var errs = this.errors;
+	    res.errors.forEach(function (v) {
+	      errs.push(v);
+	    });
+	  }
+	};
+
+	ValidatorResult.prototype.toString = function toString(res) {
+	  return this.errors.map(function(v,i){ return i+': '+v.toString()+'\n'; }).join('');
+	};
+
+	Object.defineProperty(ValidatorResult.prototype, "valid", { get: function() {
+	  return !this.errors.length;
+	} });
+
+	/**
+	 * Describes a problem with a Schema which prevents validation of an instance
+	 * @name SchemaError
+	 * @constructor
+	 */
+	var SchemaError = exports.SchemaError = function SchemaError (msg, schema) {
+	  this.message = msg;
+	  this.schema = schema;
+	  Error.call(this, msg);
+	  Error.captureStackTrace(this, SchemaError);
+	};
+	SchemaError.prototype = Object.create(Error.prototype,
+	  { constructor: {value: SchemaError, enumerable: false}
+	  , name: {value: 'SchemaError', enumerable: false}
+	  });
+
+	var SchemaContext = exports.SchemaContext = function SchemaContext (schema, options, propertyPath, base, schemas) {
+	  this.schema = schema;
+	  this.options = options;
+	  this.propertyPath = propertyPath;
+	  this.base = base;
+	  this.schemas = schemas;
+	};
+
+	SchemaContext.prototype.resolve = function resolve (target) {
+	  return uri.resolve(this.base, target);
+	};
+
+	SchemaContext.prototype.makeChild = function makeChild(schema, propertyName){
+	  var propertyPath = (propertyName===undefined) ? this.propertyPath : this.propertyPath+makeSuffix(propertyName);
+	  var base = uri.resolve(this.base, schema.id||'');
+	  var ctx = new SchemaContext(schema, this.options, propertyPath, base, Object.create(this.schemas));
+	  if(schema.id && !ctx.schemas[base]){
+	    ctx.schemas[base] = schema;
+	  }
+	  return ctx;
+	}
+
+	var FORMAT_REGEXPS = exports.FORMAT_REGEXPS = {
+	  'date-time': /^\d{4}-(?:0[0-9]{1}|1[0-2]{1})-(3[01]|0[1-9]|[12][0-9])[tT ](2[0-4]|[01][0-9]):([0-5][0-9]):(60|[0-5][0-9])(\.\d+)?([zZ]|[+-]([0-5][0-9]):(60|[0-5][0-9]))$/,
+	  'date': /^\d{4}-(?:0[0-9]{1}|1[0-2]{1})-(3[01]|0[1-9]|[12][0-9])$/,
+	  'time': /^(2[0-4]|[01][0-9]):([0-5][0-9]):(60|[0-5][0-9])$/,
+
+	  'email': /^(?:[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+\.)*[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+@(?:(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!\.)){0,61}[a-zA-Z0-9]?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!$)){0,61}[a-zA-Z0-9]?)|(?:\[(?:(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\]))$/,
+	  'ip-address': /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+	  'ipv6': /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/,
+	  'uri': /^[a-zA-Z][a-zA-Z0-9+-.]*:[^\s]*$/,
+
+	  'color': /^(#?([0-9A-Fa-f]{3}){1,2}\b|aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|orange|purple|red|silver|teal|white|yellow|(rgb\(\s*\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b\s*,\s*\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b\s*,\s*\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b\s*\))|(rgb\(\s*(\d?\d%|100%)+\s*,\s*(\d?\d%|100%)+\s*,\s*(\d?\d%|100%)+\s*\)))$/,
+
+	  // hostname regex from: http://stackoverflow.com/a/1420225/5628
+	  'hostname': /^(?=.{1,255}$)[0-9A-Za-z](?:(?:[0-9A-Za-z]|-){0,61}[0-9A-Za-z])?(?:\.[0-9A-Za-z](?:(?:[0-9A-Za-z]|-){0,61}[0-9A-Za-z])?)*\.?$/,
+	  'host-name': /^(?=.{1,255}$)[0-9A-Za-z](?:(?:[0-9A-Za-z]|-){0,61}[0-9A-Za-z])?(?:\.[0-9A-Za-z](?:(?:[0-9A-Za-z]|-){0,61}[0-9A-Za-z])?)*\.?$/,
+
+	  'alpha': /^[a-zA-Z]+$/,
+	  'alphanumeric': /^[a-zA-Z0-9]+$/,
+	  'utc-millisec': function (input) {
+	    return (typeof input === 'string') && parseFloat(input) === parseInt(input, 10) && !isNaN(input);
+	  },
+	  'regex': function (input) {
+	    var result = true;
+	    try {
+	      new RegExp(input);
+	    } catch (e) {
+	      result = false;
+	    }
+	    return result;
+	  },
+	  'style': /\s*(.+?):\s*([^;]+);?/g,
+	  'phone': /^\+(?:[0-9] ?){6,14}[0-9]$/
+	};
+
+	FORMAT_REGEXPS.regexp = FORMAT_REGEXPS.regex;
+	FORMAT_REGEXPS.pattern = FORMAT_REGEXPS.regex;
+	FORMAT_REGEXPS.ipv4 = FORMAT_REGEXPS['ip-address'];
+
+	exports.isFormat = function isFormat (input, format, validator) {
+	  if (typeof input === 'string' && FORMAT_REGEXPS[format] !== undefined) {
+	    if (FORMAT_REGEXPS[format] instanceof RegExp) {
+	      return FORMAT_REGEXPS[format].test(input);
+	    }
+	    if (typeof FORMAT_REGEXPS[format] === 'function') {
+	      return FORMAT_REGEXPS[format](input);
+	    }
+	  } else if (validator && validator.customFormats &&
+	      typeof validator.customFormats[format] === 'function') {
+	    return validator.customFormats[format](input);
+	  }
+	  return true;
+	};
+
+	var makeSuffix = exports.makeSuffix = function makeSuffix (key) {
+	  key = key.toString();
+	  // This function could be capable of outputting valid a ECMAScript string, but the
+	  // resulting code for testing which form to use would be tens of thousands of characters long
+	  // That means this will use the name form for some illegal forms
+	  if (!key.match(/[.\s\[\]]/) && !key.match(/^[\d]/)) {
+	    return '.' + key;
+	  }
+	  if (key.match(/^\d+$/)) {
+	    return '[' + key + ']';
+	  }
+	  return '[' + JSON.stringify(key) + ']';
+	};
+
+	exports.deepCompareStrict = function deepCompareStrict (a, b) {
+	  if (typeof a !== typeof b) {
+	    return false;
+	  }
+	  if (a instanceof Array) {
+	    if (!(b instanceof Array)) {
+	      return false;
+	    }
+	    if (a.length !== b.length) {
+	      return false;
+	    }
+	    return a.every(function (v, i) {
+	      return deepCompareStrict(a[i], b[i]);
+	    });
+	  }
+	  if (typeof a === 'object') {
+	    if (!a || !b) {
+	      return a === b;
+	    }
+	    var aKeys = Object.keys(a);
+	    var bKeys = Object.keys(b);
+	    if (aKeys.length !== bKeys.length) {
+	      return false;
+	    }
+	    return aKeys.every(function (v) {
+	      return deepCompareStrict(a[v], b[v]);
+	    });
+	  }
+	  return a === b;
+	};
+
+	module.exports.deepMerge = function deepMerge (target, src) {
+	  var array = Array.isArray(src);
+	  var dst = array && [] || {};
+
+	  if (array) {
+	    target = target || [];
+	    dst = dst.concat(target);
+	    src.forEach(function (e, i) {
+	      if (typeof e === 'object') {
+	        dst[i] = deepMerge(target[i], e)
+	      } else {
+	        if (target.indexOf(e) === -1) {
+	          dst.push(e)
+	        }
+	      }
+	    });
+	  } else {
+	    if (target && typeof target === 'object') {
+	      Object.keys(target).forEach(function (key) {
+	        dst[key] = target[key];
+	      });
+	    }
+	    Object.keys(src).forEach(function (key) {
+	      if (typeof src[key] !== 'object' || !src[key]) {
+	        dst[key] = src[key];
+	      }
+	      else {
+	        if (!target[key]) {
+	          dst[key] = src[key];
+	        } else {
+	          dst[key] = deepMerge(target[key], src[key])
+	        }
+	      }
+	    });
+	  }
+
+	  return dst;
+	};
+
+	/**
+	 * Validates instance against the provided schema
+	 * Implements URI+JSON Pointer encoding, e.g. "%7e"="~0"=>"~", "~1"="%2f"=>"/"
+	 * @param o
+	 * @param s The path to walk o along
+	 * @return any
+	 */
+	exports.objectGetPath = function objectGetPath(o, s) {
+	  var parts = s.split('/').slice(1);
+	  var k;
+	  while (typeof (k=parts.shift()) == 'string') {
+	    var n = decodeURIComponent(k.replace(/~0/,'~').replace(/~1/g,'/'));
+	    if (!(n in o)) return;
+	    o = o[n];
+	  }
+	  return o;
+	};
+
+	/**
+	 * Accept an Array of property names and return a JSON Pointer URI fragment
+	 * @param Array a
+	 * @return {String}
+	 */
+	exports.encodePath = function encodePointer(a){
+		// ~ must be encoded explicitly because hacks
+		// the slash is encoded by encodeURIComponent
+		return a.map(function(v){ return '/'+encodeURIComponent(v).replace(/~/g,'%7E'); }).join('');
+	};
+
+
+/***/ },
+/* 208 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+
+	(function () {
+		'use strict';
+
+		var hasOwn = {}.hasOwnProperty;
+
+		function classNames () {
+			var classes = [];
+
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+
+				var argType = typeof arg;
+
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+
+			return classes.join(' ');
+		}
+
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
+
+
+/***/ },
+/* 209 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 
 	var _react = __webpack_require__(2);
@@ -19929,7 +28219,7 @@
 	_reactDom2.default.render(_react2.default.createElement(LootTable, { url: '/dbquery?qstring=' + btoa(qstring), pollInterval: 2000 }), document.getElementById('lootfeed'));
 
 /***/ },
-/* 161 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20003,7 +28293,7 @@
 	_reactDom2.default.render(_react2.default.createElement(VectorTable, { url: '/packages/vectors.json' }), document.getElementById('vjobs'));
 
 /***/ },
-/* 162 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20048,9 +28338,6 @@
 	});
 
 	var killJob = function killJob(event) {
-	  console.log(event);
-	  //this.setState({data: "badfa"});
-
 	  var qstring = "UPDATE Jobs SET Active = 0 where ID = " + event.ID;
 
 	  //DB UPDATE QUERY
@@ -20128,7 +28415,7 @@
 	_reactDom2.default.render(_react2.default.createElement(JobTable, { url: '/dbquery?qstring=' + btoa(qstring), pollInterval: 1000 }), document.getElementById('ajobs'));
 
 /***/ },
-/* 163 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20157,7 +28444,7 @@
 	_reactDom2.default.render(_react2.default.createElement(LootNotification, null), document.getElementById('lootnotificationbox'));
 
 /***/ },
-/* 164 */
+/* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

@@ -131,6 +131,23 @@ setInterval(function(){
 }, 5000);
 */
 
+function hideFeeds() {
+   $(".feedtitle").hide();
+}
+
+function hideFeedForms() {
+   $(".feedformbox").hide();
+}
+
+function showFeeds() {
+   $(".feedformtitle").show();
+}
+
+function showFeedForm(id) {
+   $("#" + id).show();
+}
+
+
 $(document).ready(function () {
    
 $("#activejobs").click(function() {

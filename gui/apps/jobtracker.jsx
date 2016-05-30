@@ -31,9 +31,6 @@ var JobTable = React.createClass({
 });
 
 var killJob = function(event) {
-   console.log(event);
-   //this.setState({data: "badfa"});
-   
    var qstring = "UPDATE Jobs SET Active = 0 where ID = " + event.ID
    
    //DB UPDATE QUERY

@@ -1,6 +1,49 @@
 [
-  {"Name": "Port Proxy", "text": "This is one comment"},
-  {"Name": "SSLStrip", "text": "This is *another* comment"},
-  {"Name": "Harvester", "text": "This is *another* comment"}
-
+   {
+     "id": "1001",
+     "title": "Port Proxy",
+     "type": "object",
+     "required": [
+       "PROXY_PORT",
+       "FEED_PORT"
+     ],
+     "properties": {
+       "PROXY_PORT": {
+         "type": "string",
+         "title": "Proxy Port"
+       },
+       "FEED_PORT": {
+         "type": "string",
+         "title": "Feed Port"
+       }
+     }
+   },
+   {
+     "id": "1002",
+     "title": "SSLStrip",
+     "type": "object",
+     "required": [
+       "PROXY_PORT"
+     ],
+     "properties": {
+       "PROXY_PORT": {
+         "type": "string",
+         "title": "Port"
+       }
+     }
+   },
+   {
+     "id": "1003",
+     "title": "Harvester",
+     "type": "object",
+     "required": [
+       "FEED"
+     ],
+     "properties": {
+       "FEED": {
+         "type": "string",
+         "title": "Feed"
+       }
+     }
+   }
 ]
