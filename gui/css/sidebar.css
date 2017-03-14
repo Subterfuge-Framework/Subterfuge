@@ -1,0 +1,13 @@
+.feedtitle {
+   cursor: pointer;
+}
+
+.feedtitle-pressed {
+   background-color: aliceblue;
+   cursor: pointer;
+   min-height: 300px;
+   
+}
+.feedformbox {
+   display: none;   
+}

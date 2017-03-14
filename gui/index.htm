@@ -1,0 +1,159 @@
+<html>
+<head>
+   <meta charset="utf-8">
+   <title>Subterfuge</title>
+   <meta name="author" content="0sm0s1z">
+   <meta name="Description" content="Subterfuge - MITM Framework">
+   <link rel="sitemap" type="application/xml" title="Sitemap" href="">
+   <script src="gui/js/jquery-1.7.1.min.js"></script>
+   <script src="gui/js/functions.js"></script>
+   <link href="gui/css/style.css" rel="stylesheet">
+   <link href="gui/css/views.css" rel="stylesheet">
+   <link href="gui/css/sidebar.css" rel="stylesheet">
+   <link href="gui/css/forms.css" rel="stylesheet">
+   <link rel='stylesheet' href='gui/css/fonts.css' type='text/css'/>
+   
+   <script src="gui/build/react.js"></script>
+   <script src="gui/build/react-dom.js"></script>
+   <script src="gui/js/browser.min.js"></script>
+
+   <!--	Tab icon	-->
+   <link rel="shortcut icon" href="gui/images/logo.png" />
+</head>
+
+
+<body>
+
+<!-- Sidebar --> 
+<div id = "sidebar_border_fix">
+</div>
+<div id = "sidebar">
+   <div id = "sidebar_widget">
+      <img class = "logo" height = "75" width = "75" src = "gui/images/logo.png">
+   </div>
+   <div id = "sidebar_widget">
+      <span  class = "sideicons"><a href = "#" class = "sideicons"><div id = "widget_icon"><span class='icon-cog'></span></div>
+      <center>Settings</center></a></span>
+   </div>
+   <div id = "sidebar_widget"><div id = "job" onclick="toggleMenu(this.id)">
+      <span  class = "sideicons"><a href = "#" name = "Jobs" class = "sideicons"><div id = "widget_icon"><span class='icon-box-add'></span></div>
+      <center>Jobs</center></a></span>
+   </div></div>
+   <div id = "sidebar_widget">
+      <span  class = "sideicons"><a href = "#" class = "sideicons"><div id = "widget_icon"><span class='icon-bars'></span></div>
+      <center>Notifications</center></a></span>
+   </div>
+   <div id = "sidebar_widget">
+      <span  class = "sideicons"><a href = "#" class = "sideicons"><div id = "widget_icon"><span class='icon-info'></span></div>
+      <center>Help</center></a></span>
+   </div>
+</div>
+   
+   
+<!-- Sidebar Menus -->
+<div id = "settings" style="display:none">
+   
+</div>
+<div id = "jobs" class = "sidebar_menu">
+   <div id = "activejobs" class = "sbar_title sbar_title_active">
+      <span>Active</span>
+   </div>
+   <div id = "feedjobs" class = "sbar_title">
+      <span>Feeds</span>
+   </div>
+   <div id = "vectorjobs" class = "sbar_title">
+      <span>Vectors</span>
+   </div>
+   
+   <!-- Active Jobs -->
+   <div id = "sidebarcont">
+      <div id = "ajobs"></div>
+      <div id = "fjobs" style="display:none"></div>
+      <div id = "vjobs" style="display:none">Vectors</div>
+   </div>
+   
+   <!-- Feed Jobs -->
+   <div id = "sidebarcont">
+   
+   </div>
+   <!-- Vector Jobs -->
+   <div id = "sidebarcont">
+   
+   </div>
+      
+   
+</div>
+
+<div id = "notifications" style="display:none"></div>
+<div id = "help" style="display:none"></div>
+   
+
+<!-- Title Pane -->
+<div id = "topnav">
+   <div id = "nav_cont">
+      <span class = "title">Subterfuge</span><div id = "world"></div>
+   </div>
+
+   <div id = "startpwn" onclick="startpwn(this.id)">
+   <div id = "buttontoplast">
+   <div id = "buttoncont">
+      <div id = "buttonfill">
+         <center style = "padding-top: 3px;"><span class = "buttontxt" >Start</span></center>
+      </div>
+   </div>
+   </div>
+   </div>
+   
+   <div id = "stoppwn" style = "display:none" onclick="stoppwn(this.id)">
+   <div id = "buttontoplast">
+   <div id = "buttoncont">
+      
+      <div id = "buttonfill">
+         <center style = "padding-top: 3px;"><span class = "buttontxt" >Stop</span></center>
+      </div>
+   </div>
+   </div>
+   </div>
+   
+   <div id = "export" onclick="export(this.id)">
+   <div id = "buttoncont">
+      <div id = "buttonfill">
+         <center style = "padding-top: 3px;"><span class = "buttontxt" >Export</span></center>
+      </div>
+   </div>
+   </div>
+   
+   <div id = "attack_loader"><img src = "gui/images/loader.gif"></div>
+</div>
+
+<!-- Main Container -->
+<div id = "maincont">
+
+<!-- View Pane --> 
+<div id = "viewctrl">
+   <div id = "viewbox">
+      <div id = "feed_tbox"><span class = "feed_title"><b>Feeds ></b></span></div>
+      <div id = "feed_tbox"><span class = "feed_title"><span name = "feed_title" class="hostsfeed" onclick="showFeed(this)" >Hosts</span></span></div>
+      <div id = "feed_tbox"><span class = "feed_title"><span name = "feed_title" class="lootfeed" onclick="showFeed(this)">Loot</span><div id = "lootnotificationbox"></div></span></div>
+   
+   </div>
+</div>
+
+<div id = "hostcont">
+
+   <!-- Hosts Feed --> 
+   <div id = "hostsfeed" name = "feedcont"></div> <!-- Host Container -->
+
+   <!-- Loot Feed --> 
+   <div id = "lootfeed" name = "feedcont"></div> <!-- Loot Container -->
+
+
+</div> <!-- Main Container -->
+
+{{{}}}
+
+
+<div id = "CheckIn"></div>
+<script type="text/javascript" src="gui/bundle.js"></script>
+</body>
+</html>

